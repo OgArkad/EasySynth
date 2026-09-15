@@ -1,10 +1,13 @@
 import MIDI from "./MIDI.js";
-import * as effect from "./effects.js";
+import * as Effect from "./effects.js";
 import * as Tone from "tone"; //npm install tone
 import { synth } from "./instruments.js";
+import * as Preset from "./presets.js";
 //npm run dev localhosthoz, véglegessen pedig npm run build
 const midi = new MIDI;
 let started = false;
+const filter = new Tone.Filter();
+const lfo = new Tone.LFO();
 const keyboard = {
     w: "C#4", e: "D#4", t: "F#4", z: "G#4", u: "A#4",
     a: "C4", s: "D4", d: "E4", f: "F4", g: "G4", h: "A4", j: "B4", k: "C5"
@@ -15,12 +18,29 @@ async function playnote(note, synt) {
 async function playSound(note, velocity) {
     synth.triggerAttack(Tone.Frequency(note, "midi").toFrequency(), undefined, velocity / 127);
 }
+function loadPreset(preset) {
+    synth.set({
+        oscillator: preset.oscillator,
+        envelope: preset.envelope
+    });
+    if (preset.filter) {
+        filter.set(preset.filter);
+    }
+    if (preset.lfo) {
+        lfo.set(preset.lfo);
+    }
+}
 async function releaseSound(note) {
     synth.triggerRelease(Tone.Frequency(note, "midi").toFrequency());
 }
 document.getElementById("start")?.addEventListener("click", async (e) => {
-    synth.toDestination();
     await Tone.start();
+    synth.connect(filter);
+    filter.toDestination();
+    lfo.connect(filter.frequency);
+    lfo.start();
+    synth.toDestination();
+    loadPreset(Preset.defaultPreset); //after every button state change need to be called
     midi.playSound = playSound;
     midi.releaseSound = releaseSound;
     try {
@@ -31,7 +51,7 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     }
     synth.releaseAll(0);
     started = true;
-    synth.chain(effect.vibrato, Tone.getDestination()); //optional
+    synth.chain(Effect.vibrato, Tone.getDestination()); //optional
     console.log("Synth started/reseted!");
 });
 document.addEventListener("keydown", (e) => {

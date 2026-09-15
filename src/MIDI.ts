@@ -5,7 +5,7 @@ export default class MIDI {
     releaseSound?: Function;
 
     async init(){
-        if (!navigator.requestMIDIAccess) throw new Error("Your browser does not support MIDI! :(");
+        if (!navigator.requestMIDIAccess) throw new Error("Your browser does not support MIDI! :(\n Or you have to give permission to use it. In this case check out our README.md!");
         this.access = await navigator.requestMIDIAccess();
         this.access.addEventListener("statechange", () => this.refreshInputs());
         this.refreshInputs();

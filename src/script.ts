@@ -1,10 +1,9 @@
 import MIDI from "./MIDI.js";
 import * as effect from "./effects.js";
 import * as Tone from "tone"; //npm install tone
+import {synth} from "./instruments.js";
 //npm run dev localhosthoz, véglegessen pedig npm run build
 
-const synth: Tone.PolySynth<Tone.Synth<Tone.SynthOptions>> = new Tone.PolySynth(Tone.Synth);
-let notes: string[] = [];
 const midi: MIDI = new MIDI;
 let started: boolean = false;
 
@@ -14,8 +13,6 @@ const keyboard: Record<string, string> = {
 };
 
 async function playnote(note: string, synt: Tone.PolySynth<Tone.Synth<Tone.SynthOptions>>){
-    if (!notes.includes(note))
-        notes.push(note);
     synt.triggerAttack(note);
 }
 
@@ -33,32 +30,19 @@ async function releaseSound(note: number){
 
 document.getElementById("start")?.addEventListener("click", async (e) => {
     synth.toDestination();
-    if (!midi.inited){
-        try {
-            await midi.init();
-        } catch (err) {
-            console.error(err);
-        }
-    }
-    if (midi.access?.inputs.values() === undefined) return;
-    for (const input of midi.access?.inputs.values()) {
-    console.log({
-        id: input.id,
-        name: input.name,
-        manufacturer: input.manufacturer,
-        state: input.state,
-        connection: input.connection
-    });
-}
-    let inp = midi.access?.inputs.values().next().value?.id;
-    if (inp)
-        midi.selectInput(inp, playSound, releaseSound);
     await Tone.start();
-    notes.forEach(e => {
-        synth.triggerRelease(e, 0);
-    });
+
+    midi.playSound = playSound;
+    midi.releaseSound = releaseSound;
+    try {
+        await midi.init();
+    } catch (err) {
+        console.error(err);
+    }
+    
+    synth.releaseAll(0);
     started = true;
-    synth.chain(effect.vibrato, Tone.getDestination());
+    synth.chain(effect.vibrato, Tone.getDestination());//optional
     console.log("Synth started/reseted!");
 });
 
@@ -72,13 +56,8 @@ document.addEventListener("keydown", (e) => {
 
 document.addEventListener("keyup", (e) => {
     let note = keyboard[e.key]
-    if (note != undefined){
+    if (note != undefined)
         synth.triggerRelease(note);
-        notes.splice(notes.indexOf(note), 1);
-    }
 });
-
-
-
 
 console.log("script.js loaded!");

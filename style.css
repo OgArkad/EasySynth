@@ -1,4 +1,32 @@
-body{
-    background-color: rgb(43, 43, 43);
-    color: white;
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-image: url('./media/Background.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+.synth-chassis {
+  position: relative;
+  width: 1000px; 
+  height: 500px;
+  background-image: url('./media/Background.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin: 0 auto;
+}
+
+.knob-control {
+  position: absolute;
+  width: 70px;  
+  height: 70px;
+}
+
+.knob-image {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-135deg); 
+  cursor: ns-resize;
+  user-select: none;
+  will-change: transform;
 }

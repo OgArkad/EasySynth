@@ -7,8 +7,16 @@
     <link rel="stylesheet" href="style.css">
     <script type="module" src="src/script.js"></script>
     <script type="module" src="src/MIDI.js"></script>
+
+    <script type="module" src="./src/UI.ts"></script>
+    <script src="./src/UI.js" defer></script>
 </head>
 <body>
     <button type="reset" id="start">Start</button>
+    <div class="synth-chassis">
+        <div class="knob-control" style="top: 25%; left: 40%;">
+            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" alt="Cutoff Control">
+        </div>
+    </div>
 </body>
 </html>

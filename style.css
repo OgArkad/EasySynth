@@ -6,15 +6,6 @@ body {
   background-position: center center;
   background-size: cover;
 }
-.synth-chassis {
-  position: relative;
-  width: 1000px; 
-  height: 500px;
-  background-image: url('./media/Background.png');
-  background-size: cover;
-  background-repeat: no-repeat;
-  margin: 0 auto;
-}
 
 .knob-control {
   position: absolute;
@@ -23,10 +14,11 @@ body {
 }
 
 .knob-image {
-  width: 100%;
-  height: 100%;
+  width: 125%;
+  height: 125%;
   transform: rotate(-135deg); 
   cursor: ns-resize;
   user-select: none;
   will-change: transform;
+  filter: drop-shadow(-5px -5px 10px #000000);
 }

@@ -1,16 +1,23 @@
-import * as Tone from "tone";
 export default class MIDI {
     access;
     input;
-    inited = false;
+    playSound;
+    releaseSound;
     async init() {
         if (!navigator.requestMIDIAccess)
             throw new Error("Your browser does not support MIDI! :(");
         this.access = await navigator.requestMIDIAccess();
         this.access.addEventListener("statechange", () => this.refreshInputs());
         this.refreshInputs();
+        const inputs = [...(this.access?.inputs.values() ?? [])];
+        for (const input of inputs) {
+            input.addEventListener("midimessage", (e) => {
+                this.selectInput(input.id);
+                this.handleMessage(this.parse(e.data));
+            });
+        }
+        ;
         console.info("MIDI inited");
-        this.inited = true;
     }
     refreshInputs() {
         if (!this.access)
@@ -19,7 +26,7 @@ export default class MIDI {
             console.log("MIDI input: " + inp.name + " : " + inp.id);
         });
     }
-    selectInput(id, playSound, releaseSound) {
+    selectInput(id) {
         if (!this.access)
             return;
         const inp = this.access.inputs.get(id);
@@ -29,12 +36,7 @@ export default class MIDI {
         this.input.onmidimessage = (e) => {
             const msg = this.parse(e.data);
             console.log(msg);
-            if (msg === undefined)
-                return;
-            if (msg[0] === 1)
-                playSound(msg[1], msg[2]);
-            if (msg[0] === 0)
-                releaseSound(msg[1]);
+            this.handleMessage(msg);
         };
     }
     ///0: released
@@ -51,6 +53,14 @@ export default class MIDI {
         if (type === 0x80 || (type === 0x90 && velocity === 0))
             return [0, note];
         return [type, note, velocity];
+    }
+    handleMessage(msg) {
+        if (msg === undefined || this.playSound === undefined || this.releaseSound === undefined)
+            throw new Error("MIDI error: no message to handle, or play/releaseSound was not defined!");
+        if (msg[0] === 1)
+            this.playSound(msg[1], msg[2]);
+        if (msg[0] === 0)
+            this.releaseSound(msg[1]);
     }
 }
 //# sourceMappingURL=MIDI.js.map

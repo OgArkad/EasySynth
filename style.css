@@ -1,4 +1,37 @@
-body{
-    background-color: rgb(43, 43, 43);
-    color: white;
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-image: url('./media/Background.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+.knob-control {
+  position: absolute;
+  width: 70px;  
+  height: 70px;
+  font-size: large;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: #333333;
+
+ white-space: nowrap;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.knob-image {
+  width: 70px;
+  height: 70px;
+  transform: rotate(-135deg); 
+  cursor: ns-resize;
+  user-select: none;
+  will-change: transform;
+  filter: drop-shadow(-5px -5px 10px #000000);
+  object-fit: contain;
+  transform-origin: center center;
 }

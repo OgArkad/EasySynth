@@ -1,10 +1,6 @@
-# Dependencies
 node_modules/
-
-# Vite
 .vite/
-
 *.d.ts
 *.map
-
+# src/*.js
 dist/

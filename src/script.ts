@@ -1,6 +1,6 @@
 import MIDI from "./MIDI.js";
 import * as effect from "./effects.js";
-import * as Tone from "tone"; //npm install tone
+import * as Tone from "tone"; //works via the tone.js package
 //npm run dev localhosthoz, véglegessen pedig npm run build
 
 const synth: Tone.PolySynth<Tone.Synth<Tone.SynthOptions>> = new Tone.PolySynth(Tone.Synth);
@@ -8,7 +8,7 @@ let notes: string[] = [];
 const midi: MIDI = new MIDI;
 let started: boolean = false;
 
-const keyboard: Record<string, string> = {
+const keyboard: Record<string, string> = {//boviteni 2 sorosra
         w: "C#4", e: "D#4",        t: "F#4", z: "G#4", u: "A#4",
     a: "C4", s: "D4", d: "E4", f: "F4", g: "G4", h: "A4", j: "B4", k: "C5"
 };
@@ -21,10 +21,10 @@ async function playnote(note: string, synt: Tone.PolySynth<Tone.Synth<Tone.Synth
 
 async function playSound(note: number, velocity: number){
     synth.triggerAttack(
-            Tone.Frequency(note, "midi").toFrequency(),
-            undefined,
-            velocity / 127
-        );
+        Tone.Frequency(note, "midi").toFrequency(),
+        undefined,
+        velocity / 127
+    );
 }
 
 async function releaseSound(note: number){
@@ -77,8 +77,5 @@ document.addEventListener("keyup", (e) => {
         notes.splice(notes.indexOf(note), 1);
     }
 });
-
-
-
 
 console.log("script.js loaded!");

@@ -1,6 +1,6 @@
 import MIDI from "./MIDI.js";
 import * as effect from "./effects.js";
-import * as Tone from "tone"; //npm install tone
+import * as Tone from "tone"; //works via the tone.js package
 //npm run dev localhosthoz, véglegessen pedig npm run build
 const synth = new Tone.PolySynth(Tone.Synth);
 let notes = [];

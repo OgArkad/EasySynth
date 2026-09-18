@@ -55,9 +55,11 @@ const superSaw = {
         Q: 2
     },
     lfo: {
-        enabled: true,
         frequency: 4,
-        depth: 500
+        min: 2000,
+        max: 4000,
+        phase: 0,
+        type: "sine"
     }
 };
 const triangle = {

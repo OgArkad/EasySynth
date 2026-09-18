@@ -20,24 +20,23 @@ export interface SynthPreset {
         detune: number;
         volume: number;
     };
-
     filter?: {
         type: Tone.FilterOptions["type"];
         frequency: number;
         Q: number;
     };
-
     envelope: {
         attack: number;
         decay: number;
         sustain: number;
         release: number;
     };
-
     lfo?: {
-        enabled: boolean;
         frequency: number;
-        depth: number;
+        min: number;
+        max: number;
+        phase: number;
+        type: Tone.LFOOptions["type"];
     };
 }
 
@@ -101,9 +100,11 @@ const superSaw: SynthPreset = {
         Q: 2
     },
     lfo: {
-        enabled: true,
         frequency: 4,
-        depth: 500
+        min: 2000,
+        max: 4000,
+        phase: 0,
+        type: "sine"
     }
 }
 

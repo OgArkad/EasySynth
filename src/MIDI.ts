@@ -1,8 +1,22 @@
+import { chorusSend, reverbSend } from "./effects.js";
+import {synth, filter, lfo, panner, expression} from "./instrument.js";
+import * as Tone from "tone";
+
 export default class MIDI {
     private access?: MIDIAccess;
     private input?: MIDIInput;
-    playSound?: Function;
-    releaseSound?: Function;
+
+    private async playSound(note: number, velocity: number){
+        synth.triggerAttack(
+            Tone.Frequency(note, "midi").toFrequency(),
+            undefined,
+            velocity / 127
+        );
+    } 
+
+    private async releaseSound(note: number){
+        synth.triggerRelease(Tone.Frequency(note, "midi").toFrequency())
+    }
 
     async init(){
         if (!navigator.requestMIDIAccess) throw new Error("Your browser does not support MIDI! :(\n Or you have to give permission to use it. In this case check out our README.md!");
@@ -33,9 +47,7 @@ export default class MIDI {
         if (!inp) throw new Error("MIDI input not found with id " + id + ".");
         this.input = inp;
         this.input.onmidimessage = (e) => {
-            const msg = this.parse(e.data);
-            console.log(msg);
-            this.handleMessage(msg)
+            this.handleMessage(this.parse(e.data))
         }
     }
     ///0: released
@@ -59,5 +71,42 @@ export default class MIDI {
             this.playSound(msg[1], msg[2]);
         if (msg[0] === 0)
             this.releaseSound(msg[1])
+        if (msg[0] === 0xB0){
+            switch (msg[1]) {
+                case 1: //modulation
+                    lfo.frequency.value = msg[2] / 127 * 10;
+                    break;
+                case 2: //breath
+                    break;
+                case 7: //volume
+                    synth.volume.value = (msg[2] - 127) / 2;
+                    break;
+                case 10: //pan
+                    panner.pan.rampTo(((msg[2] / 127) * 2 - 1), 0.02);
+                    break;
+                case 11: //expression
+                    expression.gain.rampTo(msg[2] / 127, 0.02);
+                    break;
+                case 64: //sustain
+                    break;
+                case 65: //portamento
+                    break;
+                case 71: //resonance
+                    filter.Q.rampTo(msg[2] / 127 * 15, 0.02);
+                    break;
+                case 74: //filter cutoff
+                    const frequency = 50 * Math.pow(15000 / 50, msg[2] / 127);// min: 50, max: 15000
+                    filter.frequency.rampTo(frequency, 0.02);
+                    break;
+                case 91: //reverb
+                    reverbSend.gain.rampTo(msg[2] / 127, 0.02);
+                    break;
+                case 93: //chorus
+                    chorusSend.gain.rampTo(msg[2] / 127, 0.02);
+                    break;
+                default:
+                    console.warn("Unhandled MIDI CC message: " + msg[1]);
+            }
+        }
     }
 }

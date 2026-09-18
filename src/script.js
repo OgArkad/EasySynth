@@ -1,13 +1,11 @@
 import MIDI from "./MIDI.js";
 import * as Effect from "./effects.js";
 import * as Tone from "tone"; //npm install tone
-import { synth } from "./instruments.js";
+import { synth, filter, lfo, panner, expression } from "./instrument.js";
 import * as Preset from "./presets.js";
 //npm run dev localhosthoz, véglegessen pedig npm run build
 const midi = new MIDI;
 let started = false;
-const filter = new Tone.Filter();
-const lfo = new Tone.LFO();
 const keyboardonehun = {
     w: "C#4", e: "D#4", t: "F#4", z: "G#4", u: "A#4",
     a: "C4", s: "D4", d: "E4", f: "F4", g: "G4", h: "A4", j: "B4", k: "C5"
@@ -38,19 +36,22 @@ function loadPreset(preset) {
         lfo.set(preset.lfo);
     }
 }
-async function releaseSound(note) {
-    synth.triggerRelease(Tone.Frequency(note, "midi").toFrequency());
-}
 document.getElementById("start")?.addEventListener("click", async (e) => {
     await Tone.start();
-    synth.connect(filter);
-    filter.toDestination();
-    lfo.connect(filter.frequency);
-    lfo.start();
-    synth.toDestination();
     loadPreset(Preset.triangle); //after every button state change need to be called
-    midi.playSound = playSound;
-    midi.releaseSound = releaseSound;
+    loadPreset(Preset.defaultPreset); //after every button state change need to be called
+    if (!started) {
+        synth.connect(filter);
+        filter.connect(panner);
+        panner.connect(expression);
+        expression.connect(Effect.reverb);
+        Effect.chorus.start();
+        Effect.reverb.connect(Effect.chorus);
+        filter.toDestination();
+        lfo.connect(filter.frequency);
+        lfo.start();
+    }
+    synth.releaseAll(0);
     try {
         await midi.init();
     }
@@ -59,7 +60,6 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     }
     synth.releaseAll(0);
     started = true;
-    synth.chain(Effect.vibrato, Tone.getDestination()); //optional
     console.log("Synth started/reseted!");
 });
 document.addEventListener("keydown", (e) => {
@@ -68,7 +68,7 @@ document.addEventListener("keydown", (e) => {
     console.log(e.key);
     let note = keyboardtwohun[e.key];
     if (note != undefined)
-        playnote(note, synth);
+        synth.triggerAttack(note);
 });
 document.addEventListener("keyup", (e) => {
     let note = keyboardtwohun[e.key];

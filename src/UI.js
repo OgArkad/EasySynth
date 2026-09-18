@@ -1,22 +1,22 @@
 const KNOB_CONFIGS = {
-    'filter-knob': { minAngle: -135, maxAngle: 135 },
+    'filter-knob': { minAngle: -127, maxAngle: 127 },
     'waveform-knob': { minAngle: -100, maxAngle: 100, steps: 5 },
-    'sequencer-knob': { minAngle: -135, maxAngle: 135, steps: 8 },
-    'velocity-knob': { minAngle: -135, maxAngle: 135, sensitivity: 2.0 },
-    'cutoff-knob': { minAngle: -135, maxAngle: 135 },
-    'unison-knob': { minAngle: -135, maxAngle: 135, steps: 4 },
+    'sequencer-knob': { minAngle: -127, maxAngle: 127, steps: 8 },
+    'velocity-knob': { minAngle: -127, maxAngle: 127, sensitivity: 2.0 },
+    'cutoff-knob': { minAngle: -127, maxAngle: 127 },
+    'unison-knob': { minAngle: -127, maxAngle: 127, steps: 4 },
     'octave-knob': { minAngle: -90, maxAngle: 90, steps: 5 },
-    'semitone-knob': { minAngle: -135, maxAngle: 135, steps: 25 },
-    'fine-tuning-knob': { minAngle: -135, maxAngle: 135, sensitivity: 0.5 },
-    'attack-knob': { minAngle: -135, maxAngle: 135 },
-    'decay-knob': { minAngle: -135, maxAngle: 135 },
-    'sustain-knob': { minAngle: -135, maxAngle: 135 },
-    'release-knob': { minAngle: -135, maxAngle: 135 }
+    'semitone-knob': { minAngle: -127, maxAngle: 127, steps: 25 },
+    'fine-tuning-knob': { minAngle: -127, maxAngle: 127, sensitivity: 0.5 },
+    'attack-knob': { minAngle: -127, maxAngle: 127 },
+    'decay-knob': { minAngle: -127, maxAngle: 127 },
+    'sustain-knob': { minAngle: -127, maxAngle: 127 },
+    'release-knob': { minAngle: -127, maxAngle: 127 }
 };
 document.addEventListener('DOMContentLoaded', () => {
     const knobs = document.querySelectorAll('.knob-image');
     knobs.forEach((knob) => {
-        const config = KNOB_CONFIGS[knob.id] || { minAngle: -135, maxAngle: 135 };
+        const config = KNOB_CONFIGS[knob.id] || { minAngle: -127, maxAngle: 127 };
         const { minAngle, maxAngle, steps, sensitivity = 1.5 } = config;
         let currentAngle = minAngle;
         knob.style.transform = `rotate(${currentAngle}deg)`;

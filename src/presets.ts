@@ -44,7 +44,7 @@ export interface SynthPreset {
 const defaultPreset: SynthPreset = {
     name: "Default",
     oscillator: {
-        type: "sine",
+        type: "square",
         octave: 0,
         detune: 0,
         volume: -1
@@ -108,7 +108,7 @@ const superSaw: SynthPreset = {
     }
 }
 
-const triangle: SynthPreset = {
+const triangle: SynthPreset = { //flute
     name: "Triangles",
     oscillator: {
         type: "triangle",

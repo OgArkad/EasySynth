@@ -3,7 +3,7 @@ export { defaultPreset, cleanSaw, superSaw, triangle };
 const defaultPreset = {
     name: "Default",
     oscillator: {
-        type: "sine",
+        type: "square",
         octave: 0,
         detune: 0,
         volume: -1

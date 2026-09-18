@@ -9,5 +9,5 @@ const lfo = new Tone.LFO({
 });
 const panner = new Tone.Panner(0);
 const expression = new Tone.Gain(1);
-/*AOthyer typs of synth: MSynth, DuoSynth, FMynth, membraneSynth, metalSynth, noiseSynth, pluckSynth,  (thye not all support all our given parameters)*/ 
+/*Other types of synth: MSynth, DuoSynth, FMynth, membraneSynth, metalSynth, noiseSynth, pluckSynth,  (they not all support all our given parameters)*/ 
 //# sourceMappingURL=instrument.js.map

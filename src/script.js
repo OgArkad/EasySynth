@@ -7,23 +7,17 @@ import * as Preset from "./presets.js";
 const midi = new MIDI;
 let started = false;
 const keyboardonehun = {
-    w: "C#4", e: "D#4", t: "F#4", z: "G#4", u: "A#4",
-    a: "C4", s: "D4", d: "E4", f: "F4", g: "G4", h: "A4", j: "B4", k: "C5"
+    w: "C#5", e: "D#5", t: "F#5", z: "G#5", u: "A#5",
+    a: "C5", s: "D5", d: "E5", f: "F5", g: "G5", h: "A5", j: "B5", k: "C5"
 };
 const keyboardtwohun = {
-    3: "C#4", 4: "D#4", 6: "F#4", 7: "G#4", 8: "A#4",
-    w: "C4", e: "D4", r: "E4", t: "F4", z: "G4", u: "A4", i: "B4", o: "C5",
-    s: "C#3", d: "D#3", g: "F#3", h: "G#3", j: "A#3",
-    y: "C3", x: "D3", c: "E3", v: "F3", b: "G3", n: "A3", m: "B3", ',': "C3",
+    3: "C#5", 4: "D#5", 6: "F#5", 7: "G#5", 8: "A#5",
+    w: "C5", e: "D5", r: "E5", t: "F5", z: "G5", u: "A5", i: "B5", o: "C5",
+    s: "C#4", d: "D#4", g: "F#4", h: "G#4", j: "A#4",
+    y: "C4", x: "D4", c: "E4", v: "F4", b: "G4", n: "A4", m: "B4", ',': "C4",
 };
 const keyboardoneeng = keyboardonehun;
 const keyboardtwoeng = keyboardtwohun;
-async function playnote(note, synt) {
-    synt.triggerAttack(note);
-}
-async function playSound(note, velocity) {
-    synth.triggerAttack(Tone.Frequency(note, "midi").toFrequency(), undefined, velocity / 127);
-}
 function loadPreset(preset) {
     synth.set({
         oscillator: preset.oscillator,
@@ -34,12 +28,14 @@ function loadPreset(preset) {
     }
     if (preset.lfo) {
         lfo.set(preset.lfo);
+        lfo.start();
+    }
+    else {
+        lfo.stop();
     }
 }
 document.getElementById("start")?.addEventListener("click", async (e) => {
     await Tone.start();
-    loadPreset(Preset.triangle); //after every button state change need to be called
-    loadPreset(Preset.defaultPreset); //after every button state change need to be called
     if (!started) {
         synth.connect(filter);
         filter.connect(panner);
@@ -49,9 +45,9 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
         Effect.reverb.connect(Effect.chorus);
         filter.toDestination();
         lfo.connect(filter.frequency);
-        lfo.start();
     }
     synth.releaseAll(0);
+    loadPreset(Preset.defaultPreset); //after every button state change need to be called
     try {
         await midi.init();
     }
@@ -76,4 +72,5 @@ document.addEventListener("keyup", (e) => {
         synth.triggerRelease(note);
 });
 console.log("script.js loaded!");
+// (x,e *3, g, 6 *3, m, i * 3, b,z *3 ) 
 //# sourceMappingURL=script.js.map

@@ -7,72 +7,69 @@
     <link rel="stylesheet" href="style.css">
     <script type="module" src="src/script.js"></script>
     <script type="module" src="src/MIDI.js"></script>
-    <script type="module" src="src/effects.js"></script>
-    <script type="module" src="src/presets.js"></script>
-    <script type="module" src="src/instruments.js"></script>
-    <script type="module" src="./src/UI.ts"></script>
-    <script src="./src/UI.js" defer></script>
+    <script type="module" src="src/UI.js"></script>
 </head>
 <body>
     <button type="reset" id="start">Start</button>
     <div class="synth-chassis">
         <div id="oscilloscope" style="top: 10%; right: 10%;">
-            <canvas>asdf</canvas>
+            <canvas id="scope-canvas"></canvas>
         </div>
+        
         <div class="knob-control" style="top: 25%; right: 46%;">
             <p>FILTER</p>
-            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" alt="Cutoff Control">
+            <img src="./media/knob.png" id="filter-knob" class="knob-image" >
         </div>
         <div class="knob-control" style="top: 25%; right: 39%;">
             <p>WAVEFORM</p>
-            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" alt="Cutoff Control">
+            <img src="./media/knob.png" id="waveform-knob" class="knob-image" >
         </div>
         <div class="knob-control" style="top: 25%; right: 32%;">
             <p>SEQUENCER</p>
-            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" alt="Cutoff Control">
+            <img src="./media/knob.png" id="sequencer-knob" class="knob-image" >
         </div>
         <div class="knob-control" style="top: 25%; right: 25%;">
             <p>VELOCITY</p>
-            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" alt="Cutoff Control">
+            <img src="./media/knob.png" id="velocity-knob" class="knob-image" >
         </div>
 
         <div class="knob-control" style="top: 40%; right: 32%;">
             <p>CUTOFF</p>
-            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" alt="Cutoff Control">
+            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" >
         </div>
         <div class="knob-control" style="top: 40%; right: 25%;">
             <p>UNISON</p>
-            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" alt="Cutoff Control">
+            <img src="./media/knob.png" id="unison-knob" class="knob-image" >
         </div>
 
         <div class="knob-control" style="top: 55%; right: 32%;">
             <p>OCTAVE</p>
-            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" alt="Cutoff Control">
+            <img src="./media/knob.png" id="octave-knob" class="knob-image" >
         </div>
         <div class="knob-control" style="top: 55%; right: 25%;">
             <p>SEMITONE</p>
-            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" alt="Cutoff Control">
+            <img src="./media/knob.png" id="semitone-knob" class="knob-image" >
         </div>
         <div class="knob-control" style="top: 55%; right: 18%;">
             <p>FINE TUNING</p>
-            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" alt="Cutoff Control">
+            <img src="./media/knob.png" id="fine-tuning-knob" class="knob-image" >
         </div>
 
         <div class="knob-control" style="top: 70%; right: 32%;">
             <p>ATTACK</p>
-            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" alt="Cutoff Control">
+            <img src="./media/knob.png" id="attack-knob" class="knob-image" >
         </div>
         <div class="knob-control" style="top: 70%; right: 25%;">
-            <p>DECOY</p>
-            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" alt="Cutoff Control">
+            <p>DECAY</p>
+            <img src="./media/knob.png" id="decay-knob" class="knob-image" >
         </div>
         <div class="knob-control" style="top: 70%; right: 18%;">
             <p>SUSTAIN</p>
-            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" alt="Cutoff Control">
+            <img src="./media/knob.png" id="sustain-knob" class="knob-image" >
         </div>
         <div class="knob-control" style="top: 70%; right: 11%;">
             <p>RELEASE</p>
-            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" alt="Cutoff Control">
+            <img src="./media/knob.png" id="release-knob" class="knob-image" >
         </div>
     </div>
 </body>

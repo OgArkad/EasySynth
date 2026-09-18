@@ -14,8 +14,8 @@ Usually the your browser gives you a pop-up about this, that yous hould accept, 
 
 ## In chromium based browsers: In chromium based browsers (e.g.: Chrome, Edge, Opera, Brave) yous should have a pop up window, that you should allow. In the case that this did not happem:
 
-1. You will have a settings icon in your search bar. ![left to your search-bar](media/chrome-site-settings.png)
-2. Click that icon, and go to site settings. ![default MIDI settings](media/chrome-MIDI_def.png)
-3. Select MIDI devices and reprogram, and select allow. ![allowed MIDI settings](media/chrome-MIDI-allowed.png)
+1. You will have a settings icon in your search bar. ![t's at the left side of your search bar.](media/chrome-site-settings.png)
+2. Click that icon, and go to site settings. ![Here you should see the default MIDI settings...](media/chrome-MIDI_def.png)
+3. Select MIDI devices and reprogram, and select allow. ![Here you should see the allowed MIDI settings...](media/chrome-MIDI-allowed.png)
 <br>
 The ui can vary, and the title of the buttons too, but the main process should be the same in most browsers.

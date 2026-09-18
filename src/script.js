@@ -1,23 +1,23 @@
 import MIDI from "./MIDI.js";
 import * as Effect from "./effects.js";
 import * as Tone from "tone"; //npm install tone
-import { synth } from "./instruments.js";
+import { synth, filter, lfo, panner, expression } from "./instrument.js";
 import * as Preset from "./presets.js";
 //npm run dev localhosthoz, véglegessen pedig npm run build
 const midi = new MIDI;
 let started = false;
-const filter = new Tone.Filter();
-const lfo = new Tone.LFO();
-const keyboard = {
-    w: "C#4", e: "D#4", t: "F#4", z: "G#4", u: "A#4",
-    a: "C4", s: "D4", d: "E4", f: "F4", g: "G4", h: "A4", j: "B4", k: "C5"
+const keyboardonehun = {
+    w: "C#5", e: "D#5", t: "F#5", z: "G#5", u: "A#5",
+    a: "C5", s: "D5", d: "E5", f: "F5", g: "G5", h: "A5", j: "B5", k: "C5"
 };
-async function playnote(note, synt) {
-    synt.triggerAttack(note);
-}
-async function playSound(note, velocity) {
-    synth.triggerAttack(Tone.Frequency(note, "midi").toFrequency(), undefined, velocity / 127);
-}
+const keyboardtwohun = {
+    3: "C#5", 4: "D#5", 6: "F#5", 7: "G#5", 8: "A#5",
+    w: "C5", e: "D5", r: "E5", t: "F5", z: "G5", u: "A5", i: "B5", o: "C5",
+    s: "C#4", d: "D#4", g: "F#4", h: "G#4", j: "A#4",
+    y: "C4", x: "D4", c: "E4", v: "F4", b: "G4", n: "A4", m: "B4", ',': "C4",
+};
+const keyboardoneeng = keyboardonehun;
+const keyboardtwoeng = keyboardtwohun;
 function loadPreset(preset) {
     synth.set({
         oscillator: preset.oscillator,
@@ -28,21 +28,26 @@ function loadPreset(preset) {
     }
     if (preset.lfo) {
         lfo.set(preset.lfo);
+        lfo.start();
     }
-}
-async function releaseSound(note) {
-    synth.triggerRelease(Tone.Frequency(note, "midi").toFrequency());
+    else {
+        lfo.stop();
+    }
 }
 document.getElementById("start")?.addEventListener("click", async (e) => {
     await Tone.start();
-    synth.connect(filter);
-    filter.toDestination();
-    lfo.connect(filter.frequency);
-    lfo.start();
-    synth.toDestination();
+    if (!started) {
+        synth.connect(filter);
+        filter.connect(panner);
+        panner.connect(expression);
+        expression.connect(Effect.reverb);
+        Effect.chorus.start();
+        Effect.reverb.connect(Effect.chorus);
+        filter.toDestination();
+        lfo.connect(filter.frequency);
+    }
+    synth.releaseAll(0);
     loadPreset(Preset.defaultPreset); //after every button state change need to be called
-    midi.playSound = playSound;
-    midi.releaseSound = releaseSound;
     try {
         await midi.init();
     }
@@ -51,21 +56,21 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     }
     synth.releaseAll(0);
     started = true;
-    synth.chain(Effect.vibrato, Tone.getDestination()); //optional
     console.log("Synth started/reseted!");
 });
 document.addEventListener("keydown", (e) => {
     if (e.repeat || !started)
         return;
     console.log(e.key);
-    let note = keyboard[e.key];
+    let note = keyboardtwohun[e.key];
     if (note != undefined)
-        playnote(note, synth);
+        synth.triggerAttack(note);
 });
 document.addEventListener("keyup", (e) => {
-    let note = keyboard[e.key];
+    let note = keyboardtwohun[e.key];
     if (note != undefined)
         synth.triggerRelease(note);
 });
 console.log("script.js loaded!");
+// (x,e *3, g, 6 *3, m, i * 3, b,z *3 ) 
 //# sourceMappingURL=script.js.map

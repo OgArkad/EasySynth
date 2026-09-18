@@ -1,5 +1,5 @@
 import * as Tone from "tone"; //no need in the js file, but dependency in ts. remove before final build
-export { defaultPreset, cleanSaw, superSaw };
+export { defaultPreset, cleanSaw, superSaw, triangle };
 const defaultPreset = {
     name: "Default",
     oscillator: {
@@ -58,6 +58,26 @@ const superSaw = {
         enabled: true,
         frequency: 4,
         depth: 500
+    }
+};
+const triangle = {
+    name: "Triangles",
+    oscillator: {
+        type: "triangle",
+        octave: 0,
+        detune: 0,
+        volume: 1
+    },
+    envelope: {
+        attack: 0.02,
+        decay: 0.1,
+        sustain: 0.1,
+        release: 0.1
+    },
+    filter: {
+        type: "lowpass",
+        frequency: 2500,
+        Q: 2
     }
 };
 //# sourceMappingURL=presets.js.map

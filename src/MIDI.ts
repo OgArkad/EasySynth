@@ -59,6 +59,5 @@ export default class MIDI {
             this.playSound(msg[1], msg[2]);
         if (msg[0] === 0)
             this.releaseSound(msg[1])
-        
     }
 }

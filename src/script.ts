@@ -10,10 +10,23 @@ let started: boolean = false;
 const filter = new Tone.Filter();
 const lfo = new Tone.LFO();
 
-const keyboard: Record<string, string> = {//boviteni 2 sorosra
+const keyboardonehun: Record<string, string> = {
         w: "C#4", e: "D#4",        t: "F#4", z: "G#4", u: "A#4",
     a: "C4", s: "D4", d: "E4", f: "F4", g: "G4", h: "A4", j: "B4", k: "C5"
 };
+
+const keyboardtwohun: Record<string, string> = {
+        3: "C#4", 4: "D#4",        6: "F#4", 7: "G#4", 8: "A#4",
+    w: "C4", e: "D4", r: "E4", t: "F4", z: "G4", u: "A4", i: "B4", o: "C5",
+        s: "C#3", d: "D#3",        g: "F#3", h: "G#3", j: "A#3",
+    y: "C3", x: "D3", c: "E3", v: "F3", b: "G3", n: "A3", m: "B3", ',': "C3",
+};
+
+const keyboardoneeng: Record<string, string> = keyboardonehun;
+
+const keyboardtwoeng: Record<string, string> = keyboardtwohun;
+
+
 
 async function playnote(note: string, synt: Tone.PolySynth<Tone.Synth<Tone.SynthOptions>>){
     synt.triggerAttack(note);
@@ -53,7 +66,7 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     lfo.start();
     synth.toDestination();
 
-    loadPreset(Preset.defaultPreset); //after every button state change need to be called
+    loadPreset(Preset.triangle); //after every button state change need to be called
 
     midi.playSound = playSound;
     midi.releaseSound = releaseSound;
@@ -62,7 +75,7 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     } catch (err) {
         console.error(err);
     }
-    
+
     synth.releaseAll(0);
     started = true;
     synth.chain(Effect.vibrato, Tone.getDestination());//optional
@@ -72,13 +85,13 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
 document.addEventListener("keydown", (e) => {
     if (e.repeat || !started) return;
     console.log(e.key);
-    let note = keyboard[e.key];
+    let note = keyboardtwohun[e.key];
     if (note != undefined)
         playnote(note, synth);
 });
 
 document.addEventListener("keyup", (e) => {
-    let note = keyboard[e.key]
+    let note = keyboardtwohun[e.key]
     if (note != undefined)
         synth.triggerRelease(note);
 });

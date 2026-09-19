@@ -3,35 +3,43 @@ import * as Effect from "./effects.js";
 import * as Tone from "tone"; //npm install tone
 import { synth, filter, lfo, panner, expression, synths } from "./instrument.js";
 import * as Preset from "./presets.js";
-import { createAudioWorkletNode } from "tone/build/esm/core/context/AudioContext.js";
 //npm run dev localhosthoz, véglegessen pedig npm run build
 const midi = new MIDI;
 let started = false;
+export const waveform = new Tone.Waveform(1024); //ez inkább az instrument.ts-be illik...
 const keyboardonehun = {
     w: "C#5", e: "D#5", t: "F#5", z: "G#5", u: "A#5",
-    a: "C5", s: "D5", d: "E5", f: "F5", g: "G5", h: "A5", j: "B5", k: "C5"
+    a: "C5", s: "D5", d: "E5", f: "F5", g: "G5", h: "A5", j: "B5", k: "C6"
 };
 const keyboardtwohun = {
     3: "C#5", 4: "D#5", 6: "F#5", 7: "G#5", 8: "A#5",
-    w: "C5", e: "D5", r: "E5", t: "F5", z: "G5", u: "A5", i: "B5", o: "C5",
+    w: "C5", e: "D5", r: "E5", t: "F5", z: "G5", u: "A5", i: "B5", o: "C6",
     s: "C#4", d: "D#4", g: "F#4", h: "G#4", j: "A#4",
-    y: "C4", x: "D4", c: "E4", v: "F4", b: "G4", n: "A4", m: "B4", ',': "C4",
+    y: "C4", x: "D4", c: "E4", v: "F4", b: "G4", n: "A4", m: "B4", ',': "C5",
 };
-const keyboardoneeng = keyboardonehun;
-const keyboardtwoeng = keyboardtwohun;
-let pressed = [];
+const keyboardoneeng = {
+    ...keyboardonehun,
+    y: "G#5",
+    z: undefined,
+};
+;
+const keyboardtwoeng = {
+    ...keyboardtwohun,
+    y: "G5",
+    z: "C4",
+};
+const pressed = new Set();
 document.getElementById("start")?.addEventListener("click", async (e) => {
     e.currentTarget.remove();
-    await Tone.start();
-    Effect.switchSustain(true);
     if (!started) {
+        await Tone.start();
         synth.connect(filter);
         filter.connect(panner);
         panner.connect(expression);
         expression.connect(Effect.reverb);
-        Effect.chorus.start();
         Effect.reverb.connect(Effect.chorus);
-        filter.toDestination();
+        Effect.chorus.connect(waveform);
+        Effect.chorus.toDestination();
         lfo.connect(filter.frequency);
     }
     synth.releaseAll(0);
@@ -57,7 +65,7 @@ document.addEventListener("keydown", (e) => {
             synth.triggerAttack(note);
         else
             synths.forEach((synth) => synth.triggerAttack(note));
-        pressed.push(note);
+        pressed.add(note);
     }
 });
 document.addEventListener("keyup", (e) => {
@@ -67,12 +75,9 @@ document.addEventListener("keyup", (e) => {
             synth.triggerRelease(note);
         else
             synths.forEach((synth) => synth.triggerRelease());
-        pressed = pressed.splice(pressed.findIndex((x) => x == note));
+        pressed.delete(note);
     }
 });
-export const waveform = new Tone.Waveform(1024);
-Effect.chorus.connect(waveform);
-Effect.chorus.toDestination();
 console.log("script.js loaded!");
 // (x,e *3, g, 6 *3, m, i * 3, b,z *3 ) 
 //# sourceMappingURL=script.js.map

@@ -1,4 +1,4 @@
-import { chorusSend, reverbSend, sustain, switchSustain } from "./effects.js";
+import { chorus, chorusSend, reverbSend, sustain, switchSustain } from "./effects.js";
 import { synth, filter, lfo, panner, expression } from "./instrument.js";
 import * as Tone from "tone";
 export default class MIDI {
@@ -100,7 +100,14 @@ export default class MIDI {
                     reverbSend.gain.rampTo(msg[2] / 127, 0.02);
                     break;
                 case 93: //chorus
-                    chorusSend.gain.rampTo(msg[2] / 127, 0.02);
+                    if (msg[2] / 127 >= 0) {
+                        chorus.start();
+                        chorusSend.gain.rampTo(msg[2] / 127, 0.02);
+                    }
+                    else {
+                        chorusSend.gain.rampTo(msg[2] / 127, 0.02);
+                        chorus.stop();
+                    }
                     break;
                 default:
                     console.warn("Unhandled MIDI CC message: " + msg[1]);

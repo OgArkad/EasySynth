@@ -1,5 +1,6 @@
 import * as Tone from "tone"; //no need in the js file, but dependency in ts. remove before final build
-export {defaultPreset, cleanSaw, superSaw, triangle}
+import { filter, lfo, synth } from "./instruments.js";
+export {loadPreset, currentPreset, presets};
 
 type PresetOscillatorType =
     | "sine"
@@ -40,6 +41,24 @@ export interface SynthPreset {
     };
 }
 
+function loadPreset(preset: SynthPreset | undefined, synth: Tone.PolySynth | Tone.Synth) {
+    if (!preset) throw new Error("Preset is undefined!");
+    synth.set({
+        oscillator: preset.oscillator,
+        envelope: preset.envelope
+    });
+
+    if (preset.filter) {
+        filter.set(preset.filter);
+    }
+    if (preset.lfo) {
+        lfo.set(preset.lfo);
+        if (!lfo.state || lfo.state === "stopped") lfo.start();
+    }
+    else {
+        lfo.stop();
+    }
+}
 
 const defaultPreset: SynthPreset = {
     name: "Default",
@@ -128,3 +147,7 @@ const triangle: SynthPreset = { //flute
         Q: 2
     }
 }
+
+let currentPreset: number = 0;
+
+const presets: SynthPreset[] = [defaultPreset, cleanSaw, superSaw, triangle];

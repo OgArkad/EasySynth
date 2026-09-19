@@ -15,7 +15,7 @@ const BlackNotes = [
 ];  
 
 if (synthDest) {
-    const keyWidth = 2.5;
+    const keyWidth = 2.5; 
     const StartLeft = 3;
 
     for (let white = 0; white < 17; white++) {
@@ -54,7 +54,7 @@ if (synthDest) {
 
         const note = BlackNotes[index];
         if(note){
-            blackNote.addEventListener("mousedown", (e) => { e.preventDefault(); synth.triggerAttack(note); });
+            blackNote.addEventListener("mousedown", (e) => { e.preventDefault(); synth.triggerAttack(note); blackNote.classList.add('.noteIs-hovered');});
             blackNote.addEventListener("mouseup", () => synth.triggerRelease(note));
             blackNote.addEventListener("mouseleave", () => synth.triggerRelease(note));
         }

@@ -40,7 +40,6 @@ body {
   justify-content: center;
   align-items: center;
 
-  /* Screen overlay bounds */
   position: fixed;
   top: 0;
   left: 0;
@@ -51,6 +50,7 @@ body {
   color: whitesmoke;
   font-size: 20vw;
   font-family: Arial, Helvetica, sans-serif;
+  text-decoration: underline;
   border: none;
   cursor: pointer;
 
@@ -94,4 +94,8 @@ body {
   text-transform: uppercase;
   
   pointer-events: none; 
+}
+
+.noteIs-hovered {
+  opacity: 0.2;
 }

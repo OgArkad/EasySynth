@@ -15,7 +15,6 @@ export default class MIDI {
             throw new Error("Your browser does not support MIDI! :(\n Or you have to give permission to use it. In this case check out our README.md!");
         this.access = await navigator.requestMIDIAccess();
         this.access.addEventListener("statechange", () => this.refreshInputs());
-        //this.refreshInputs();
         const inputs = [...(this.access?.inputs.values() ?? [])];
         for (const input of inputs) {
             input.addEventListener("midimessage", (e) => {

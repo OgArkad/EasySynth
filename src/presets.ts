@@ -10,7 +10,7 @@ type PresetOscillatorType =
     | "fattriangle"
     | "fatsawtooth";
 
-export interface SynthPreset {
+interface SynthPreset {
     name: string;
     oscillator: {
         type: PresetOscillatorType;
@@ -65,20 +65,20 @@ export function loadPreset(
     }
 }
 
-export const defaultPreset: SynthPreset = {
+const defaultPreset: SynthPreset = {
     name: "Default",
     oscillator: { type: "square", octave: 0, detune: 0, volume: -1 },
     envelope: { attack: 0.01, decay: 0.1, sustain: 0.5, release: 1 }
 };
 
-export const cleanSaw: SynthPreset = {
+const cleanSaw: SynthPreset = {
     name: "Clean Saw",
     oscillator: { type: "sawtooth", octave: 0, detune: 0, volume: -1 },
     filter: { type: "lowpass", frequency: 2000, Q: 1 },
     envelope: { attack: 0.01, decay: 0.1, sustain: 0.5, release: 1 }
 };
 
-export const superSaw: SynthPreset = {
+const superSaw: SynthPreset = {
     name: "Super Saw",
     oscillator: { type: "sawtooth", octave: 0, detune: 0, volume: 1 },
     envelope: { attack: 0.01, decay: 0.2, sustain: 0.7, release: 0.5 },
@@ -86,7 +86,7 @@ export const superSaw: SynthPreset = {
     lfo: { frequency: 4, min: 2000, max: 4000, phase: 0, type: "sine" }
 };
 
-export const triangle: SynthPreset = {
+const triangle: SynthPreset = {
     name: "Triangles",
     oscillator: { type: "triangle", octave: 0, detune: 0, volume: 1 },
     envelope: { attack: 0.02, decay: 0.1, sustain: 0.1, release: 0.1 },

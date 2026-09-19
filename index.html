@@ -9,6 +9,7 @@
     <script type="module" src="src/MIDI.js"></script>
     <script type="module" src="src/UI.js"></script>
     <script type="module" src="src/oscilloscope.js"></script>
+    <script type="module" src="src/piano.ts"></script>
 </head>
 <body>
     <div id="start">Start</div>
@@ -42,6 +43,7 @@
             <img src="./media/knob.png" id="unison-knob" class="knob-image" >
         </div>
 
+        <div class="knobSegment">PITCH</div>
         <div class="knob-control" style="top: 55%; right: 32%;">
             <p>OCTAVE</p>
             <img src="./media/knob.png" id="octave-knob" class="knob-image" >
@@ -55,19 +57,22 @@
             <img src="./media/knob.png" id="fine-tuning-knob" class="knob-image" >
         </div>
 
-        <div class="knob-control" style="top: 70%; right: 32%;">
+        <div class="knobSegment" id="asdr">
+            <span class="segment-label">ADSR</span>
+        </div>
+        <div class="knob-control" style="position: absolute; top: 70%; right: 32%;">
             <p>ATTACK</p>
             <img src="./media/knob.png" id="attack-knob" class="knob-image" >
         </div>
-        <div class="knob-control" style="top: 70%; right: 25%;">
+        <div class="knob-control" style="position: absolute; top: 70%; right: 25%;">
             <p>DECAY</p>
             <img src="./media/knob.png" id="decay-knob" class="knob-image" >
         </div>
-        <div class="knob-control" style="top: 70%; right: 18%;">
+        <div class="knob-control" style="position: absolute; top: 70%; right: 18%;">
             <p>SUSTAIN</p>
             <img src="./media/knob.png" id="sustain-knob" class="knob-image" >
         </div>
-        <div class="knob-control" style="top: 70%; right: 11%;">
+        <div class="knob-control" style="position: absolute; top: 70%; right: 11%;">
             <p>RELEASE</p>
             <img src="./media/knob.png" id="release-knob" class="knob-image" >
         </div>

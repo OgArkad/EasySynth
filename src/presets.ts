@@ -1,6 +1,4 @@
-import * as Tone from "tone"; //no need in the js file, but dependency in ts. remove before final build
-import { filter, lfo, synth } from "./instruments.js";
-export {loadPreset, currentPreset, presets};
+import * as Tone from "tone";
 
 type PresetOscillatorType =
     | "sine"
@@ -14,7 +12,6 @@ type PresetOscillatorType =
 
 export interface SynthPreset {
     name: string;
-
     oscillator: {
         type: PresetOscillatorType;
         octave: number;
@@ -41,113 +38,60 @@ export interface SynthPreset {
     };
 }
 
-function loadPreset(preset: SynthPreset | undefined, synth: Tone.PolySynth | Tone.Synth) {
+export function loadPreset(
+    preset: SynthPreset | undefined,
+    targetSynth: Tone.PolySynth | Tone.Synth,
+    targetFilter?: Tone.Filter,
+    targetLfo?: Tone.LFO
+) {
     if (!preset) throw new Error("Preset is undefined!");
-    synth.set({
+
+    targetSynth.set({
         oscillator: preset.oscillator,
         envelope: preset.envelope
     });
 
-    if (preset.filter) {
-        filter.set(preset.filter);
+    if (preset.filter && targetFilter) {
+        targetFilter.set(preset.filter);
     }
-    if (preset.lfo) {
-        lfo.set(preset.lfo);
-        if (!lfo.state || lfo.state === "stopped") lfo.start();
-    }
-    else {
-        lfo.stop();
+
+    if (preset.lfo && targetLfo) {
+        targetLfo.set(preset.lfo);
+        if (!targetLfo.state || targetLfo.state === "stopped") {
+            targetLfo.start();
+        }
+    } else if (targetLfo) {
+        targetLfo.stop();
     }
 }
 
-const defaultPreset: SynthPreset = {
+export const defaultPreset: SynthPreset = {
     name: "Default",
-    oscillator: {
-        type: "square",
-        octave: 0,
-        detune: 0,
-        volume: -1
-    },
-    envelope: {
-        attack: 0.01,
-        decay: 0.1,
-        sustain: 0.5,
-        release: 1
-    }
+    oscillator: { type: "square", octave: 0, detune: 0, volume: -1 },
+    envelope: { attack: 0.01, decay: 0.1, sustain: 0.5, release: 1 }
+};
 
-}
-
-const cleanSaw: SynthPreset = {
+export const cleanSaw: SynthPreset = {
     name: "Clean Saw",
-    oscillator: {
-        type: "sawtooth",
-        octave: 0,
-        detune: 0,
-        volume: -1
-    },
-    filter: {
-        type: "lowpass",
-        frequency: 2000,
-        Q: 1
-    },
-    envelope: {
-        attack: 0.01,
-        decay: 0.1,
-        sustain: 0.5,
-        release: 1
-    }
-}
+    oscillator: { type: "sawtooth", octave: 0, detune: 0, volume: -1 },
+    filter: { type: "lowpass", frequency: 2000, Q: 1 },
+    envelope: { attack: 0.01, decay: 0.1, sustain: 0.5, release: 1 }
+};
 
-
-const superSaw: SynthPreset = {
+export const superSaw: SynthPreset = {
     name: "Super Saw",
-    oscillator: {
-        type: "sawtooth",
-        octave: 0,
-        detune: 0,
-        volume: 1
-    },
-    envelope: {
-        attack: 0.01,
-        decay: 0.2,
-        sustain: 0.7,
-        release: 0.5
-    },
-    filter: {
-        type: "lowpass",
-        frequency: 2500,
-        Q: 2
-    },
-    lfo: {
-        frequency: 4,
-        min: 2000,
-        max: 4000,
-        phase: 0,
-        type: "sine"
-    }
-}
+    oscillator: { type: "sawtooth", octave: 0, detune: 0, volume: 1 },
+    envelope: { attack: 0.01, decay: 0.2, sustain: 0.7, release: 0.5 },
+    filter: { type: "lowpass", frequency: 2500, Q: 2 },
+    lfo: { frequency: 4, min: 2000, max: 4000, phase: 0, type: "sine" }
+};
 
-const triangle: SynthPreset = { //flute
+export const triangle: SynthPreset = {
     name: "Triangles",
-    oscillator: {
-        type: "triangle",
-        octave: 0,
-        detune: 0,
-        volume: 1
-    },
-    envelope: {
-        attack: 0.02,
-        decay: 0.1,
-        sustain: 0.1,
-        release: 0.1
-    },
-    filter: {
-        type: "lowpass",
-        frequency: 2500,
-        Q: 2
-    }
-}
+    oscillator: { type: "triangle", octave: 0, detune: 0, volume: 1 },
+    envelope: { attack: 0.02, decay: 0.1, sustain: 0.1, release: 0.1 },
+    filter: { type: "lowpass", frequency: 2500, Q: 2 }
+};
 
-let currentPreset: number = 0;
-
-const presets: SynthPreset[] = [defaultPreset, cleanSaw, superSaw, triangle];
+export let currentPreset: number = 0;
+export const presets: SynthPreset[] = [defaultPreset, cleanSaw, superSaw, triangle];

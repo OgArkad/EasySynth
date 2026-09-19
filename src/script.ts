@@ -1,8 +1,9 @@
 import MIDI from "./MIDI.js";
 import * as Effect from "./effects.js";
 import * as Tone from "tone"; //npm install tone
-import {synth, filter, lfo, panner, expression} from "./instrument.js";
+import {synth, filter, lfo, panner, expression, synths} from "./instrument.js";
 import * as Preset from "./presets.js";
+import { createAudioWorkletNode } from "tone/build/esm/core/context/AudioContext.js";
 //npm run dev localhosthoz, véglegessen pedig npm run build
 
 const midi: MIDI = new MIDI;
@@ -25,28 +26,13 @@ const keyboardoneeng: Record<string, string> = keyboardonehun;
 
 const keyboardtwoeng: Record<string, string> = keyboardtwohun;
 
-function loadPreset(preset: Preset.SynthPreset){
-    synth.set({
-        oscillator: preset.oscillator,
-        envelope: preset.envelope
-    });
-
-    if (preset.filter) {
-        filter.set(preset.filter);
-    }
-    if (preset.lfo) {
-        lfo.set(preset.lfo);
-        lfo.start();
-    }
-    else {
-        lfo.stop();
-    }
-}
+let pressed: string[] = [];
 
 document.getElementById("start")?.addEventListener("click", async (e) => {
     (e.currentTarget as HTMLElement).remove();
 
     await Tone.start();
+    Effect.switchSustain(true);
 
     if (!started){
         synth.connect(filter);
@@ -60,8 +46,9 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
         lfo.connect(filter.frequency);
     }
     synth.releaseAll(0);
+    synths.forEach((synth) => synth.triggerRelease());
 
-    loadPreset(Preset.defaultPreset); //after every button state change need to be called
+    Preset.loadPreset(Preset.presets[Preset.currentPreset], synth); //after every button state change need to be called
 
     try {
         await midi.init();
@@ -78,14 +65,20 @@ document.addEventListener("keydown", (e) => {
     if (e.repeat || !started) return;
     console.log(e.key);
     let note = keyboardtwohun[e.key];
-    if (note != undefined)
-        synth.triggerAttack(note);
+    if (note != undefined){
+        if (!Effect.unison.on) synth.triggerAttack(note);
+        else synths.forEach((synth) => synth.triggerAttack(note));
+        pressed.push(note);
+    }
 });
 
 document.addEventListener("keyup", (e) => {
     let note = keyboardtwohun[e.key]
-    if (note != undefined)
-        synth.triggerRelease(note);
+    if (note != undefined && !Effect.sustain){
+        if (!Effect.unison.on) synth.triggerRelease(note);
+        else synths.forEach((synth) => synth.triggerRelease());
+        pressed = pressed.splice(pressed.findIndex((x) => x == note))
+    }
 });
 
 export const waveform = new Tone.Waveform(1024);

@@ -1,4 +1,4 @@
-import { chorusSend, reverbSend } from "./effects.js";
+import { chorusSend, reverbSend, sustain, switchSustain } from "./effects.js";
 import { synth, filter, lfo, panner, expression } from "./instrument.js";
 import * as Tone from "tone";
 export default class MIDI {
@@ -15,7 +15,7 @@ export default class MIDI {
             throw new Error("Your browser does not support MIDI! :(\n Or you have to give permission to use it. In this case check out our README.md!");
         this.access = await navigator.requestMIDIAccess();
         this.access.addEventListener("statechange", () => this.refreshInputs());
-        this.refreshInputs();
+        //this.refreshInputs();
         const inputs = [...(this.access?.inputs.values() ?? [])];
         for (const input of inputs) {
             input.addEventListener("midimessage", (e) => {
@@ -83,6 +83,10 @@ export default class MIDI {
                     expression.gain.rampTo(msg[2] / 127, 0.02);
                     break;
                 case 64: //sustain
+                    if (msg[2] >= 64)
+                        switchSustain(true);
+                    else
+                        switchSustain(false);
                     break;
                 case 65: //portamento
                     break;
@@ -101,6 +105,7 @@ export default class MIDI {
                     break;
                 default:
                     console.warn("Unhandled MIDI CC message: " + msg[1]);
+                    return;
             }
         }
     }

@@ -1,5 +1,14 @@
 import * as Tone from "tone"; //only needed in TS, remove before production
-export { reverb, delay, chorus, phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, chorusSend, reverbSend, /** / autoFilter, autoPanner, cheby, pingPong, pitchShift, autoWah/**/ };
+export { sustain, switchSustain, reverb, delay, chorus, phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, chorusSend, reverbSend, unison, /** / autoFilter, autoPanner, cheby, pingPong, pitchShift, autoWah/**/ };
+let sustain = false;
+function switchSustain(value = !sustain) {
+    sustain = value;
+}
+const unison = {
+    on: false,
+    detune: 10,
+    voices: 3
+};
 const reverb = new Tone.Reverb({
     decay: 2,
     wet: 0.3
@@ -29,11 +38,6 @@ const bitcrusher = new Tone.BitCrusher(4);
 const tremolo = new Tone.Tremolo(9, 0.75);
 const vibrato = new Tone.Vibrato(4, 0.5);
 /** /
-const autoFilter: Tone.AutoFilter       = new Tone.AutoFilter("4n");
-const autoPanner: Tone.AutoPanner       = new Tone.AutoPanner("4n");
-const cheby: Tone.Chebyshev             = new Tone.Chebyshev(50);
-const pingPong: Tone.PingPongDelay      = new Tone.PingPongDelay("4n", 0.2);
-const pitchShift: Tone.PitchShift       = new Tone.PitchShift(5);
 const autoFilter: Tone.AutoFilter       = new Tone.AutoFilter("4n");
 const autoPanner: Tone.AutoPanner       = new Tone.AutoPanner("4n");
 const cheby: Tone.Chebyshev             = new Tone.Chebyshev(50);

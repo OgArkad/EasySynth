@@ -1,5 +1,25 @@
 import * as Tone from "tone"; //no need in the js file, but dependency in ts. remove before final build
-export { defaultPreset, cleanSaw, superSaw, triangle };
+import { filter, lfo, synth } from "./instruments.js";
+export { loadPreset, currentPreset, presets };
+function loadPreset(preset, synth) {
+    if (!preset)
+        throw new Error("Preset is undefined!");
+    synth.set({
+        oscillator: preset.oscillator,
+        envelope: preset.envelope
+    });
+    if (preset.filter) {
+        filter.set(preset.filter);
+    }
+    if (preset.lfo) {
+        lfo.set(preset.lfo);
+        if (!lfo.state || lfo.state === "stopped")
+            lfo.start();
+    }
+    else {
+        lfo.stop();
+    }
+}
 const defaultPreset = {
     name: "Default",
     oscillator: {
@@ -82,4 +102,6 @@ const triangle = {
         Q: 2
     }
 };
+let currentPreset = 0;
+const presets = [defaultPreset, cleanSaw, superSaw, triangle];
 //# sourceMappingURL=presets.js.map

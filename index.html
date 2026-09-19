@@ -8,14 +8,14 @@
     <script type="module" src="src/script.js"></script>
     <script type="module" src="src/MIDI.js"></script>
     <script type="module" src="src/UI.js"></script>
+    <script type="module" src="src/oscilloscope.js"></script>
 </head>
 <body>
-    <button type="reset" id="start">Start</button>
+    <div id="start">Start</div>
     <div class="synth-chassis">
-        <div id="oscilloscope" style="top: 10%; right: 10%;">
-            <canvas id="scope-canvas"></canvas>
+        <div id="oscilloscope">
+            <canvas id="oscilloscope-canvas"></canvas>
         </div>
-        
         <div class="knob-control" style="top: 25%; right: 46%;">
             <p>FILTER</p>
             <img src="./media/knob.png" id="filter-knob" class="knob-image" >

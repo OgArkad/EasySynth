@@ -34,3 +34,31 @@ body {
   object-fit: contain;
   transform-origin: center center;
 }
+
+#start {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* Screen overlay bounds */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  background-color: black;
+  color: whitesmoke;
+  font-size: 20vw;
+  font-family: Arial, Helvetica, sans-serif;
+  border: none;
+  cursor: pointer;
+
+  z-index: 9999;
+}
+#oscilloscope-canvas{
+  position: absolute;
+  width: 35vw;
+  top: 5%;
+  left: 3%;
+}

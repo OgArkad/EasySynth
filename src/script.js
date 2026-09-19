@@ -35,6 +35,7 @@ function loadPreset(preset) {
     }
 }
 document.getElementById("start")?.addEventListener("click", async (e) => {
+    e.currentTarget.remove();
     await Tone.start();
     if (!started) {
         synth.connect(filter);
@@ -71,6 +72,9 @@ document.addEventListener("keyup", (e) => {
     if (note != undefined)
         synth.triggerRelease(note);
 });
+export const waveform = new Tone.Waveform(1024);
+Effect.chorus.connect(waveform);
+Effect.chorus.toDestination();
 console.log("script.js loaded!");
 // (x,e *3, g, 6 *3, m, i * 3, b,z *3 ) 
 //# sourceMappingURL=script.js.map

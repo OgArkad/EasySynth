@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const KNOB_CONFIGS = {
     'filter-knob': { minAngle: -127, maxAngle: 127 },
     'waveform-knob': { minAngle: -100, maxAngle: 100, steps: 5 },
@@ -51,7 +50,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-=======
->>>>>>> fa62a8d4b2adedf0b8f2ef4be7b081d14d033bc3
 export {};
 //# sourceMappingURL=UI.js.map

@@ -44,6 +44,8 @@ function loadPreset(preset: Preset.SynthPreset){
 }
 
 document.getElementById("start")?.addEventListener("click", async (e) => {
+    (e.currentTarget as HTMLElement).remove();
+
     await Tone.start();
 
     if (!started){
@@ -70,7 +72,7 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     synth.releaseAll(0);
     started = true;
     console.log("Synth started/reseted!");
-});
+}); 
 
 document.addEventListener("keydown", (e) => {
     if (e.repeat || !started) return;
@@ -85,6 +87,11 @@ document.addEventListener("keyup", (e) => {
     if (note != undefined)
         synth.triggerRelease(note);
 });
+
+export const waveform = new Tone.Waveform(1024);
+
+Effect.chorus.connect(waveform);
+Effect.chorus.toDestination();
 
 console.log("script.js loaded!");
 

@@ -1,6 +1,7 @@
 import * as Tone from "tone";
 import { loadPreset, presets, currentPreset } from "./presets.js";
 import { sustain, unison } from "./effects.js";
+import { Effect } from "tone/build/esm/effect/Effect.js";
 const synth = new Tone.PolySynth();
 const filter = new Tone.Filter();
 const lfo = new Tone.LFO({
@@ -41,7 +42,14 @@ function manageKnobs(knob, degree) {
             preset.oscillator.octave = Math.round(degree / 127 * 4); //8 oktave
             break;
         case "semitone":
+            preset.oscillator.detune = degree; // -127 - 127
             break; //To-do
+        case "tuning":
+            preset.oscillator.detune = degree / 10; //-12,7 - 12,7
+            break;
+        case "unison":
+            unison.on = degree > 0;
+            break;
         default:
             console.error("Unexpected knob: " + knob + ": " + degree);
             return;

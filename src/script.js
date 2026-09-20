@@ -1,7 +1,7 @@
 import MIDI from "./MIDI.js";
 import * as Effect from "./effects.js";
 import * as Tone from "tone"; //npm install tone
-import { synth, filter, lfo, panner, expression, synths } from "./instrument.js";
+import { synth, filter, lfo, panner, expression, synths, volume } from "./instrument.js";
 import * as Preset from "./presets.js";
 //npm run dev localhosthoz, véglegessen pedig npm run build
 const midi = new MIDI;
@@ -34,7 +34,8 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     e.currentTarget.remove();
     if (!started) {
         await Tone.start();
-        synth.connect(filter);
+        synth.connect(volume);
+        volume.connect(filter);
         filter.connect(panner);
         panner.connect(expression);
         expression.connect(Effect.reverb);

@@ -1,3 +1,4 @@
+import { manageKnobs } from "./instrument.js";
 const KNOB_CONFIGS = {
     'filter-knob': { minAngle: -127, maxAngle: 127 },
     'waveform-knob': { minAngle: -100, maxAngle: 100, steps: 5 },
@@ -5,7 +6,7 @@ const KNOB_CONFIGS = {
     'velocity-knob': { minAngle: -127, maxAngle: 127, sensitivity: 2.0 },
     'cutoff-knob': { minAngle: -127, maxAngle: 127 },
     'unison-knob': { minAngle: -127, maxAngle: 127, steps: 4 },
-    'octave-knob': { minAngle: -90, maxAngle: 90, steps: 5 },
+    'octave-knob': { minAngle: -90, maxAngle: 90, steps: 5 }, //ennek a 4. oktávról kéne indulnia, és összesen 8 lépés kéne bele
     'semitone-knob': { minAngle: -127, maxAngle: 127, steps: 25 },
     'fine-tuning-knob': { minAngle: -127, maxAngle: 127, sensitivity: 0.5 },
     'attack-knob': { minAngle: -127, maxAngle: 127 },
@@ -32,14 +33,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     const range = maxAngle - minAngle;
                     const stepSize = range / (steps - 1);
                     const currentStep = Math.round((targetAngle - minAngle) / stepSize);
-                    currentAngle = targetAngle;
-                    const snappedAngle = minAngle + currentStep * stepSize;
-                    knob.style.transform = `rotate(${snappedAngle}deg)`;
+                    currentAngle = minAngle + currentStep * stepSize;
+                    knob.style.transform = `rotate(${currentAngle}deg)`;
                 }
                 else {
                     currentAngle = targetAngle;
                     knob.style.transform = `rotate(${currentAngle}deg)`;
                 }
+                manageKnobs(knob.id.replace("-knob", ""), currentAngle);
             };
             const onMouseUp = () => {
                 window.removeEventListener('mousemove', onMouseMove);
@@ -50,5 +51,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-export {};
 //# sourceMappingURL=UI.js.map

@@ -11,7 +11,7 @@ type PresetOscillatorType =
     | "fattriangle"
     | "fatsawtooth";
 
-interface SynthPreset {
+export interface SynthPreset {
     name: string;
     oscillator: {
         type: PresetOscillatorType;

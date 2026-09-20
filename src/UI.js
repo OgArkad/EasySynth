@@ -3,7 +3,7 @@ const KNOB_CONFIGS = {
     'filter-knob': { minAngle: -127, maxAngle: 127 },
     'waveform-knob': { minAngle: -100, maxAngle: 100, steps: 5 },
     'sequencer-knob': { minAngle: -127, maxAngle: 127, steps: 8 },
-    'velocity-knob': { minAngle: -127, maxAngle: 127, sensitivity: 2.0 },
+    'velocity-knob': { minAngle: -127, maxAngle: 127, sensitivity: 2.0 }, //ennek pedig 127-ről kéne indulnia
     'cutoff-knob': { minAngle: -127, maxAngle: 127 },
     'unison-knob': { minAngle: -127, maxAngle: 127, steps: 4 },
     'octave-knob': { minAngle: -90, maxAngle: 90, steps: 5 }, //ennek a 4. oktávról kéne indulnia, és összesen 8 lépés kéne bele (meg egy kicsit fura az animációja)

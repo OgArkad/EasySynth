@@ -10,6 +10,7 @@
     <script type="module" src="src/UI.js"></script>
     <script type="module" src="src/oscilloscope.js"></script>
     <script type="module" src="src/piano.ts"></script>
+    <script type="module" src="src/sampleOptions.ts"></script>
 </head>
 <body>
     <div id="start">Start</div>
@@ -17,44 +18,50 @@
         <div id="oscilloscope">
             <canvas id="oscilloscope-canvas"></canvas>
         </div>
+
+        <select name="samples" id="sampleOptions">
+            <option value="default" selected>default</option>
+        </select>
+        <img src="./media/add.png" alt="add" id="sampleAddOptions">
+
         <div class="knob-control" style="top: 25%; right: 46%;">
             <p>FILTER</p>
-            <img src="./media/knob.png" id="filter-knob" class="knob-image" >
+            <img src="./media/knob.png" id="filter-knob" class="knob-image" alt="filter">
         </div>
         <div class="knob-control" style="top: 25%; right: 39%;">
             <p>WAVEFORM</p>
-            <img src="./media/knob.png" id="waveform-knob" class="knob-image" >
+            <img src="./media/knob.png" id="waveform-knob" class="knob-image" alt="waveform">
         </div>
         <div class="knob-control" style="top: 25%; right: 32%;">
             <p>SEQUENCER</p>
-            <img src="./media/knob.png" id="sequencer-knob" class="knob-image" >
+            <img src="./media/knob.png" id="sequencer-knob" class="knob-image" alt="sequencer">
         </div>
         <div class="knob-control" style="top: 25%; right: 25%;">
             <p>VELOCITY</p>
-            <img src="./media/knob.png" id="velocity-knob" class="knob-image" >
+            <img src="./media/knob.png" id="velocity-knob" class="knob-image" alt="velocity">
         </div>
 
         <div class="knob-control" style="top: 40%; right: 32%;">
             <p>CUTOFF</p>
-            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" >
+            <img src="./media/knob.png" id="cutoff-knob" class="knob-image" alt="cutoff">
         </div>
         <div class="knob-control" style="top: 40%; right: 25%;">
             <p>UNISON</p>
-            <img src="./media/knob.png" id="unison-knob" class="knob-image" >
+            <img src="./media/knob.png" id="unison-knob" class="knob-image" alt="unison">
         </div>
 
         <div class="knobSegment">PITCH</div>
         <div class="knob-control" style="top: 55%; right: 32%;">
             <p>OCTAVE</p>
-            <img src="./media/knob.png" id="octave-knob" class="knob-image" >
+            <img src="./media/knob.png" id="octave-knob" class="knob-image" alt="octave">
         </div>
         <div class="knob-control" style="top: 55%; right: 25%;">
             <p>SEMITONE</p>
-            <img src="./media/knob.png" id="semitone-knob" class="knob-image" >
+            <img src="./media/knob.png" id="semitone-knob" class="knob-image" alt="semitone">
         </div>
         <div class="knob-control" style="top: 55%; right: 18%;">
             <p>FINE TUNING</p>
-            <img src="./media/knob.png" id="fine-tuning-knob" class="knob-image" >
+            <img src="./media/knob.png" id="fine-tuning-knob" class="knob-image" alt="fine tuning">
         </div>
 
         <div class="knobSegment" id="asdr">
@@ -62,19 +69,19 @@
         </div>
         <div class="knob-control" style="position: absolute; top: 70%; right: 32%;">
             <p>ATTACK</p>
-            <img src="./media/knob.png" id="attack-knob" class="knob-image" >
+            <img src="./media/knob.png" id="attack-knob" class="knob-image" alt="attack">
         </div>
         <div class="knob-control" style="position: absolute; top: 70%; right: 25%;">
             <p>DECAY</p>
-            <img src="./media/knob.png" id="decay-knob" class="knob-image" >
+            <img src="./media/knob.png" id="decay-knob" class="knob-image" alt="decay">
         </div>
         <div class="knob-control" style="position: absolute; top: 70%; right: 18%;">
             <p>SUSTAIN</p>
-            <img src="./media/knob.png" id="sustain-knob" class="knob-image" >
+            <img src="./media/knob.png" id="sustain-knob" class="knob-image" alt="sustain">
         </div>
         <div class="knob-control" style="position: absolute; top: 70%; right: 11%;">
             <p>RELEASE</p>
-            <img src="./media/knob.png" id="release-knob" class="knob-image" >
+            <img src="./media/knob.png" id="release-knob" class="knob-image" alt="release">
         </div>
     </div>
 </body>

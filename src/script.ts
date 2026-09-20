@@ -34,6 +34,8 @@ const keyboardtwoeng: Record<string, string> = {
     z: "C4",
 };
 
+let keyboard = keyboardtwohun;
+
 const pressed: Set<string> = new Set<string>();
 
 document.getElementById("start")?.addEventListener("click", async (e) => {
@@ -71,7 +73,7 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
 document.addEventListener("keydown", (e) => {
     if (e.repeat || !started) return;
     console.log(e.key);
-    let note = keyboardtwohun[e.key];
+    let note = keyboard[e.key];
     if (note != undefined){
         if (!Effect.unison.on) synth.triggerAttack(note);
         else synths.forEach((synth) => synth.triggerAttack(note));
@@ -80,7 +82,7 @@ document.addEventListener("keydown", (e) => {
 });
 
 document.addEventListener("keyup", (e) => {
-    let note = keyboardtwohun[e.key]
+    let note = keyboard[e.key]
     if (note != undefined && !Effect.sustain){
         if (!Effect.unison.on) synth.triggerRelease(note);
         else synths.forEach((synth) => synth.triggerRelease());

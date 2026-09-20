@@ -1,3 +1,5 @@
+import { manageKnobs} from "./instrument.js";
+
 interface KnobConfig {
   minAngle: number;
   maxAngle: number;
@@ -12,7 +14,7 @@ const KNOB_CONFIGS: Record<string, KnobConfig> = {
   'velocity-knob':    { minAngle: -127, maxAngle: 127, sensitivity: 2.0 },
   'cutoff-knob':      { minAngle: -127, maxAngle: 127 },
   'unison-knob':      { minAngle: -127, maxAngle: 127, steps: 4 },
-  'octave-knob':      { minAngle: -90,  maxAngle: 90,  steps: 5 },
+  'octave-knob':      { minAngle: -90,  maxAngle: 90,  steps: 5 }, //ennek a 4. oktávról kéne indulnia, és összesen 8 lépés kéne bele (meg egy kicsit fura az animációja)
   'semitone-knob':    { minAngle: -127, maxAngle: 127, steps: 25 },
   'fine-tuning-knob': { minAngle: -127, maxAngle: 127, sensitivity: 0.5 },
   'attack-knob':      { minAngle: -127, maxAngle: 127 },
@@ -47,13 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
           const stepSize = range / (steps - 1);
           const currentStep = Math.round((targetAngle - minAngle) / stepSize);
 
-          currentAngle = targetAngle;
-          const snappedAngle = minAngle + currentStep * stepSize;
-          knob.style.transform = `rotate(${snappedAngle}deg)`;
+          currentAngle = minAngle + currentStep * stepSize;
+          knob.style.transform = `rotate(${currentAngle}deg)`;
         } else {
           currentAngle = targetAngle;
           knob.style.transform = `rotate(${currentAngle}deg)`;
         }
+        manageKnobs(knob.id.replace("-knob", ""), currentAngle);
       };
 
       const onMouseUp = () => {

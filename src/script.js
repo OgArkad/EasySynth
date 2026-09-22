@@ -3,6 +3,7 @@ import * as Effect from "./effects.js";
 import * as Tone from "tone"; //npm install tone
 import { synth, filter, lfo, panner, expression, synths, volume } from "./instrument.js";
 import * as Preset from "./presets.js";
+import { sequencer } from "./effects.js";
 //npm run dev localhosthoz, véglegessen pedig npm run build
 const midi = new MIDI;
 let started = false;
@@ -52,7 +53,6 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     catch (err) {
         console.error(err);
     }
-    synth.releaseAll(0);
     document.getElementById("start")?.remove();
     started = true;
     console.log("Synth started/reseted!");
@@ -72,7 +72,10 @@ document.addEventListener("keydown", (e) => {
         else
             synths.forEach((synth) => synth.triggerAttack(note));
         pressed.add(note);
+        if (Effect.sequencer.on)
+            sequencer.sequence.push(note);
     }
+    console.log(sequencer.sequence);
 });
 document.addEventListener("keyup", (e) => {
     let note = keyboard[e.key];

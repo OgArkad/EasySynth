@@ -103,12 +103,6 @@ const acid = {
     filter: { type: "lowpass", frequency: 900, Q: 12 },
     envelope: { attack: 0.005, decay: 0.3, sustain: 0.15, release: 0.15 }
 };
-const digitalBell = {
-    name: "Digital Bell",
-    oscillator: { type: "fatsine", octave: 1, detune: 0, volume: -8 },
-    filter: { type: "highpass", frequency: 700, Q: 2 },
-    envelope: { attack: 0.001, decay: 1.2, sustain: 0.05, release: 1.5 }
-};
 const retroGame = {
     name: "Retro Game",
     oscillator: { type: "square", octave: 0, detune: 0, volume: -5 },
@@ -157,7 +151,6 @@ const presets = [
     dreamPad,
     wobble,
     acid,
-    digitalBell,
     retroGame,
     cosmic,
     organ,

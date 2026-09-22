@@ -1,5 +1,5 @@
 import * as Tone from "tone"; //only needed in TS, remove before production
-export { sustain, switchSustain, reverb, delay, chorus, phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, chorusSend, reverbSend, unison, /** / autoFilter, autoPanner, cheby, pingPong, pitchShift, autoWah/**/ };
+export { sequencer, sustain, switchSustain, reverb, delay, chorus, phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, chorusSend, reverbSend, unison, /** / autoFilter, autoPanner, cheby, pingPong, pitchShift, autoWah/**/ };
 let sustain = false;
 function switchSustain(value = !sustain) {
     sustain = value;
@@ -9,6 +9,12 @@ const unison = {
     detune: 10,
     voices: 3
 };
+const sequencer = {
+    on: false,
+    sequence: ["C4"],
+    sequences: "8n"
+};
+sequencer.sequence.length = 0; //removing C4, but needed in declaration, because of type, else null
 const reverb = new Tone.Reverb({
     decay: 2,
     wet: 0.3

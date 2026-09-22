@@ -162,13 +162,6 @@ const acid: SynthPreset = {
     envelope: { attack: 0.005, decay: 0.3, sustain: 0.15, release: 0.15 }
 };
 
-const digitalBell: SynthPreset = {
-    name: "Digital Bell",
-    oscillator: { type: "fatsine", octave: 1, detune: 0, volume: -8 },
-    filter: { type: "highpass", frequency: 700, Q: 2 },
-    envelope: { attack: 0.001, decay: 1.2, sustain: 0.05, release: 1.5 }
-};
-
 const retroGame: SynthPreset = {
     name: "Retro Game",
     oscillator: { type: "square", octave: 0, detune: 0, volume: -5 },
@@ -223,7 +216,6 @@ const presets: SynthPreset[] = [
     dreamPad,
     wobble,
     acid,
-    digitalBell,
     retroGame,
     cosmic,
     organ,

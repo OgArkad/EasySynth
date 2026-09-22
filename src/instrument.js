@@ -1,6 +1,13 @@
 import * as Tone from "tone";
 import { loadPreset, presets, currentPreset } from "./presets.js";
-import { unison } from "./effects.js";
+import { sequencer, unison } from "./effects.js";
+const seq = new Tone.Sequence((time, note) => {
+    if (unison.on)
+        synths.forEach((synth) => synth.triggerAttackRelease(note, "8n", time));
+    else
+        synth.triggerAttackRelease(note, "8n", time);
+    console.log("sequencing it");
+}, sequencer.sequence, "8n");
 const synth = new Tone.PolySynth();
 let volume = new Tone.Gain(1);
 const filter = new Tone.Filter();
@@ -66,6 +73,13 @@ function manageKnobs(knob, degree) {
             preset.oscillator.type = x;*/
             break;
         case "sequencer":
+            sequencer.on = degree > 0;
+            if (sequencer.on)
+                seq.start(0);
+            else {
+                seq.stop();
+                sequencer.sequence.length = 0;
+            }
             break;
         case "velocity":
             expression.gain.rampTo((degree + 127) / 254, 0.02);

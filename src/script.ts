@@ -3,6 +3,7 @@ import * as Effect from "./effects.js";
 import * as Tone from "tone"; //npm install tone
 import {synth, filter, lfo, panner, expression, synths, volume} from "./instrument.js";
 import * as Preset from "./presets.js";
+import { sequencer } from "./effects.js";
 //npm run dev localhosthoz, véglegessen pedig npm run build
 
 const midi: MIDI = new MIDI;
@@ -41,17 +42,18 @@ const pressed: Set<string> = new Set<string>();
 document.getElementById("start")?.addEventListener("click", async (e) => {
     if (started) return;
 
-        await Tone.start();
-        synth.connect(volume);
-        volume.connect(filter);
-        filter.connect(panner);
-        panner.connect(expression);
-        expression.connect(Effect.reverb);
-        Effect.reverb.connect(Effect.chorus);
-        Effect.chorus.connect(waveform);
-        Effect.chorus.toDestination();
+    await Tone.start();
 
-        lfo.connect(filter.frequency);
+    synth.connect(volume);
+    volume.connect(filter);
+    filter.connect(panner);
+    panner.connect(expression);
+    expression.connect(Effect.reverb);
+    Effect.reverb.connect(Effect.chorus);
+    Effect.chorus.connect(waveform);
+    Effect.chorus.toDestination();
+
+    lfo.connect(filter.frequency);
 
     synth.releaseAll(0);
     synths.forEach((synth) => synth.triggerRelease());
@@ -63,8 +65,6 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     } catch (err) {
         console.error(err);
     }
-
-    synth.releaseAll(0);
 
     document.getElementById("start")?.remove();
     started = true;
@@ -83,7 +83,9 @@ document.addEventListener("keydown", (e) => {
         if (!Effect.unison.on) synth.triggerAttack(note);
         else synths.forEach((synth) => synth.triggerAttack(note));
         pressed.add(note);
+        if (Effect.sequencer.on) sequencer.sequence.push(note);
     }
+    console.log(sequencer.sequence);
 });
 
 document.addEventListener("keyup", (e) => {

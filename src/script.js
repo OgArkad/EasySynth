@@ -31,19 +31,18 @@ const keyboardtwoeng = {
 let keyboard = keyboardtwohun;
 const pressed = new Set();
 document.getElementById("start")?.addEventListener("click", async (e) => {
-    e.currentTarget.remove();
-    if (!started) {
-        await Tone.start();
-        synth.connect(volume);
-        volume.connect(filter);
-        filter.connect(panner);
-        panner.connect(expression);
-        expression.connect(Effect.reverb);
-        Effect.reverb.connect(Effect.chorus);
-        Effect.chorus.connect(waveform);
-        Effect.chorus.toDestination();
-        lfo.connect(filter.frequency);
-    }
+    if (started)
+        return;
+    await Tone.start();
+    synth.connect(volume);
+    volume.connect(filter);
+    filter.connect(panner);
+    panner.connect(expression);
+    expression.connect(Effect.reverb);
+    Effect.reverb.connect(Effect.chorus);
+    Effect.chorus.connect(waveform);
+    Effect.chorus.toDestination();
+    lfo.connect(filter.frequency);
     synth.releaseAll(0);
     synths.forEach((synth) => synth.triggerRelease());
     Preset.loadPreset(Preset.presets[Preset.currentPreset], synth); //after every button state change need to be called
@@ -54,9 +53,14 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
         console.error(err);
     }
     synth.releaseAll(0);
+    document.getElementById("start")?.remove();
     started = true;
     console.log("Synth started/reseted!");
 });
+window.onblur = function () {
+    synth.releaseAll(0);
+    synths.forEach((synth) => synth.triggerRelease());
+};
 document.addEventListener("keydown", (e) => {
     if (e.repeat || !started)
         return;
@@ -81,5 +85,5 @@ document.addEventListener("keyup", (e) => {
     }
 });
 console.log("script.js loaded!");
-// (x,e *3, g, 6 *3, m, i * 3, b,z *3 ) 
+// (x,e *3, g, 6 *3, m, i * 3, b,z *3 )
 //# sourceMappingURL=script.js.map

@@ -2,6 +2,7 @@ import { presets, loadPreset } from "./presets.js";
 import { synth, filter, lfo } from "./instrument.js";
 const options = document.getElementById("sampleOptions");
 const add = document.getElementById("sampleAddOptions");
+let i = 0;
 function renderPresetOptions() {
     if (!options)
         return;
@@ -18,7 +19,7 @@ options?.addEventListener("change", (e) => {
     const selectedIndex = parseInt(e.target.value, 10);
     const selectedPreset = presets[selectedIndex];
     if (selectedPreset) {
-        loadPreset(selectedPreset, synth, filter, lfo);
+        loadPreset(selectedPreset, synth, filter, lfo, true);
         console.log(`Loaded preset: ${selectedPreset.name}`);
     }
 });
@@ -39,11 +40,13 @@ add?.addEventListener("click", () => {
             release: 1
         }
     };
-    presets.push(newPreset);
+    presets.push(newPreset); //wil not update
+    localStorage.setItem("preset" + i, newPreset.toString());
+    i++;
     renderPresetOptions();
     if (options) {
         options.value = (presets.length - 1).toString();
-        loadPreset(newPreset, synth, filter, lfo);
+        loadPreset(newPreset, synth, filter, lfo, true);
     }
 });
 //# sourceMappingURL=sampleOptions.js.map

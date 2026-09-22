@@ -3,15 +3,16 @@ import { synth, filter, lfo } from "./instrument.js";
 
 const options = document.getElementById("sampleOptions") as HTMLSelectElement | null;
 const add = document.getElementById("sampleAddOptions") as HTMLElement | null;
+let i: number = 0;
 
 function renderPresetOptions() {
   if (!options) return;
-  options.innerHTML = ""; 
+  options.innerHTML = "";
 
   presets.forEach((preset, index) => {
     const opt = document.createElement("option");
-    opt.value = index.toString(); 
-    opt.textContent = preset.name; 
+    opt.value = index.toString();
+    opt.textContent = preset.name;
     options.appendChild(opt);
   });
 }
@@ -23,7 +24,7 @@ options?.addEventListener("change", (e) => {
   const selectedPreset = presets[selectedIndex];
 
   if (selectedPreset) {
-    loadPreset(selectedPreset, synth, filter, lfo);
+    loadPreset(selectedPreset, synth, filter, lfo, true);
     console.log(`Loaded preset: ${selectedPreset.name}`);
   }
 });
@@ -34,7 +35,7 @@ add?.addEventListener("click", () => {
   const newPreset: SynthPreset = {
     name: title,
     oscillator: {
-      type: "sawtooth", 
+      type: "sawtooth",
       octave: 0,
       detune: 0,
       volume: 0
@@ -47,11 +48,13 @@ add?.addEventListener("click", () => {
     }
   };
 
-  presets.push(newPreset);
+  presets.push(newPreset);//wil not update
+  localStorage.setItem("preset" + i, newPreset.toString());
+  i++;
 
   renderPresetOptions();
   if (options) {
     options.value = (presets.length - 1).toString();
-    loadPreset(newPreset, synth, filter, lfo);
+    loadPreset(newPreset, synth, filter, lfo, true);
   }
 });

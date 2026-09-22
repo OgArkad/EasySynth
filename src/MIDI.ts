@@ -12,7 +12,7 @@ export default class MIDI {
             undefined,
             velocity / 127
         );
-    } 
+    }
 
     private async releaseSound(note: number){
         synth.triggerRelease(Tone.Frequency(note, "midi").toFrequency())
@@ -53,7 +53,7 @@ export default class MIDI {
     ///1: pressed
     parse(msg: Uint8Array<ArrayBuffer> | null) {
         if (msg === null || msg[0] === undefined || msg[1] === undefined || msg[2] === undefined) return;
-        console.log(msg);
+        //console.log(msg);
         const type = msg[0] & 0xF0;
         const note = msg[1];
         const velocity = msg[2];

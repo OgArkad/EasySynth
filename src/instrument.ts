@@ -15,15 +15,15 @@ const lfo = new Tone.LFO({
 const panner = new Tone.Panner(0);
 const expression = new Tone.Gain(1);
 
-const synths = Array.from({ length: unison.voices }, (_, i) => { 
+const synths = Array.from({ length: unison.voices }, (_, i) => {
     const singleSynth = new Tone.Synth();
-    loadPreset(presets[currentPreset], singleSynth, filter, lfo);
-    
+    loadPreset(presets[currentPreset], singleSynth, filter, lfo, false);
+
     const panner = new Tone.Panner((i - (i / 2)) * 0.32);
     singleSynth.connect(panner);
     panner.toDestination();
-    singleSynth.detune.value = (i - 2) * unison.detune; 
-    
+    singleSynth.detune.value = (i - 2) * unison.detune;
+
     return singleSynth;
 });
 
@@ -53,7 +53,7 @@ function manageKnobs (knob: string, degree: number){ // degree: -127 - 127
         case "semitone":
             preset.oscillator.detune = Math.round(degree / 127 * 12) * 1000;// -120 - 120
             break;
-        case "tuning":
+        case "fine-tuning":
             preset.oscillator.detune = degree / 10; //-12,7 - 12,7
             break;
 
@@ -66,8 +66,14 @@ function manageKnobs (knob: string, degree: number){ // degree: -127 - 127
             break;
 
         case "filter":
+            const frequency = 50 * Math.pow(15000 / 50, ((degree + 127) / 254));// min: 50, max: 15000
+            filter.frequency.rampTo(frequency, 0.02);
             break;
         case "waveform":
+            /*const types = ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"];
+            const x: | "sine" | "square"| "triangle"| "sawtooth"| "fatsine"| "fatsquare"| "fattriangle"| "fatsawtooth" | undefined = types[Math.floor(degree/8)];
+            if (x === undefined) throw new Error("This shouldn't have happened, knob went throu limits");
+            preset.oscillator.type = x;*/
             break;
         case "sequencer":
             break;
@@ -75,11 +81,11 @@ function manageKnobs (knob: string, degree: number){ // degree: -127 - 127
             expression.gain.rampTo((degree + 127) / 254, 0.02);
             break;
 
-            
+
         default:
             console.error("Unexpected knob: " + knob + ": " + degree);
             return;
     }
-    if (!unison.on) loadPreset(preset, synth);
-    else synths.forEach((synth) => loadPreset(preset, synth));
+    if (!unison.on) loadPreset(preset, synth, undefined, undefined, false);
+    else synths.forEach((synth) => loadPreset(preset, synth, undefined, undefined, false));
 }

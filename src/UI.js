@@ -1,4 +1,6 @@
-import { manageKnobs } from "./instrument.js";
+import { expression, manageKnobs } from "./instrument.js";
+import { presets, currentPreset } from "./presets.js";
+export { setKnobs };
 const KNOB_CONFIGS = {
     'filter-knob': { minAngle: -127, maxAngle: 127 },
     'waveform-knob': { minAngle: -100, maxAngle: 100, steps: 5 },
@@ -51,4 +53,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+function setKnobs() {
+    console.log("trying");
+    function set_Knob(knob, deg) {
+        const x = document.getElementById(knob + "-knob");
+        if (x == null)
+            return;
+        x.style.transform = `rotate(${deg}deg)`;
+    }
+    const pres = presets[currentPreset];
+    if (pres === undefined)
+        throw new Error("This shouldn't have happened, you selected a non-existing preset! (Trying to rotate knobs in position)");
+    if (pres.filter) {
+        set_Knob("cutoff", Math.log(pres.filter.frequency / 20) / Math.log(20000 / 20) * 254 - 127);
+    }
+    set_Knob("attack", pres.envelope.attack * 200 - 127);
+    set_Knob("decay", pres.envelope.decay * 100 - 127);
+    set_Knob("sustain", pres.envelope.sustain * 254 - 127);
+    set_Knob("release", pres.envelope.release * 100 - 127);
+    set_Knob("octave", pres.oscillator.octave / 4 * 127);
+    set_Knob("semitone", pres.oscillator.detune / 1000 / 12 * 127);
+    set_Knob("fine-tuning", pres.oscillator.detune * 10);
+    //set_Knob("unison", unison.on ? 127 : -127); // no need, because it's an outer variable
+    set_Knob("velocity", expression.gain.value * 254 - 127);
+    console.log("Knobs set!");
+}
 //# sourceMappingURL=UI.js.map

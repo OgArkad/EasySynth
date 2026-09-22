@@ -39,9 +39,8 @@ let keyboard = keyboardtwohun;
 const pressed: Set<string> = new Set<string>();
 
 document.getElementById("start")?.addEventListener("click", async (e) => {
-    (e.currentTarget as HTMLElement).remove();
+    if (started) return;
 
-    if (!started){
         await Tone.start();
         synth.connect(volume);
         volume.connect(filter);
@@ -53,7 +52,7 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
         Effect.chorus.toDestination();
 
         lfo.connect(filter.frequency);
-    }
+
     synth.releaseAll(0);
     synths.forEach((synth) => synth.triggerRelease());
 
@@ -66,9 +65,15 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     }
 
     synth.releaseAll(0);
+
+    document.getElementById("start")?.remove();
     started = true;
     console.log("Synth started/reseted!");
-}); 
+});
+
+window.onblur = function(){synth.releaseAll(0);
+    synths.forEach((synth) => synth.triggerRelease());
+};
 
 document.addEventListener("keydown", (e) => {
     if (e.repeat || !started) return;
@@ -92,4 +97,4 @@ document.addEventListener("keyup", (e) => {
 
 console.log("script.js loaded!");
 
-// (x,e *3, g, 6 *3, m, i * 3, b,z *3 ) 
+// (x,e *3, g, 6 *3, m, i * 3, b,z *3 )

@@ -1,4 +1,4 @@
-import * as Tone from "tone"; //only needed in TS, remove before production
+import * as Tone from "tone";
 export { sequencer, sustain, switchSustain, unison, reverb, chorus, chorusSend, reverbSend, /* delay, phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, /** / autoFilter, autoPanner, cheby, pingPong, pitchShift, autoWah/**/ };
 let sustain = false;
 function switchSustain(value = !sustain) {

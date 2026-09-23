@@ -1,6 +1,6 @@
-import { chorus, chorusSend, reverbSend, sustain, switchSustain} from "./effects.js";
+import { chorus, chorusSend, reverbSend, switchSustain} from "./effects.js";
 import {synth, filter, lfo, panner, expression} from "./instrument.js";
-import * as Tone from "tone";
+import {Frequency} from "tone";
 
 export default class MIDI {
     private access?: MIDIAccess;
@@ -8,14 +8,14 @@ export default class MIDI {
 
     private async playSound(note: number, velocity: number){
         synth.triggerAttack(
-            Tone.Frequency(note, "midi").toFrequency(),
+            Frequency(note, "midi").toFrequency(),
             undefined,
             velocity / 127
         );
     }
 
     private async releaseSound(note: number){
-        synth.triggerRelease(Tone.Frequency(note, "midi").toFrequency())
+        synth.triggerRelease(Frequency(note, "midi").toFrequency())
     }
 
     async init(){

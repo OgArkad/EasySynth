@@ -12,15 +12,15 @@ const BlackNotes = [
   "C#4", "D#4", "F#4", "G#4", "A#4",
   "C#5", "D#5", "F#5", "G#5", "A#5",
   "C#6", "D#6"
-];  
+];
 
 if (synthDest) {
-    const keyWidth = 2.5; 
+    const keyWidth = 2.5;
     const StartLeft = 3;
 
     for (let white = 0; white < 17; white++) {
         let whiteNote = document.createElement("img");
-        
+
         whiteNote.src = "media/white.png";
         whiteNote.style.position = "absolute";
         whiteNote.style.top = "51vh";
@@ -34,7 +34,7 @@ if (synthDest) {
             whiteNote.addEventListener("mouseup", () => synth.triggerRelease(note));
             whiteNote.addEventListener("mouseleave", () => synth.triggerRelease(note));
         }
-        
+
         synthDest.appendChild(whiteNote);
     }
 
@@ -42,15 +42,15 @@ if (synthDest) {
 
     blackButtons.forEach((buttonIndex, index) => {
         let blackNote = document.createElement("img");
-        
-        blackNote.src = "media/black.png"; 
+
+        blackNote.src = "media/black.png";
         blackNote.style.position = "absolute";
         blackNote.style.top = "50vh";
         blackNote.style.left = `${StartLeft + (buttonIndex * keyWidth)}vw`;
-        
-        blackNote.style.width = `${keyWidth * 1}vw`; 
+
+        blackNote.style.width = `${keyWidth * 1}vw`;
         blackNote.style.height = "auto";
-        blackNote.style.zIndex = "2"; 
+        blackNote.style.zIndex = "2";
 
         const note = BlackNotes[index];
         if(note){

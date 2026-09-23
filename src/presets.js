@@ -1,4 +1,3 @@
-import * as Tone from "tone";
 import { setKnobs } from "./UI.js";
 export { loadPreset, currentPreset, presets };
 function loadPreset(preset, Synth, Filter, Lfo, set = true) {

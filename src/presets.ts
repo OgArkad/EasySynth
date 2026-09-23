@@ -1,6 +1,7 @@
-import * as Tone from "tone";
+import type {FilterOptions, LFOOptions, PolySynth, Synth, Filter, LFO} from "tone";//no need in js;
 import { setKnobs } from "./UI.js";
 export {loadPreset, currentPreset, presets};
+export type {SynthPreset};
 
 type PresetOscillatorType =
     | "sine"
@@ -12,7 +13,7 @@ type PresetOscillatorType =
     | "fattriangle"
     | "fatsawtooth";
 
-export interface SynthPreset {
+interface SynthPreset {
     name: string;
     oscillator: {
         type: PresetOscillatorType;
@@ -21,7 +22,7 @@ export interface SynthPreset {
         volume: number;
     };
     filter?: {
-        type: Tone.FilterOptions["type"];
+        type: FilterOptions["type"];
         frequency: number;
         Q: number;
     };
@@ -36,15 +37,15 @@ export interface SynthPreset {
         min: number;
         max: number;
         phase: number;
-        type: Tone.LFOOptions["type"];
+        type: LFOOptions["type"];
     };
 }
 
 function loadPreset(
     preset: SynthPreset | undefined,
-    Synth: Tone.PolySynth | Tone.Synth,
-    Filter?: Tone.Filter,
-    Lfo?: Tone.LFO,
+    Synth: PolySynth | Synth,
+    Filter?: Filter,
+    Lfo?: LFO,
     set: Boolean = true
 ) {
     if (!preset) throw new Error("Preset is undefined!");

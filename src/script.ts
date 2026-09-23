@@ -4,6 +4,7 @@ import * as Tone from "tone"; //npm install tone
 import {synth, filter, lfo, panner, expression, synths, volume} from "./instrument.js";
 import * as Preset from "./presets.js";
 import { sequencer } from "./effects.js";
+import { drawOscilloscope } from "./oscilloscope.js";
 //npm run dev localhosthoz, véglegessen pedig npm run build
 
 const midi: MIDI = new MIDI;
@@ -65,6 +66,8 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     } catch (err) {
         console.error(err);
     }
+
+    drawOscilloscope();
 
     document.getElementById("start")?.remove();
     started = true;

@@ -1,5 +1,5 @@
 import * as Tone from "tone";//only needed in TS, remove before production
-export {sequencer, sustain, switchSustain, reverb, delay, chorus, phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, chorusSend, reverbSend, unison,/** / autoFilter, autoPanner, cheby, pingPong, pitchShift, autoWah/**/};
+export {sequencer, sustain, switchSustain, unison,  reverb, chorus, chorusSend, reverbSend, /* delay, phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, /** / autoFilter, autoPanner, cheby, pingPong, pitchShift, autoWah/**/};
 
 let sustain = false;
 
@@ -43,7 +43,7 @@ const chorus: Tone.Chorus = new Tone.Chorus({
 
 const chorusSend = new Tone.Gain(0);
 chorus.connect(chorusSend);
-
+/*
 const phaser: Tone.Phaser = new Tone.Phaser({
     frequency: 80,
     octaves: 3,

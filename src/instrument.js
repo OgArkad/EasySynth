@@ -1,27 +1,27 @@
-import * as Tone from "tone";
+import { PolySynth, Sequence, Gain, Filter, LFO, Panner, Synth } from "tone";
 import { loadPreset, presets, currentPreset } from "./presets.js";
 import { sequencer, unison } from "./effects.js";
-const seq = new Tone.Sequence((time, note) => {
+const seq = new Sequence((time, note) => {
     if (unison.on)
         synths.forEach((synth) => synth.triggerAttackRelease(note, "8n", time));
     else
         synth.triggerAttackRelease(note, "8n", time);
     console.log("sequencing it");
 }, sequencer.sequence, "8n");
-const synth = new Tone.PolySynth();
-let volume = new Tone.Gain(1);
-const filter = new Tone.Filter();
-const lfo = new Tone.LFO({
+const synth = new PolySynth();
+let volume = new Gain(1);
+const filter = new Filter();
+const lfo = new LFO({
     min: 500,
     max: 5000,
     phase: 0,
 });
-const panner = new Tone.Panner(0);
-const expression = new Tone.Gain(1);
+const panner = new Panner(0);
+const expression = new Gain(1);
 const synths = Array.from({ length: unison.voices }, (_, i) => {
-    const singleSynth = new Tone.Synth();
+    const singleSynth = new Synth();
     loadPreset(presets[currentPreset], singleSynth, filter, lfo, false);
-    const panner = new Tone.Panner((i - (i / 2)) * 0.32);
+    const panner = new Panner((i - (i / 2)) * 0.32);
     singleSynth.connect(panner);
     panner.toDestination();
     singleSynth.detune.value = (i - 2) * unison.detune;

@@ -3,7 +3,7 @@ import { waveform } from "./script.js";
 const canvas = document.getElementById("oscilloscope-canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d")!;
 
-function drawOscilloscope() {
+export function drawOscilloscope() {
   requestAnimationFrame(drawOscilloscope);
 
   const values = waveform.getValue();
@@ -12,7 +12,7 @@ function drawOscilloscope() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ctx.lineWidth = 2;
-  ctx.strokeStyle = "#00ffcc"; 
+  ctx.strokeStyle = "#00ffcc";
   ctx.beginPath();
 
   const sliceWidth = canvas.width / values.length;
@@ -33,5 +33,3 @@ function drawOscilloscope() {
 
   ctx.stroke();
 }
-
-drawOscilloscope();

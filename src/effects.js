@@ -1,5 +1,5 @@
 import * as Tone from "tone"; //only needed in TS, remove before production
-export { sequencer, sustain, switchSustain, reverb, delay, chorus, phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, chorusSend, reverbSend, unison, /** / autoFilter, autoPanner, cheby, pingPong, pitchShift, autoWah/**/ };
+export { sequencer, sustain, switchSustain, unison, reverb, chorus, chorusSend, reverbSend, /* delay, phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, /** / autoFilter, autoPanner, cheby, pingPong, pitchShift, autoWah/**/ };
 let sustain = false;
 function switchSustain(value = !sustain) {
     sustain = value;
@@ -33,16 +33,17 @@ const chorus = new Tone.Chorus({
 });
 const chorusSend = new Tone.Gain(0);
 chorus.connect(chorusSend);
-const phaser = new Tone.Phaser({
+/*
+const phaser: Tone.Phaser = new Tone.Phaser({
     frequency: 80,
     octaves: 3,
     baseFrequency: 1000
 });
-const stereowidener = new Tone.StereoWidener(0); //0: mid, 1: side
-const distortion = new Tone.Distortion(0.8);
-const bitcrusher = new Tone.BitCrusher(4);
-const tremolo = new Tone.Tremolo(9, 0.75);
-const vibrato = new Tone.Vibrato(4, 0.5);
+const stereowidener: Tone.StereoWidener = new Tone.StereoWidener(0);//0: mid, 1: side
+const distortion: Tone.Distortion       = new Tone.Distortion(0.8);
+const bitcrusher: Tone.BitCrusher       = new Tone.BitCrusher(4);
+const tremolo: Tone.Tremolo             = new Tone.Tremolo(9, 0.75);
+const vibrato: Tone.Vibrato             = new Tone.Vibrato(4, 0.5);
 /** /
 const autoFilter: Tone.AutoFilter       = new Tone.AutoFilter("4n");
 const autoPanner: Tone.AutoPanner       = new Tone.AutoPanner("4n");

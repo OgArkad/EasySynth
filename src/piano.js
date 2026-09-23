@@ -15,7 +15,7 @@ if (synthDest) {
     const StartLeft = 3;
     for (let white = 0; white < 17; white++) {
         let whiteNote = document.createElement("img");
-        whiteNote.src = "media/white.png";
+        whiteNote.src = "./white.png";
         whiteNote.style.position = "absolute";
         whiteNote.style.top = "51vh";
         whiteNote.style.left = `${StartLeft + (white * keyWidth)}vw`;
@@ -32,7 +32,7 @@ if (synthDest) {
     const blackButtons = [0.5, 1.6, 3.6, 4.6, 5.6, 7.6, 8.6, 10.6, 11.6, 12.6, 14.6, 15.6];
     blackButtons.forEach((buttonIndex, index) => {
         let blackNote = document.createElement("img");
-        blackNote.src = "media/black.png";
+        blackNote.src = "./black.png";
         blackNote.style.position = "absolute";
         blackNote.style.top = "50vh";
         blackNote.style.left = `${StartLeft + (buttonIndex * keyWidth)}vw`;

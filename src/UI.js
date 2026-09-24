@@ -5,10 +5,10 @@ const KNOB_CONFIGS = {
     'filter-knob': { minAngle: -127, maxAngle: 127 },
     'waveform-knob': { minAngle: -100, maxAngle: 100, steps: 5 },
     'sequencer-knob': { minAngle: -127, maxAngle: 127, steps: 8 },
-    'velocity-knob': { minAngle: -127, maxAngle: 127, sensitivity: 2.0 }, //ennek pedig 127-ről kéne indulnia
+    'velocity-knob': { minAngle: -127, maxAngle: 127, sensitivity: 2.0 },
     'cutoff-knob': { minAngle: -127, maxAngle: 127 },
     'unison-knob': { minAngle: -127, maxAngle: 127, steps: 4 },
-    'octave-knob': { minAngle: -90, maxAngle: 90, steps: 5 }, //ennek a 4. oktávról kéne indulnia, és összesen 8 lépés kéne bele (meg egy kicsit fura az animációja)
+    'octave-knob': { minAngle: -90, maxAngle: 90, steps: 8 },
     'semitone-knob': { minAngle: -127, maxAngle: 127, steps: 25 },
     'fine-tuning-knob': { minAngle: -127, maxAngle: 127, sensitivity: 0.5 },
     'attack-knob': { minAngle: -127, maxAngle: 127 },
@@ -77,5 +77,20 @@ function setKnobs() {
     //set_Knob("unison", unison.on ? 127 : -127); // no need, because it's an outer variable
     set_Knob("velocity", expression.gain.value * 254 - 127);
     console.log("Knobs set!");
+}
+/*                             -                           Set tempo UI                                          -                                                */
+let up = document.getElementById("tempoUp");
+let down = document.getElementById("tempDown");
+let value = document.getElementById("tempoValue");
+let tempoValue = 120;
+if (up && down && value) {
+    up.addEventListener("click", function (e) {
+        tempoValue++;
+        value.textContent = tempoValue.toString();
+    });
+    down.addEventListener("click", function (e) {
+        tempoValue--;
+        value.textContent = tempoValue.toString();
+    });
 }
 //# sourceMappingURL=UI.js.map

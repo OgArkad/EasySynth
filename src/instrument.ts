@@ -1,6 +1,7 @@
-import { PolySynth, Sequence, Gain, Filter, LFO, Panner, Synth } from "tone";
-import { loadPreset, presets, currentPreset } from "./presets.js";
+import { PolySynth, Sequence, Gain, Filter, LFO, Panner, Synth, Transport } from "tone";
+import { loadPreset, presets, currentPreset, type PresetOscillatorType } from "./presets.js";
 import { sequencer, unison } from "./effects.js";
+
 
 const seq = new Sequence((time, note) => {
     if (unison.on) synths.forEach((synth) => synth.triggerAttackRelease(note, "8n", time));
@@ -57,7 +58,7 @@ function manageKnobs (knob: string, degree: number){ // degree: -127 - 127
             preset.oscillator.octave = Math.round(degree / 127 * 4); //9 oktave
             break;
         case "semitone":
-            preset.oscillator.detune = Math.round(degree / 127 * 12) * 1000;// -120 - 120
+            preset.oscillator.detune = Math.round(degree / 127 * 12) * 100;// -120 - 120
             break;
         case "fine-tuning":
             preset.oscillator.detune = degree / 10; //-12,7 - 12,7
@@ -76,14 +77,19 @@ function manageKnobs (knob: string, degree: number){ // degree: -127 - 127
             filter.frequency.rampTo(frequency, 0.02);
             break;
         case "waveform":
-            /*const types = ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"];
-            const x: | "sine" | "square"| "triangle"| "sawtooth"| "fatsine"| "fatsquare"| "fattriangle"| "fatsawtooth" | undefined = types[Math.floor(degree/8)];
+            const types: PresetOscillatorType[] =
+            ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"];
+
+            const x = types[ Math.min(types.length - 1,Math.floor(((degree + 127) / 254) * types.length))];
             if (x === undefined) throw new Error("This shouldn't have happened, knob went throu limits");
-            preset.oscillator.type = x;*/
+            preset.oscillator.type = x;
             break;
         case "sequencer":
             sequencer.on = degree > 0;
-            if (sequencer.on) seq.start(0);
+            if (sequencer.on){
+                seq.start(0);
+                Transport.start();
+            }
             else {
                 seq.stop();
                 sequencer.sequence.length = 0;

@@ -1,5 +1,5 @@
 import { setKnobs } from "./UI.js";
-export { loadPreset, currentPreset, presets };
+export { loadPreset, loadLocalPresets, currentPreset, presets };
 function loadPreset(preset, Synth, Filter, Lfo, set = true) {
     if (!preset)
         throw new Error("Preset is undefined!");
@@ -181,5 +181,4 @@ function loadLocalPresets() {
     }
     console.log(i + " presets loaded from local machine");
 }
-loadLocalPresets();
 //# sourceMappingURL=presets.js.map

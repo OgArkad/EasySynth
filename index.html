@@ -6,14 +6,13 @@
     <title>easySynth</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="./favicon.png">
+
     <script type="module" src="src/script.js"></script>
-    <script type="module" src="src/presets.js"></script>
     <script type="module" src="src/MIDI.js"></script>
     <script type="module" src="src/UI.js"></script>
     <script type="module" src="src/oscilloscope.js"></script>
     <script type="module" src="src/piano.js"></script>
     <script type="module" src="src/sampleOptions.js"></script>
-    <script type="module" src="src/tempo.js"></script>
 </head>
 <body>
     <div id="start">Start</div>
@@ -23,7 +22,7 @@
         </div>
 
         <div id="tempo">
-            <p id="tempoValue">100</p>
+            <p id="tempoValue">120</p>
             <img src="./media/tempoAside.png" id="tempoAside">
             <img src="./media/buttonUp.png" alt="up" class="tempoButton" id="tempoUp">
             <img src="./media/buttonDown.png" alt="down" class="tempoButton" id="tempDown">
@@ -44,7 +43,7 @@
         <select name="samples" id="sampleOptions">
             <option value="default" selected>default</option>
         </select>
-        <img src="./add.png" alt="add" id="sampleAddOptions">   
+        <img src="./add.png" alt="add" id="sampleAddOptions">
 
         <div class="knob-control" style="top: 25%; right: 46%;">
             <p>FILTER</p>

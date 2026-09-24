@@ -1,7 +1,7 @@
 import type {FilterOptions, LFOOptions, PolySynth, Synth, Filter, LFO} from "tone";//no need in js;
 import { setKnobs } from "./UI.js";
-export {loadPreset, currentPreset, presets};
-export type {SynthPreset};
+export {loadPreset, loadLocalPresets, currentPreset, presets};
+export type {SynthPreset, PresetOscillatorType};
 
 type PresetOscillatorType =
     | "sine"
@@ -249,5 +249,3 @@ function loadLocalPresets(){
     }
     console.log(i + " presets loaded from local machine");
 }
-
-loadLocalPresets();

@@ -1,5 +1,5 @@
 import * as Tone from "tone";
-export { sequencer, sustain, switchSustain, unison, reverb, chorus, chorusSend, reverbSend, effects /* delay, phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, /** / autoFilter, autoPanner, cheby, pingPong, pitchShift, autoWah/**/ };
+export { sequencer, sustain, switchSustain, unison, reverb, chorus, chorusSend, reverbSend, effects };
 let sustain = false;
 function switchSustain(value = !sustain) {
     sustain = value;
@@ -18,6 +18,7 @@ const reverb = new Tone.Reverb({
     decay: 2,
     wet: 0.3
 });
+reverb.generate();
 const reverbSend = new Tone.Gain(0);
 reverb.connect(reverbSend);
 const delay = new Tone.FeedbackDelay({
@@ -29,16 +30,15 @@ const chorus = new Tone.Chorus({
     frequency: 1.5,
     delayTime: 3.5,
     depth: 0.7
-});
+}).start();
 const chorusSend = new Tone.Gain(0);
 chorus.connect(chorusSend);
-/**/
 const phaser = new Tone.Phaser({
     frequency: 80,
     octaves: 3,
     baseFrequency: 1000
 });
-const stereowidener = new Tone.StereoWidener(0); //0: mid, 1: side
+const stereowidener = new Tone.StereoWidener(0);
 const distortion = new Tone.Distortion(0.8);
 const bitcrusher = new Tone.BitCrusher(4);
 const tremolo = new Tone.Tremolo(9, 0.75);
@@ -55,5 +55,4 @@ const autoWah = new Tone.AutoWah({
     Q: 6
 });
 const effects = [phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, pingPong, autoWah];
-/**/ 
 //# sourceMappingURL=effects.js.map

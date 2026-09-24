@@ -35,8 +35,13 @@ const pressed = new Set();
 document.getElementById("start")?.addEventListener("click", async (e) => {
     if (started)
         return;
-    Preset.loadLocalPresets();
     await Tone.start();
+    const startElem = document.getElementById("start");
+    if (startElem)
+        startElem.style.display = "none";
+    started = true;
+    // 3. Load presets & connect audio chain
+    Preset.loadLocalPresets();
     synth.connect(volume);
     volume.connect(filter);
     filter.connect(panner);
@@ -47,18 +52,13 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     Effect.chorus.toDestination();
     lfo.connect(filter.frequency);
     synth.releaseAll(0);
-    synths.forEach((synth) => synth.triggerRelease());
-    Preset.loadPreset(Preset.presets[Preset.currentPreset], synth); //after every button state change need to be called
-    try {
-        await midi.init();
-    }
-    catch (err) {
-        console.error(err);
-    }
+    synths.forEach((s) => s.triggerRelease());
+    Preset.loadPreset(Preset.presets[Preset.currentPreset], synth);
     drawOscilloscope();
-    document.getElementById("start")?.remove();
-    started = true;
-    console.log("Synth started/reseted!");
+    midi.init().catch((err) => {
+        console.warn("MIDI initialization warning/error:", err);
+    });
+    console.log("Synth started/reset!");
 });
 window.onblur = function () {
     synth.releaseAll(0);

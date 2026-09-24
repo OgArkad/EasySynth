@@ -13,6 +13,7 @@
     <script type="module" src="src/oscilloscope.js"></script>
     <script type="module" src="src/piano.js"></script>
     <script type="module" src="src/sampleOptions.js"></script>
+    <script type="module" src="src/tempo.js"></script>
 </head>
 <body>
     <div id="start">Start</div>
@@ -21,10 +22,24 @@
             <canvas id="oscilloscope-canvas"></canvas>
         </div>
 
+        <div id="tempo">
+            <p id="tempoValue">100</p>
+            <img src="./media/tempoAside.png" id="tempoAside">
+            <img src="./media/buttonUp.png" alt="up" class="tempoButton" id="tempoUp">
+            <img src="./media/buttonDown.png" alt="down" class="tempoButton" id="tempDown">
+        </div>
+        <img src="./media/Play.png" alt="play" class="media" id="play">
+        <img src="./media/Pause.png" alt="pause" class="media" id="pause">
+        <img src="./media/Record.png" alt="record" class="media" id="record">
+
+        <div class="switch-control">
+                <img src="./media/NutOfTheSwitch.png" alt="switch" id="">
+        </div>
+
         <select name="samples" id="sampleOptions">
             <option value="default" selected>default</option>
         </select>
-        <img src="./add.png" alt="add" id="sampleAddOptions">
+        <img src="./add.png" alt="add" id="sampleAddOptions">   
 
         <div class="knob-control" style="top: 25%; right: 46%;">
             <p>FILTER</p>

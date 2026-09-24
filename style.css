@@ -120,6 +120,85 @@ body {
   position: absolute;
   left: 39%;
   top: 30%;
-  height: 2vw;
+  height: 4vh;
   width: 6vw;
+}
+
+/*
+  <div id="tempo">
+      <p id="tempoValue">100</p>
+      <button class="tempoButton" id="tempoUp"></button>
+      <button class="tempoButton" id="tempDown"></button>
+  </div>
+*/
+#tempo {
+  background-color: #000000;
+  width: 8vw;          
+  height: 5vw;
+  position: absolute;
+  left: 39%;
+  top: 5%;
+  overflow: hidden;    
+  display: flex;       
+  align-items: center;
+  justify-content: center;
+}
+
+#tempoValue {
+  color: red;
+  font-size: 3vw;      
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1;
+  text-shadow: 
+  0 0 3px #ff0000,
+  0 0 9px #ff0000;
+
+  position: absolute;
+  left: 6%;
+}
+
+.tempoButton {
+  width: 2vw;
+  height: 2vw;
+  cursor: pointer;
+}
+
+#tempoUp {
+  position: absolute;
+  right: 0.5%;
+  top: 0%;
+}
+
+#tempDown {
+  position: absolute;
+  right: 0.5%;
+  bottom: 0%;
+}
+
+#tempoAside{
+  position: absolute;
+  right: 0%;
+
+  width: 2vw;
+}
+
+.media{
+  width: 2vw;
+  height: 2vw;
+}
+
+#play{
+  position: absolute;
+  top: 15%;
+  left: 40%;
+}
+#pause{
+  position: absolute;
+  top: 15%;
+  left: 42%;
+}
+#record{
+  position: absolute;
+  top: 15%;
+  left: 44%;
 }

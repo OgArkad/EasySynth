@@ -1,5 +1,6 @@
 import * as Tone from "tone";
-export {sequencer, sustain, switchSustain, unison,  reverb, chorus, chorusSend, reverbSend, /* delay, phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, /** / autoFilter, autoPanner, cheby, pingPong, pitchShift, autoWah/**/};
+export {sequencer, sustain, switchSustain, unison,  reverb, chorus, chorusSend, reverbSend, effects /* delay, phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, /** / autoFilter, autoPanner, cheby, pingPong, pitchShift, autoWah/**/};
+
 
 let sustain = false;
 
@@ -15,11 +16,9 @@ const unison = {
 
 const sequencer = {
     on: false,
-    sequence: ["C4"],
+    sequence: [] as string[],
     sequences: "8n"
 }
-
-sequencer.sequence.length = 0;//removing C4, but needed in declaration, because of type, else null
 
 const reverb: Tone.Reverb = new Tone.Reverb({
     decay: 2,
@@ -43,7 +42,8 @@ const chorus: Tone.Chorus = new Tone.Chorus({
 
 const chorusSend = new Tone.Gain(0);
 chorus.connect(chorusSend);
-/*
+
+/**/
 const phaser: Tone.Phaser = new Tone.Phaser({
     frequency: 80,
     octaves: 3,
@@ -54,7 +54,7 @@ const distortion: Tone.Distortion       = new Tone.Distortion(0.8);
 const bitcrusher: Tone.BitCrusher       = new Tone.BitCrusher(4);
 const tremolo: Tone.Tremolo             = new Tone.Tremolo(9, 0.75);
 const vibrato: Tone.Vibrato             = new Tone.Vibrato(4, 0.5);
-/** /
+
 const autoFilter: Tone.AutoFilter       = new Tone.AutoFilter("4n");
 const autoPanner: Tone.AutoPanner       = new Tone.AutoPanner("4n");
 const cheby: Tone.Chebyshev             = new Tone.Chebyshev(50);
@@ -66,4 +66,6 @@ const autoWah: Tone.AutoWah             = new Tone.AutoWah({
     sensitivity: -30,
     Q: 6
 });
+
+const effects = [phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, pingPong, autoWah];
 /**/

@@ -1,11 +1,11 @@
+import * as Tone from "tone"; //npm install tone
 import MIDI from "./MIDI.js";
 import * as Effect from "./effects.js";
-import * as Tone from "tone"; //npm install tone
 import { synth, filter, lfo, panner, expression, synths, volume } from "./instrument.js";
 import * as Preset from "./presets.js";
 import { sequencer } from "./effects.js";
 import { drawOscilloscope } from "./oscilloscope.js";
-//npm run dev localhosthoz, véglegessen pedig npm run build
+//localhost: npm run dev, build: npm run build
 const midi = new MIDI;
 let started = false;
 export const waveform = new Tone.Waveform(1024); //ez inkább az instrument.ts-be illik...
@@ -35,6 +35,7 @@ const pressed = new Set();
 document.getElementById("start")?.addEventListener("click", async (e) => {
     if (started)
         return;
+    Preset.loadLocalPresets();
     await Tone.start();
     synth.connect(volume);
     volume.connect(filter);
@@ -78,6 +79,7 @@ document.addEventListener("keydown", (e) => {
             sequencer.sequence.push(note);
     }
     console.log(sequencer.sequence);
+    console.log(Tone.Transport.state);
 });
 document.addEventListener("keyup", (e) => {
     let note = keyboard[e.key];

@@ -12,7 +12,8 @@ const unison = {
 const sequencer = {
     on: false,
     sequence: [],
-    sequences: "8n"
+    sequences: "8n",
+    recording: false
 };
 const reverb = new Tone.Reverb({
     decay: 2,

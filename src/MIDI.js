@@ -4,8 +4,8 @@ import { Frequency } from "tone";
 export default class MIDI {
     access;
     input;
-    async playSound(note, velocity) {
-        synth.triggerAttack(Frequency(note, "midi").toFrequency(), undefined, velocity / 127);
+    async playSound(note, gain) {
+        synth.triggerAttack(Frequency(note, "midi").toFrequency(), undefined, gain / 127);
     }
     async releaseSound(note) {
         synth.triggerRelease(Frequency(note, "midi").toFrequency());
@@ -51,12 +51,12 @@ export default class MIDI {
         //console.log(msg);
         const type = msg[0] & 0xF0;
         const note = msg[1];
-        const velocity = msg[2];
-        if (type === 0x90 && velocity > 0)
-            return [1, note, velocity];
-        if (type === 0x80 || (type === 0x90 && velocity === 0))
+        const gain = msg[2];
+        if (type === 0x90 && gain > 0)
+            return [1, note, gain];
+        if (type === 0x80 || (type === 0x90 && gain === 0))
             return [0, note];
-        return [type, note, velocity];
+        return [type, note, gain];
     }
     handleMessage(msg) {
         if (msg === undefined || this.playSound === undefined || this.releaseSound === undefined)

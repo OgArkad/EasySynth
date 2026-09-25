@@ -1,5 +1,8 @@
 import {expression, manageKnobs} from "./instrument.js";
-import { presets, currentPreset } from "./presets.js";
+import { presets, currentPreset, type PresetOscillatorType, type SynthPreset } from "./presets.js";
+import { sequencer } from "./effects.js";
+import { seq } from "./instrument.js";
+import { Transport } from "tone";
 export {setKnobs};
 
 interface KnobConfig {
@@ -11,9 +14,9 @@ interface KnobConfig {
 
 const KNOB_CONFIGS: Record<string, KnobConfig> = {
   'filter-knob':      { minAngle: -127, maxAngle: 127 },
-  'waveform-knob':    { minAngle: -100, maxAngle: 100, steps: 5 },
+  'waveform-knob':    { minAngle: -100, maxAngle: 100, steps: 8 },
   'sequencer-knob':   { minAngle: -127, maxAngle: 127, steps: 8 },
-  'velocity-knob':    { minAngle: -127, maxAngle: 127, sensitivity: 2.0 },
+  'gain-knob':    { minAngle: -127, maxAngle: 127, sensitivity: 2.0 },
   'cutoff-knob':      { minAngle: -127, maxAngle: 127 },
   'unison-knob':      { minAngle: -127, maxAngle: 127, steps: 4 },
   'octave-knob':      { minAngle: -90,  maxAngle: 90,  steps: 8 },
@@ -72,14 +75,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function setKnobs(){
-  console.log("trying");
   function set_Knob(knob: string, deg: number){
     const x: HTMLElement | null = document.getElementById(knob + "-knob");
     if (x == null) return;
     x.style.transform =  `rotate(${deg}deg)`;
   }
 
-  const pres = presets[currentPreset];
+  const pres: SynthPreset | undefined = presets[currentPreset];
   if (pres === undefined) throw new Error("This shouldn't have happened, you selected a non-existing preset! (Trying to rotate knobs in position)");
   if (pres.filter){
     set_Knob("cutoff",  Math.log( pres.filter.frequency / 20) / Math.log(20000 / 20) * 254 - 127 );
@@ -90,13 +92,14 @@ function setKnobs(){
   set_Knob("sustain", pres.envelope.sustain * 254 - 127);
   set_Knob("release", pres.envelope.release * 100 - 127);
 
+  set_Knob("waveform", ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"].indexOf(pres.oscillator.type) * 32 - 127); //254/8 = 31,75
   set_Knob("octave",  pres.oscillator.octave  / 4 * 127);
   set_Knob("semitone", pres.oscillator.detune / 1000 / 12 * 127);
   set_Knob("fine-tuning", pres.oscillator.detune * 10);
   //set_Knob("unison", unison.on ? 127 : -127); // no need, because it's an outer variable
 
-  set_Knob("velocity", expression.gain.value * 254 - 127);
-  console.log("Knobs set!");
+  set_Knob("gain", expression.gain.value * 254 - 127);
+  console.info("Knobs set!");
 }
 
 /*                             -                           Set tempo UI                                          -                                                */
@@ -104,19 +107,40 @@ let up = document.getElementById("tempoUp");
 let down = document.getElementById("tempDown");
 let value = document.getElementById("tempoValue");
 
-let tempoValue = 120;
+let tempoValue: number = 120;
 
 if (up && down && value) {
   up.addEventListener("click", function (e) {
     tempoValue++;
     value.textContent = tempoValue.toString();
+    Transport.bpm.value = tempoValue;
   });
 
   down.addEventListener("click", function (e) {
     tempoValue--;
     value.textContent = tempoValue.toString();
+    Transport.bpm.value = tempoValue;
   });
 }
+
+document.getElementById("play")?.addEventListener("click", () => {
+  if (sequencer.on) return
+  seq.start(0);
+  Transport.start();
+  sequencer.recording = true;
+});
+
+document.getElementById("pause")?.addEventListener("click", () => {
+  if (!sequencer.on) return
+  seq.stop();
+  sequencer.sequence.length = 0;
+});
+
+document.getElementById("record")?.addEventListener("click", () => {
+  if (!sequencer.on) return
+  sequencer.recording = !sequencer.recording;
+});
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const switches = document.querySelectorAll<HTMLImageElement>('.switch');

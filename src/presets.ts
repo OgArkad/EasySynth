@@ -240,8 +240,8 @@ function toSynthPreset(x: String): SynthPreset{
 }
 
 function loadLocalPresets(){
-    let i = 0;
-    let x = localStorage.getItem("preset" + i);
+    let i: number = 0;
+    let x: string | null = localStorage.getItem("preset" + i);
     while ((x != null || x != undefined) && i < 150)//max 150 items
     {
         presets.push(toSynthPreset(x));

@@ -1,9 +1,10 @@
-import { PolySynth, Sequence, Gain, Filter, LFO, Panner, Synth, Transport } from "tone";
+import { PolySynth, Sequence, Gain, Filter, LFO, Panner, Synth, Transport, Waveform, type SynthOptions } from "tone";
 import { loadPreset, presets, currentPreset, type PresetOscillatorType } from "./presets.js";
 import { sequencer, unison } from "./effects.js";
 
+const waveform: Waveform = new Waveform(1024);
 
-const seq = new Sequence((time, note) => {
+export const seq: Sequence<string> = new Sequence((time, note) => {
     if (unison.on) synths.forEach((synth) => synth.triggerAttackRelease(note, "8n", time));
     else synth.triggerAttackRelease(note, "8n", time);
     console.log("sequencing it");
@@ -11,18 +12,18 @@ const seq = new Sequence((time, note) => {
 
 const synth: PolySynth = new PolySynth();
 
-let volume = new Gain(1);
+let volume: Gain<"gain"> = new Gain(1);
 
-const filter = new Filter();
-const lfo = new LFO({
+const filter: Filter = new Filter();
+const lfo: LFO = new LFO({
     min: 500,
     max: 5000,
     phase: 0,
 });
-const panner = new Panner(0);
-const expression = new Gain(1);
+const panner: Panner = new Panner(0);
+const expression: Gain<"gain"> = new Gain(1);
 
-const synths = Array.from({ length: unison.voices }, (_, i) => {
+const synths: Synth<SynthOptions>[] = Array.from({ length: unison.voices }, (_, i) => {
     const singleSynth = new Synth();
     loadPreset(presets[currentPreset], singleSynth, filter, lfo, false);
 
@@ -34,7 +35,7 @@ const synths = Array.from({ length: unison.voices }, (_, i) => {
     return singleSynth;
 });
 
-export { synth, filter, lfo, panner, expression, synths, manageKnobs, volume};
+export {waveform, synth, filter, lfo, panner, expression, synths, manageKnobs, volume};
 
 function manageKnobs (knob: string, degree: number){ // degree: -127 - 127
     const preset = presets[currentPreset];
@@ -73,12 +74,15 @@ function manageKnobs (knob: string, degree: number){ // degree: -127 - 127
             break;
 
         case "filter":
-            const frequency = 50 * Math.pow(15000 / 50, ((degree + 127) / 254));// min: 50, max: 15000
-            filter.frequency.rampTo(frequency, 0.02);
+            console.debug(degree);
+            const frequency = Math.floor(50 * Math.pow(15000 / 50, ((degree + 127) / 254)));// min: 50, max: 15000
+            console.debug(frequency);
+            filter.frequency.rampTo(frequency, 0.2);
+            console.debug(filter.frequency.value);
             break;
         case "waveform":
             const types: PresetOscillatorType[] =
-            ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"];
+            ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"];//8
 
             const x = types[ Math.min(types.length - 1,Math.floor(((degree + 127) / 254) * types.length))];
             if (x === undefined) throw new Error("This shouldn't have happened, knob went throu limits");
@@ -95,8 +99,8 @@ function manageKnobs (knob: string, degree: number){ // degree: -127 - 127
                 sequencer.sequence.length = 0;
             }
             break;
-        case "velocity":
-            expression.gain.rampTo((degree + 127) / 254, 0.02);
+        case "gain":
+            expression.gain.rampTo((degree + 127) / 254, 0.2);
             break;
 
 
@@ -107,3 +111,4 @@ function manageKnobs (knob: string, degree: number){ // degree: -127 - 127
     if (!unison.on) loadPreset(preset, synth, undefined, undefined, false);
     else synths.forEach((synth) => loadPreset(preset, synth, undefined, undefined, false));
 }
+

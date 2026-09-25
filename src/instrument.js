@@ -1,7 +1,8 @@
-import { PolySynth, Sequence, Gain, Filter, LFO, Panner, Synth, Transport } from "tone";
+import { PolySynth, Sequence, Gain, Filter, LFO, Panner, Synth, Transport, Waveform } from "tone";
 import { loadPreset, presets, currentPreset } from "./presets.js";
 import { sequencer, unison } from "./effects.js";
-const seq = new Sequence((time, note) => {
+const waveform = new Waveform(1024);
+export const seq = new Sequence((time, note) => {
     if (unison.on)
         synths.forEach((synth) => synth.triggerAttackRelease(note, "8n", time));
     else
@@ -27,7 +28,7 @@ const synths = Array.from({ length: unison.voices }, (_, i) => {
     singleSynth.detune.value = (i - 2) * unison.detune;
     return singleSynth;
 });
-export { synth, filter, lfo, panner, expression, synths, manageKnobs, volume };
+export { waveform, synth, filter, lfo, panner, expression, synths, manageKnobs, volume };
 function manageKnobs(knob, degree) {
     const preset = presets[currentPreset];
     if (!preset)
@@ -63,11 +64,14 @@ function manageKnobs(knob, degree) {
             unison.on = degree > 0;
             break;
         case "filter":
-            const frequency = 50 * Math.pow(15000 / 50, ((degree + 127) / 254)); // min: 50, max: 15000
-            filter.frequency.rampTo(frequency, 0.02);
+            console.debug(degree);
+            const frequency = Math.floor(50 * Math.pow(15000 / 50, ((degree + 127) / 254))); // min: 50, max: 15000
+            console.debug(frequency);
+            filter.frequency.rampTo(frequency, 0.2);
+            console.debug(filter.frequency.value);
             break;
         case "waveform":
-            const types = ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"];
+            const types = ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"]; //8
             const x = types[Math.min(types.length - 1, Math.floor(((degree + 127) / 254) * types.length))];
             if (x === undefined)
                 throw new Error("This shouldn't have happened, knob went throu limits");
@@ -84,8 +88,8 @@ function manageKnobs(knob, degree) {
                 sequencer.sequence.length = 0;
             }
             break;
-        case "velocity":
-            expression.gain.rampTo((degree + 127) / 254, 0.02);
+        case "gain":
+            expression.gain.rampTo((degree + 127) / 254, 0.2);
             break;
         default:
             console.error("Unexpected knob: " + knob + ": " + degree);

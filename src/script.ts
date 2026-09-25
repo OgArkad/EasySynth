@@ -1,7 +1,7 @@
-import * as Tone from "tone"; //npm install tone
+import {start} from "tone"; //npm install tone
 import MIDI from "./MIDI.js";
 import * as Effect from "./effects.js";
-import {synth, filter, lfo, panner, expression, synths, volume} from "./instrument.js";
+import {synth, filter, lfo, panner, expression, synths, volume, waveform} from "./instrument.js";
 import * as Preset from "./presets.js";
 import { sequencer } from "./effects.js";
 import { drawOscilloscope } from "./oscilloscope.js";
@@ -9,8 +9,6 @@ import { drawOscilloscope } from "./oscilloscope.js";
 
 const midi: MIDI = new MIDI;
 let started: boolean = false;
-
-export const waveform = new Tone.Waveform(1024);//ez inkább az instrument.ts-be illik...
 
 const keyboardonehun: Record<string, string> = {//higher notes, because usually you hear thet cleaner (due to technology)
         w: "C#5", e: "D#5",        t: "F#5", z: "G#5", u: "A#5",
@@ -43,15 +41,27 @@ const pressed: Set<string> = new Set<string>();
 document.getElementById("start")?.addEventListener("click", async (e) => {
     if (started) return;
 
-    await Tone.start();
+    await start(); //aka Tone.start
 
     const startElem = document.getElementById("start");
-    if (startElem) startElem.style.display = "none"; 
+    if (startElem) startElem.style.display = "none";
     started = true;
 
     // 3. Load presets & connect audio chain
     Preset.loadLocalPresets();
 
+    await start();// aka Tone.start();
+
+    synths.forEach((synth) => {
+        synth.connect(volume);
+        volume.connect(filter);
+        filter.connect(panner);
+        panner.connect(expression);
+        expression.connect(Effect.reverb);
+        Effect.reverb.connect(Effect.chorus);
+        Effect.chorus.connect(waveform);
+        Effect.chorus.toDestination();
+    });
     synth.connect(volume);
     volume.connect(filter);
     filter.connect(panner);
@@ -83,17 +93,13 @@ window.onblur = function(){synth.releaseAll(0);
 
 document.addEventListener("keydown", (e) => {
     if (e.repeat || !started) return;
-    console.log(e.key);
     let note = keyboard[e.key];
     if (note != undefined){
         if (!Effect.unison.on) synth.triggerAttack(note);
         else synths.forEach((synth) => synth.triggerAttack(note));
         pressed.add(note);
-        if (Effect.sequencer.on) sequencer.sequence.push(note);
+        if (Effect.sequencer.recording) sequencer.sequence.push(note);
     }
-    
-    console.log(sequencer.sequence);
-    console.log(Tone.Transport.state);
 });
 
 document.addEventListener("keyup", (e) => {
@@ -105,6 +111,6 @@ document.addEventListener("keyup", (e) => {
     }
 });
 
-console.log("script.js loaded!");
+console.debug("script.js loaded!");
 
 // (x,e *3, g, 6 *3, m, i * 3, b,z *3 )

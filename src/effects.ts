@@ -24,10 +24,11 @@ const unison = {
 };
 
 const sequencer = {
-  on: false,
-  sequence: [] as string[],
-  sequences: "8n"
-};
+    on: false,
+    sequence: [] as string[],
+    sequences: "8n",
+    recording: false
+}
 
 const reverb: Tone.Reverb = new Tone.Reverb({
   decay: 2,

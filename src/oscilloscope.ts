@@ -1,4 +1,4 @@
-import { waveform } from "./script.js";
+import { waveform } from "./instrument.js";
 
 const canvas = document.getElementById("oscilloscope-canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d")!;

@@ -53,10 +53,17 @@ body {
   text-align: center;
 }
 
+.switch-nut{
+  width: 3vw;
+}
+.switch{
+  width: 3vw;
+}
+
 .switch{
   position: absolute;
-  top: 52%;
-  right: 42%;
+  top: 58%;
+  right: 48%;
 }
 
 #start {
@@ -128,7 +135,7 @@ body {
 #sampleAddOptions{
   position: absolute;
   left: 46%;
-  top: 30%;
+  top: 33%;
   height: 2vw;
   width: 2vw;
 }
@@ -138,12 +145,12 @@ body {
   color: green;
   font-family: Arial, Helvetica, sans-serif;
   text-align: center;
-  font-size: 2rem;
+  font-size: 1vw;
   border-radius: 8px;
 
   position: absolute;
   left: 39%;
-  top: 30%;
+  top: 33%;
   height: 4vh;
   width: 6vw;
 }

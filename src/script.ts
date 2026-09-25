@@ -10,7 +10,7 @@ import { drawOscilloscope } from "./oscilloscope.js";
 const midi: MIDI = new MIDI;
 let started: boolean = false;
 
-const keyboardonehun: Record<string, string> = {//higher notes, because usually you hear thet cleaner (due to technology)
+const keyboardonehun: Record<string, string> = {//higher notes, because usually you hear them cleaner (due to technologycal issues)
         w: "C#5", e: "D#5",        t: "F#5", z: "G#5", u: "A#5",
     a: "C5", s: "D5", d: "E5", f: "F5", g: "G5", h: "A5", j: "B5", k: "C6"
 };
@@ -34,7 +34,7 @@ const keyboardtwoeng: Record<string, string> = {
     z: "C4",
 };
 
-let keyboard = keyboardtwohun;
+let keyboard:Record<string, string | undefined> = keyboardtwohun;
 
 const pressed: Set<string> = new Set<string>();
 

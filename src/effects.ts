@@ -1,4 +1,5 @@
 import * as Tone from "tone";
+import type { Effect } from "tone/build/esm/effect/Effect.js";
 export {
   sequencer,
   sustain,
@@ -11,10 +12,10 @@ export {
   effects
 };
 
-let sustain = false;
+let sustain: boolean = false;
 
-function switchSustain(value = !sustain) {
-  sustain = value;
+function switchSustain(value: boolean = !sustain){
+    sustain = value;
 }
 
 const unison = {
@@ -36,7 +37,7 @@ const reverb: Tone.Reverb = new Tone.Reverb({
 });
 reverb.generate(); 
 
-const reverbSend = new Tone.Gain(0);
+const reverbSend: Tone.Gain<"gain"> = new Tone.Gain(0);
 reverb.connect(reverbSend);
 
 const delay: Tone.FeedbackDelay = new Tone.FeedbackDelay({
@@ -51,7 +52,7 @@ const chorus: Tone.Chorus = new Tone.Chorus({
   depth: 0.7
 }).start();
 
-const chorusSend = new Tone.Gain(0);
+const chorusSend: Tone.Gain<"gain"> = new Tone.Gain(0);
 chorus.connect(chorusSend);
 
 const phaser: Tone.Phaser = new Tone.Phaser({
@@ -77,4 +78,9 @@ const autoWah: Tone.AutoWah = new Tone.AutoWah({
   Q: 6
 });
 
-const effects = [phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, pingPong, autoWah];
+type effectType = (Tone.Phaser | Tone.StereoWidener | Tone.Distortion | Tone.BitCrusher | Tone.Tremolo | Tone.Vibrato | Tone.PingPongDelay | Tone.AutoWah | Tone.Reverb | Tone.Gain
+    | Tone.FeedbackDelay | Tone.Chorus | Tone.Phaser | Tone.StereoWidener | Tone.Distortion | Tone.BitCrusher | Tone.Tremolo | Tone.Vibrato | Tone.AutoFilter | Tone.AutoPanner
+    | Tone.Chebyshev | Tone.PingPongDelay | Tone.PitchShift | Tone.AutoWah);
+
+const effects: effectType[] = [phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, pingPong, autoWah];
+/**/

@@ -1,4 +1,4 @@
-import { PolySynth, Sequence, Gain, Filter, LFO, Panner, Synth, Transport, Waveform } from "tone";
+import { PolySynth, Sequence, Gain, Filter, LFO, Panner, Synth, Transport, Waveform, type SynthOptions } from "tone";
 import { loadPreset, presets, currentPreset, type PresetOscillatorType } from "./presets.js";
 import { sequencer, unison } from "./effects.js";
 
@@ -14,16 +14,16 @@ const synth: PolySynth = new PolySynth();
 
 let volume: Gain<"gain"> = new Gain(1);
 
-const filter = new Filter();
-const lfo = new LFO({
+const filter: Filter = new Filter();
+const lfo: LFO = new LFO({
     min: 500,
     max: 5000,
     phase: 0,
 });
-const panner = new Panner(0);
-const expression = new Gain(1);
+const panner: Panner = new Panner(0);
+const expression: Gain<"gain"> = new Gain(1);
 
-const synths = Array.from({ length: unison.voices }, (_, i) => {
+const synths: Synth<SynthOptions>[] = Array.from({ length: unison.voices }, (_, i) => {
     const singleSynth = new Synth();
     loadPreset(presets[currentPreset], singleSynth, filter, lfo, false);
 

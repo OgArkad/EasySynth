@@ -121,45 +121,28 @@ if (up && down && value) {
 document.addEventListener('DOMContentLoaded', () => {
   const switches = document.querySelectorAll<HTMLImageElement>('.switch');
 
-  switches.forEach((knob) => {
-    const config = KNOB_CONFIGS[knob.id] || { minAngle: -127, maxAngle: 127 };
-    const { minAngle, maxAngle, steps, sensitivity = 1.5 } = config;
+  switches.forEach((switchOne) => {
+    switchOne.style.position = "absolute";
+    switchOne.style.top = "50%";
+    switchOne.style.right = "33%";
 
-    let currentAngle = minAngle;
-    knob.style.transform = `rotate(${currentAngle}deg)`;
-
-    knob.addEventListener('mousedown', (e: MouseEvent) => {
-      e.preventDefault();
-      let startY = e.clientY;
-
-      const onMouseMove = (moveEvent: MouseEvent) => {
-        const deltaY = startY - moveEvent.clientY;
-        startY = moveEvent.clientY;
-
-        let targetAngle = currentAngle + deltaY * sensitivity;
-        targetAngle = Math.min(maxAngle, Math.max(minAngle, targetAngle));
-
-        if (steps && steps > 1) {
-          const range = maxAngle - minAngle;
-          const stepSize = range / (steps - 1);
-          const currentStep = Math.round((targetAngle - minAngle) / stepSize);
-
-          currentAngle = minAngle + currentStep * stepSize;
-          knob.style.transform = `rotate(${currentAngle}deg)`;
-        } else {
-          currentAngle = targetAngle;
-          knob.style.transform = `rotate(${currentAngle}deg)`;
-        }
-        manageKnobs(knob.id.replace("-knob", ""), currentAngle);
-      };
-
-      const onMouseUp = () => {
-        window.removeEventListener('mousemove', onMouseMove);
-        window.removeEventListener('mouseup', onMouseUp);
-      };
-
-      window.addEventListener('mousemove', onMouseMove);
-      window.addEventListener('mouseup', onMouseUp);
+    switchOne.addEventListener('click', (e: MouseEvent) => {
+      if (switchOne.dataset.works === "off") {
+        switchOne.src = "./media/switchRight.png";
+        switchOne.dataset.works = "on";
+        switchOne.style.top = "50%";
+        switchOne.style.right = "66%";
+      } else {
+        switchOne.src = "./media/switchLeft.png";
+        switchOne.dataset.works = "off";
+        switchOne.style.top = "50%";
+        switchOne.style.right = "33%";
+      }
     });
   });
 });
+/*
+  position: absolute;
+  top: 50%;
+  right: 48%;
+*/

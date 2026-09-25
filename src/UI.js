@@ -93,4 +93,31 @@ if (up && down && value) {
         value.textContent = tempoValue.toString();
     });
 }
+document.addEventListener('DOMContentLoaded', () => {
+    const switches = document.querySelectorAll('.switch');
+    switches.forEach((switchOne) => {
+        switchOne.style.position = "absolute";
+        switchOne.style.top = "50%";
+        switchOne.style.right = "33%";
+        switchOne.addEventListener('click', (e) => {
+            if (switchOne.dataset.works === "off") {
+                switchOne.src = "./media/switchRight.png";
+                switchOne.dataset.works = "on";
+                switchOne.style.top = "50%";
+                switchOne.style.right = "66%";
+            }
+            else {
+                switchOne.src = "./media/switchLeft.png";
+                switchOne.dataset.works = "off";
+                switchOne.style.top = "50%";
+                switchOne.style.right = "33%";
+            }
+        });
+    });
+});
+/*
+  position: absolute;
+  top: 50%;
+  right: 48%;
+*/ 
 //# sourceMappingURL=UI.js.map

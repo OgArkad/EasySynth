@@ -18,7 +18,12 @@ const synth: PolySynth = new PolySynth();
 
 let volume: Gain<"gain"> = new Gain(1);
 
-const filter: Filter = new Filter();
+const filter: Filter = new Filter({
+    type: "lowpass",
+    frequency: 15000,
+    Q: 1
+});
+
 const lfo: LFO = new LFO({
     min: 500,
     max: 5000,
@@ -38,6 +43,7 @@ const synths: Synth<SynthOptions>[] = Array.from({ length: unison.voices }, (_, 
 
     return singleSynth;
 });
+
 
 export {waveform, synth, filter, lfo, panner, expression, synths, manageKnobs, volume};
 
@@ -70,23 +76,21 @@ function manageKnobs (knob: string, degree: number){ // degree: -127 - 127
             break;
 
         case "cutoff":
-            if (!preset.filter) return;
-            preset.filter.frequency = 20 * Math.pow(20000 / 20, (degree + 127) / 254); //min 20, max: 20000
+            const frequency = Math.floor(50 * Math.pow(15000 / 50, ((degree + 127) / 254)));// min: 50, max: 15000
+            filter.frequency.value = frequency;
             break;
         case "unison":
             unison.on = degree > 0;
             break;
 
         case "filter":
-            console.debug(degree);
-            const frequency = Math.floor(50 * Math.pow(15000 / 50, ((degree + 127) / 254)));// min: 50, max: 15000
-            console.debug(frequency);
-            filter.frequency.rampTo(frequency, 0.2);
-            console.debug(filter.frequency.value);
+            const filter_types: BiquadFilterType[] = ["lowpass", "highpass", "lowshelf", "highshelf", "notch", "allpass", "peaking"];
+            let xtype: BiquadFilterType | undefined = filter_types[Math.floor((degree + 127) / 254 * 6)];
+            if (xtype == undefined) throw new Error("undefined filter type.");
+            filter.type = xtype;
             break;
         case "waveform":
-            const types: PresetOscillatorType[] =
-            ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"];//8
+            const types: PresetOscillatorType[] = ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"];//8
 
             const x = types[ Math.min(types.length - 1,Math.floor(((degree + 127) / 254) * types.length))];
             if (x === undefined) throw new Error("This shouldn't have happened, knob went throu limits");

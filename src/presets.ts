@@ -1,4 +1,5 @@
 import type {FilterOptions, LFOOptions, PolySynth, Synth, Filter, LFO} from "tone";//no need in js;
+import { filter } from "./instrument.js";
 import { setKnobs } from "./UI.js";
 export {loadPreset, loadLocalPresets, currentPreset, switchPreset, presets};
 export type {SynthPreset, PresetOscillatorType};
@@ -55,8 +56,10 @@ function loadPreset(
         envelope: preset.envelope
     });
 
-    if (preset.filter && Filter) {
-        Filter.set(preset.filter);
+    if (preset.filter && filter) {
+        preset.filter.frequency = parseInt(filter.frequency.value.toString());
+        preset.filter.type = filter.type;
+        filter.set(preset.filter);
     }
 
     if (preset.lfo && Lfo) {

@@ -1,11 +1,10 @@
-import { expression, manageKnobs } from "./instrument.js";
+import { expression, manageKnobs, filter, seq } from "./instrument.js";
 import { presets, currentPreset } from "./presets.js";
 import { sequencer } from "./effects.js";
-import { seq } from "./instrument.js";
 import { Transport } from "tone";
 export { setKnobs };
 const KNOB_CONFIGS = {
-    'filter-knob': { minAngle: -127, maxAngle: 127 },
+    'filter-knob': { minAngle: -127, maxAngle: 127, steps: 7 },
     'waveform-knob': { minAngle: -100, maxAngle: 100, steps: 8 },
     'sequencer-knob': { minAngle: -127, maxAngle: 127, steps: 8 },
     'gain-knob': { minAngle: -127, maxAngle: 127, sensitivity: 2.0 },
@@ -66,9 +65,8 @@ function setKnobs() {
     const pres = presets[currentPreset];
     if (pres === undefined)
         throw new Error("This shouldn't have happened, you selected a non-existing preset! (Trying to rotate knobs in position)");
-    if (pres.filter) {
-        set_Knob("cutoff", Math.log(pres.filter.frequency / 20) / Math.log(20000 / 20) * 254 - 127);
-    }
+    set_Knob("cutoff", Math.log(parseInt(filter.frequency.value.toString()) / 20) / Math.log(20000 / 20) * 254 - 127);
+    set_Knob("filter", ["lowpass", "highpass", "lowshelf", "highshelf", "notch", "allpass", "peaking"].indexOf(filter.type) / 6 * 254 - 127);
     set_Knob("attack", pres.envelope.attack * 200 - 127);
     set_Knob("decay", pres.envelope.decay * 100 - 127);
     set_Knob("sustain", pres.envelope.sustain * 254 - 127);

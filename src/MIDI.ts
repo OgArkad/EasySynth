@@ -96,6 +96,7 @@ export default class MIDI {
                     filter.Q.rampTo(msg[2] / 127 * 15, 0.02);
                     break;
                 case 74: //filter cutoff
+                //if()
                     const frequency = 50 * Math.pow(15000 / 50, msg[2] / 127);// min: 50, max: 15000
                     filter.frequency.rampTo(frequency, 0.02);
                     break;

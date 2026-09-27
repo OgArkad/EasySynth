@@ -14,7 +14,11 @@ const pattern = new Pattern(function (time, note) {
 }, ["C4", "D4", "E4", "G4", "A4"]);
 const synth = new PolySynth();
 let volume = new Gain(1);
-const filter = new Filter();
+const filter = new Filter({
+    type: "lowpass",
+    frequency: 15000,
+    Q: 1
+});
 const lfo = new LFO({
     min: 500,
     max: 5000,
@@ -59,19 +63,18 @@ function manageKnobs(knob, degree) {
             preset.oscillator.detune = degree / 10; //-12,7 - 12,7
             break;
         case "cutoff":
-            if (!preset.filter)
-                return;
-            preset.filter.frequency = 20 * Math.pow(20000 / 20, (degree + 127) / 254); //min 20, max: 20000
+            const frequency = Math.floor(50 * Math.pow(15000 / 50, ((degree + 127) / 254))); // min: 50, max: 15000
+            filter.frequency.value = frequency;
             break;
         case "unison":
             unison.on = degree > 0;
             break;
         case "filter":
-            console.debug(degree);
-            const frequency = Math.floor(50 * Math.pow(15000 / 50, ((degree + 127) / 254))); // min: 50, max: 15000
-            console.debug(frequency);
-            filter.frequency.rampTo(frequency, 0.2);
-            console.debug(filter.frequency.value);
+            const filter_types = ["lowpass", "highpass", "lowshelf", "highshelf", "notch", "allpass", "peaking"];
+            let xtype = filter_types[Math.floor((degree + 127) / 254 * 6)];
+            if (xtype == undefined)
+                throw new Error("undefined filter type.");
+            filter.type = xtype;
             break;
         case "waveform":
             const types = ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"]; //8

@@ -1,3 +1,4 @@
+import { filter } from "./instrument.js";
 import { setKnobs } from "./UI.js";
 export { loadPreset, loadLocalPresets, currentPreset, switchPreset, presets };
 function loadPreset(preset, Synth, Filter, Lfo, set = true) {
@@ -7,8 +8,9 @@ function loadPreset(preset, Synth, Filter, Lfo, set = true) {
         oscillator: preset.oscillator,
         envelope: preset.envelope
     });
-    if (preset.filter && Filter) {
-        Filter.set(preset.filter);
+    if (preset.filter && filter) {
+        preset.filter.frequency = parseInt(filter.frequency.value.toString());
+        filter.set(preset.filter);
     }
     if (preset.lfo && Lfo) {
         Lfo.set(preset.lfo);

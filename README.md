@@ -1,18 +1,20 @@
 # easySinth
-This is an **online** ([`tone.js`](https://tonejs.github.io/)) based synthesizer. It's online, and open-source! You just have to open our webpage, and you have access to a full synthesizer.<br>
-It currently has:
-- Almost full MIDI support
-- Lot's of effects (but you can't access all of them yet)
-- Presets (and we are working on new ones)
-- A beautiful oscilloscope
-- An integrated mini piano, but you can also play on it from your keyboard
+This is an **online** ([`tone.js`](https://tonejs.github.io/)) based synthesizer. It's online, and open-source! You just have to open our webpage, and you have access to a full synthesizer.
 <br>
-We are working on:
-- Not all knobs are working yet
-- A full sequencer
-- A better oscilloscope
-- More buttons!
-
+---
+Knobs: <br>
+- Filter: the type of the filter:  lowpass, highpass, lowshelf, highshelf, notch, allpass, peaking
+- Waveform: the form of the wave: sine, square, triangle, sawtooth, fatsine, fatsquare, fattriangle, fatsawtooth
+- Gain: the gain from the source
+- cutoff: cutoff frequency: 50-15000
+- Octave: -
+- Semitone: set the detune to a semitone level
+- Tuning set the detune, at a note-level
+- ASDR:
+    - Attack: 0-1.27s
+    - Decay: 0-2.54s
+    - Sustain: 0-1
+    - Release: 0-2.54s
 ---
 
 If you want to use your MIDI controller with this synth, you must enable our webpage to access your MIDI inputs (you have to do this only once):

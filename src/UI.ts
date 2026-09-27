@@ -83,6 +83,7 @@ function setKnobs(){
 
   const pres: SynthPreset | undefined = presets[currentPreset];
   if (pres === undefined) throw new Error("This shouldn't have happened, you selected a non-existing preset! (Trying to rotate knobs in position)");
+
   if (pres.filter){
     set_Knob("cutoff",  Math.log( pres.filter.frequency / 20) / Math.log(20000 / 20) * 254 - 127 );
   }

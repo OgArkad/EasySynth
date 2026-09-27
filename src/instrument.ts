@@ -1,4 +1,4 @@
-import { PolySynth, Sequence, Gain, Filter, LFO, Panner, Synth, Transport, Waveform, type SynthOptions } from "tone";
+import { PolySynth, Sequence, Gain, Filter, LFO, Panner, Synth, Transport, Waveform, Pattern, type SynthOptions } from "tone";
 import { loadPreset, presets, currentPreset, type PresetOscillatorType } from "./presets.js";
 import { sequencer, unison } from "./effects.js";
 
@@ -9,6 +9,10 @@ export const seq: Sequence<string> = new Sequence((time, note) => {
     else synth.triggerAttackRelease(note, "8n", time);
     console.log("sequencing it");
 }, sequencer.sequence, "8n");
+
+const pattern = new Pattern(function(time, note){
+	synth.triggerAttackRelease(note, 0.25);
+}, ["C4", "D4", "E4", "G4", "A4"]);
 
 const synth: PolySynth = new PolySynth();
 

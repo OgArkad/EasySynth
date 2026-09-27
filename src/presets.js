@@ -1,5 +1,5 @@
 import { setKnobs } from "./UI.js";
-export { loadPreset, loadLocalPresets, currentPreset, presets };
+export { loadPreset, loadLocalPresets, currentPreset, switchPreset, presets };
 function loadPreset(preset, Synth, Filter, Lfo, set = true) {
     if (!preset)
         throw new Error("Preset is undefined!");
@@ -136,6 +136,9 @@ const laser = {
     lfo: { frequency: 8, min: 1000, max: 7000, phase: 0, type: "sawtooth" }
 };
 let currentPreset = 0;
+function switchPreset(i) {
+    currentPreset = i;
+}
 const presets = [
     defaultPreset,
     cleanSaw,

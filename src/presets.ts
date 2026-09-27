@@ -1,6 +1,6 @@
 import type {FilterOptions, LFOOptions, PolySynth, Synth, Filter, LFO} from "tone";//no need in js;
 import { setKnobs } from "./UI.js";
-export {loadPreset, loadLocalPresets, currentPreset, presets};
+export {loadPreset, loadLocalPresets, currentPreset, switchPreset, presets};
 export type {SynthPreset, PresetOscillatorType};
 
 type PresetOscillatorType =
@@ -202,6 +202,10 @@ const laser: SynthPreset = {
 };
 
 let currentPreset: number = 0;
+
+function switchPreset(i: number){
+    currentPreset = i;
+}
 
 const presets: SynthPreset[] = [
     defaultPreset,

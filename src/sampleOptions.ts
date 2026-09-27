@@ -1,4 +1,4 @@
-import { presets, loadPreset, type SynthPreset } from "./presets.js";
+import { presets, loadPreset, currentPreset, switchPreset, type SynthPreset } from "./presets.js";
 import { synth, filter, lfo } from "./instrument.js";
 
 const options = document.getElementById("sampleOptions") as HTMLSelectElement | null;
@@ -20,8 +20,8 @@ function renderPresetOptions() {
 renderPresetOptions();
 
 options?.addEventListener("change", (e) => {
-  const selectedIndex = parseInt((e.target as HTMLSelectElement).value, 10);
-  const selectedPreset = presets[selectedIndex];
+  switchPreset(parseInt((e.target as HTMLSelectElement).value, 10));
+  const selectedPreset = presets[currentPreset];
 
   if (selectedPreset) {
     loadPreset(selectedPreset, synth, filter, lfo, true);

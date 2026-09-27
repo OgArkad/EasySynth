@@ -56,4 +56,5 @@ const autoWah = new Tone.AutoWah({
     Q: 6
 });
 const effects = [phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, pingPong, autoWah];
+/**/ 
 //# sourceMappingURL=effects.js.map

@@ -98,6 +98,24 @@ if (up && down && value) {
         Transport.bpm.value = tempoValue;
     });
 }
+document.getElementById("play")?.addEventListener("click", () => {
+    if (sequencer.on)
+        return;
+    seq.start(0);
+    Transport.start();
+    sequencer.recording = true;
+});
+document.getElementById("pause")?.addEventListener("click", () => {
+    if (!sequencer.on)
+        return;
+    seq.stop();
+    sequencer.sequence.length = 0;
+});
+document.getElementById("record")?.addEventListener("click", () => {
+    if (!sequencer.on)
+        return;
+    sequencer.recording = !sequencer.recording;
+});
 document.addEventListener('DOMContentLoaded', () => {
     const switches = document.querySelectorAll('.switch');
     switches.forEach((switchOne) => {
@@ -125,59 +143,4 @@ document.addEventListener('DOMContentLoaded', () => {
   top: 50%;
   right: 48%;
 */ 
-document.getElementById("play")?.addEventListener("click", () => {
-    if (sequencer.on)
-        return;
-    seq.start(0);
-    Transport.start();
-    sequencer.recording = true;
-});
-document.getElementById("pause")?.addEventListener("click", () => {
-    if (!sequencer.on)
-        return;
-    seq.stop();
-    sequencer.sequence.length = 0;
-});
-document.getElementById("record")?.addEventListener("click", () => {
-    if (!sequencer.on)
-        return;
-    sequencer.recording = !sequencer.recording;
-});
-document.addEventListener('DOMContentLoaded', () => {
-    const switches = document.querySelectorAll('.switch');
-    switches.forEach((knob) => {
-        const config = KNOB_CONFIGS[knob.id] || { minAngle: -127, maxAngle: 127 };
-        const { minAngle, maxAngle, steps, sensitivity = 1.5 } = config;
-        let currentAngle = minAngle;
-        knob.style.transform = `rotate(${currentAngle}deg)`;
-        knob.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            let startY = e.clientY;
-            const onMouseMove = (moveEvent) => {
-                const deltaY = startY - moveEvent.clientY;
-                startY = moveEvent.clientY;
-                let targetAngle = currentAngle + deltaY * sensitivity;
-                targetAngle = Math.min(maxAngle, Math.max(minAngle, targetAngle));
-                if (steps && steps > 1) {
-                    const range = maxAngle - minAngle;
-                    const stepSize = range / (steps - 1);
-                    const currentStep = Math.round((targetAngle - minAngle) / stepSize);
-                    currentAngle = minAngle + currentStep * stepSize;
-                    knob.style.transform = `rotate(${currentAngle}deg)`;
-                }
-                else {
-                    currentAngle = targetAngle;
-                    knob.style.transform = `rotate(${currentAngle}deg)`;
-                }
-                manageKnobs(knob.id.replace("-knob", ""), currentAngle);
-            };
-            const onMouseUp = () => {
-                window.removeEventListener('mousemove', onMouseMove);
-                window.removeEventListener('mouseup', onMouseUp);
-            };
-            window.addEventListener('mousemove', onMouseMove);
-            window.addEventListener('mouseup', onMouseUp);
-        });
-    });
-});
 //# sourceMappingURL=UI.js.map

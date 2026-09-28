@@ -59,6 +59,46 @@ body {
 .switch{
   width: 3vw;
 }
+
+
+
+.slider-control {
+  position: absolute; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: #333333;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.slider {
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.cap {
+  position: absolute;
+  bottom: 0; 
+  cursor: grab;
+  user-select: none;
+  -webkit-user-drag: none;
+  touch-action: none;
+  will-change: transform;
+  left: 0%;
+}
+
+.cap:active {
+  cursor: grabbing;
+}
+
+
 #start {
   display: flex;
   justify-content: center;

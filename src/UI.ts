@@ -154,16 +154,68 @@ document.addEventListener('DOMContentLoaded', () => {
         switchOne.src = "./media/switchRight.png";
         switchOne.dataset.works = "on";
         switchOne.style.top = "50%";
-        switchOne.style.right = "66%";
+        switchOne.style.left = "66%";
       } else {
         switchOne.src = "./media/switchLeft.png";
         switchOne.dataset.works = "off";
-        switchOne.style.top = "50%";
+        switchOne.style.top = "50%";  
         switchOne.style.right = "33%";
       }
     });
   });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  const caps = document.querySelectorAll<HTMLImageElement>('.cap');
+
+  caps.forEach((cap) => {
+    let currentY = 60; 
+
+    cap.addEventListener('mousedown', (e: MouseEvent) => {
+      e.preventDefault();
+
+      const container = cap.parentElement;
+      const track = container?.querySelector<HTMLImageElement>('.slider');
+      if (!track) return;
+
+      const totalTravel = track.offsetHeight - cap.offsetHeight;
+      const minY = -totalTravel; 
+      const maxY = 0;           
+
+      let startY = e.clientY;
+
+      const onMouseMove = (moveEvent: MouseEvent) => {
+        const deltaY = moveEvent.clientY - startY;
+        startY = moveEvent.clientY;
+
+        let targetY = currentY + deltaY;
+
+        currentY = Math.min(maxY, Math.max(minY, targetY));
+
+        cap.style.transform = `translateY(${currentY}px)`;
+
+        const value = Math.round(((maxY - currentY) / totalTravel) * 100);
+
+        const paramId = cap.id.replace(/-(cap|knob)$/, '');
+
+        if (typeof (window as any).manageKnobs === 'function') {
+          (window as any).manageKnobs(paramId, value);
+        } else {
+          console.log(`Slider [${paramId}]: ${value}%`);
+        }
+      };
+
+      const onMouseUp = () => {
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
+      };
+
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+    });
+  });
+});
+
 /*
   position: absolute;
   top: 50%;

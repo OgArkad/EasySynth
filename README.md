@@ -2,7 +2,8 @@
 This is an **online** ([`tone.js`](https://tonejs.github.io/)) based synthesizer. It's online, and open-source! You just have to open our webpage, and you have access to a full synthesizer.
 <br>
 ---
-Knobs: <br>
+###Knobs: <br>
+- Sequencer: play, pause, switch recording
 - Filter: the type of the filter:  lowpass, highpass, lowshelf, highshelf, notch, allpass, peaking
 - Waveform: the form of the wave: sine, square, triangle, sawtooth, fatsine, fatsquare, fattriangle, fatsawtooth
 - Gain: the gain from the source
@@ -15,12 +16,16 @@ Knobs: <br>
     - Decay: 0-2.54s
     - Sustain: 0-1
     - Release: 0-2.54s
+---
+###It currently has:
+- A bult in keyboard:
+    - On your screen, via MIDI (full support), or your normal keyboard: (currently only qwertz, in 2 rows: )
 - A sequencer whith UI buttons, or on your keyboard:
     - Space: start/pause recording your input
     - Enter: start/pause the recording itself
     - Backspace: stop, and clears the recording
+- All the knob functions described above
 ---
-
 If you want to use your MIDI controller with this synth, you must enable our webpage to access your MIDI inputs (you have to do this only once):
 Usually the your browser gives you a pop-up about this, that you should accept, but in some cases you wont have this (e.g.: on Windows x Firefox).
 ## In firefox it's easy:

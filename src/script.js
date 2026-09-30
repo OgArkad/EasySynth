@@ -1,7 +1,7 @@
-import { start } from "tone"; //npm install tone
+import { start, Transport } from "tone"; //npm install tone
 import MIDI from "./MIDI.js";
 import * as Effect from "./effects.js";
-import { synth, filter, lfo, panner, expression, synths, volume, waveform } from "./instrument.js";
+import { synth, filter, lfo, panner, expression, synths, volume, waveform, seq } from "./instrument.js";
 import * as Preset from "./presets.js";
 import { sequencer } from "./effects.js";
 import { drawOscilloscope } from "./oscilloscope.js";
@@ -35,13 +35,10 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     if (started)
         return;
     await start(); //aka Tone.start
+    Transport.start();
     const startElem = document.getElementById("start");
     if (startElem)
         startElem.style.display = "none";
-    started = true;
-    // 3. Load presets & connect audio chain
-    Preset.loadLocalPresets();
-    await start(); // aka Tone.start();
     synths.forEach((synth) => {
         synth.connect(volume);
         volume.connect(filter);
@@ -63,11 +60,13 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     //lfo.connect(filter.frequency);
     synth.releaseAll(0);
     synths.forEach((s) => s.triggerRelease());
+    Preset.loadLocalPresets();
     Preset.loadPreset(Preset.presets[Preset.currentPreset], synth);
     drawOscilloscope();
     midi.init().catch((err) => {
         console.warn("MIDI initialization warning/error:", err);
     });
+    started = true;
     console.log("Synth started/reset!");
 });
 window.onblur = function () {
@@ -84,8 +83,11 @@ document.addEventListener("keydown", (e) => {
         else
             synths.forEach((synth) => synth.triggerAttack(note));
         pressed.add(note);
-        if (Effect.sequencer.recording)
-            sequencer.sequence.push(note);
+        if (Effect.sequencer.recording) {
+            const t = (Transport.seconds - sequencer.recStart) % sequencer.length;
+            seq.add(t, note);
+            console.log("Recorded: ", note, t);
+        }
     }
 });
 document.addEventListener("keyup", (e) => {

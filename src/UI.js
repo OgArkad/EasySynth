@@ -1,7 +1,7 @@
 import { expression, manageKnobs, filter, seq } from "./instrument.js";
 import { presets, currentPreset } from "./presets.js";
 import { sequencer } from "./effects.js";
-import { Transport } from "tone";
+import { Recorder, Transport } from "tone";
 export { setKnobs };
 const KNOB_CONFIGS = {
 <<<<<<< Updated upstream
@@ -172,10 +172,10 @@ function setKnobs() {
     set_Knob("decay", pres.envelope.decay * 100 - 127);
     set_Knob("sustain", pres.envelope.sustain * 254 - 127);
     set_Knob("release", pres.envelope.release * 100 - 127);
-    const waveIndex = ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"].indexOf(pres.oscillator.type);
-    set_Knob("waveform", waveIndex * 32 - 127);
-    set_Knob("octave", (pres.oscillator.octave / 4) * 127);
-    set_Knob("semitone", (pres.oscillator.detune / 1000 / 12) * 127);
+    set_Knob("filter", ["lowpass", "highpass", "lowshelf", "highshelf", "notch", "allpass", "peaking"].indexOf(filter.type) / 6 * 254 - 127);
+    set_Knob("waveform", ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"].indexOf(pres.oscillator.type) * 32 - 127); //254/8 = 31,75
+    set_Knob("octave", pres.oscillator.octave / 4 * 127);
+    set_Knob("semitone", pres.oscillator.detune / 1000 / 12 * 127);
     set_Knob("fine-tuning", pres.oscillator.detune * 10);
     set_Knob("gain", expression.gain.value * 254 - 127);
 }
@@ -198,22 +198,31 @@ if (up && down && value) {
     });
 }
 document.getElementById("play")?.addEventListener("click", () => {
-    if (sequencer.on)
-        return;
-    seq.start(0);
-    Transport.start();
+    sequencer.on = true;
+    seq.start();
+    seq.loop = true;
     sequencer.recording = true;
+    sequencer.recStart = Transport.seconds;
+    console.log(sequencer);
+    console.log(seq);
 });
 document.getElementById("pause")?.addEventListener("click", () => {
     if (!sequencer.on)
         return;
+    sequencer.recording = false;
+    seq.loop = false;
     seq.stop();
     sequencer.sequence.length = 0;
+    sequencer.on = false;
+    console.log(sequencer);
+    console.log(seq);
 });
 document.getElementById("record")?.addEventListener("click", () => {
     if (!sequencer.on)
         return;
     sequencer.recording = !sequencer.recording;
+    console.log(sequencer);
+    console.log(seq);
 });
 document.addEventListener('DOMContentLoaded', () => {
     const switches = document.querySelectorAll('.switch');

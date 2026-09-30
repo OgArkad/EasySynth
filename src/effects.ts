@@ -1,5 +1,4 @@
 import * as Tone from "tone";
-import type { Effect } from "tone/build/esm/effect/Effect.js";
 export {
   sequencer,
   sustain,
@@ -28,14 +27,16 @@ const sequencer = {
     on: false,
     sequence: [] as string[],
     sequences: "8n",
-    recording: false
+    recording: false,
+    recStart: 0 as number,
+    length: Tone.Time("1m").toSeconds()
 }
 
 const reverb: Tone.Reverb = new Tone.Reverb({
   decay: 2,
   wet: 0.3
 });
-reverb.generate(); 
+reverb.generate();
 
 const reverbSend: Tone.Gain<"gain"> = new Tone.Gain(0);
 reverb.connect(reverbSend);

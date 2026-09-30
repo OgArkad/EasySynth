@@ -13,7 +13,9 @@ const sequencer = {
     on: false,
     sequence: [],
     sequences: "8n",
-    recording: false
+    recording: false,
+    recStart: 0,
+    length: Tone.Time("1m").toSeconds()
 };
 const reverb = new Tone.Reverb({
     decay: 2,

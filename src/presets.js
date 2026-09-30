@@ -10,6 +10,7 @@ function loadPreset(preset, Synth, Filter, Lfo, set = true) {
     });
     if (preset.filter && filter) {
         preset.filter.frequency = parseInt(filter.frequency.value.toString());
+        preset.filter.type = filter.type;
         filter.set(preset.filter);
     }
     if (preset.lfo && Lfo) {

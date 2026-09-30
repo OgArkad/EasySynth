@@ -1,7 +1,7 @@
 import {expression, manageKnobs, filter, seq} from "./instrument.js";
 import { presets, currentPreset, type PresetOscillatorType, type SynthPreset } from "./presets.js";
 import { sequencer } from "./effects.js";
-import { Transport } from "tone";
+import { Recorder, Transport } from "tone";
 export {setKnobs};
 
 interface KnobConfig {
@@ -123,21 +123,31 @@ if (up && down && value) {
 }
 
 document.getElementById("play")?.addEventListener("click", () => {
-  if (sequencer.on) return
-  seq.start(0);
-  Transport.start();
+  sequencer.on = true;
+  seq.start();
+  seq.loop = true;
   sequencer.recording = true;
+  sequencer.recStart = Transport.seconds;
+  console.log(sequencer);
+  console.log(seq);
 });
 
 document.getElementById("pause")?.addEventListener("click", () => {
   if (!sequencer.on) return
+  sequencer.recording = false;
+  seq.loop = false;
   seq.stop();
   sequencer.sequence.length = 0;
+  sequencer.on = false;
+  console.log(sequencer);
+  console.log(seq);
 });
 
 document.getElementById("record")?.addEventListener("click", () => {
   if (!sequencer.on) return
   sequencer.recording = !sequencer.recording;
+  console.log(sequencer);
+  console.log(seq);
 });
 
 

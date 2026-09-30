@@ -1,17 +1,28 @@
-import { PolySynth, Sequence, Gain, Filter, LFO, Panner, Synth, Transport, Waveform, Pattern } from "tone";
+import { PolySynth, Sequence, Gain, Filter, LFO, Panner, Synth, Waveform, Part } from "tone";
 import { loadPreset, presets, currentPreset } from "./presets.js";
 import { sequencer, unison } from "./effects.js";
 const waveform = new Waveform(1024);
-export const seq = new Sequence((time, note) => {
-    if (unison.on)
-        synths.forEach((synth) => synth.triggerAttackRelease(note, "8n", time));
-    else
-        synth.triggerAttackRelease(note, "8n", time);
+/*export const seq: Sequence<string> = new Sequence((time, note) => {//https://medium.com/geekculture/creating-a-step-sequencer-with-tone-js-32ea3002aaf5 nem segít, de érdekes
+    if (unison.on) synths.forEach((synth) => synth.triggerAttackRelease(note, "8n", time));
+    else synth.triggerAttackRelease(note, "8n", time);
     console.log("sequencing it");
 }, sequencer.sequence, "8n");
-const pattern = new Pattern(function (time, note) {
-    synth.triggerAttackRelease(note, 0.25);
-}, ["C4", "D4", "E4", "G4", "A4"]);
+
+console.log(seq);
+*/
+export const seq = new Part((time, note) => {
+    console.log("PLAY:", note);
+    if (!unison.on) {
+        synth.triggerAttackRelease(note, "8n", time);
+    }
+    else {
+        synths.forEach((synth) => {
+            synth.triggerAttackRelease(note, "8n", time);
+        });
+    }
+}, []);
+seq.loopEnd = "1m";
+//seq.start();
 const synth = new PolySynth();
 let volume = new Gain(1);
 const filter = new Filter({
@@ -54,7 +65,7 @@ function manageKnobs(knob, degree) {
             preset.envelope.release = (degree + 127) / 100; //0 - 2,54
             break;
         case "octave": //tuning
-            preset.oscillator.octave = Math.round(degree / 127 * 4); //9 oktave
+            preset.oscillator.detune = Math.round(degree / 127 * 1200); //9 oktave
             break;
         case "semitone":
             preset.oscillator.detune = Math.round(degree / 127 * 12) * 100; // -120 - 120
@@ -86,8 +97,8 @@ function manageKnobs(knob, degree) {
         case "sequencer":
             sequencer.on = degree > 0;
             if (sequencer.on) {
-                seq.start(0);
-                Transport.start();
+                seq.start();
+                console.log("seq should start");
             }
             else {
                 seq.stop();

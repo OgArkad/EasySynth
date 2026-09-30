@@ -25,7 +25,6 @@ const unison = {
 
 const sequencer = {
     on: false,
-    sequence: [] as string[],
     sequences: "8n",
     recording: false,
     recStart: 0 as number,

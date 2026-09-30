@@ -3,7 +3,6 @@ import MIDI from "./MIDI.js";
 import * as Effect from "./effects.js";
 import {synth, filter, lfo, panner, expression, synths, volume, waveform, seq} from "./instrument.js";
 import * as Preset from "./presets.js";
-import { sequencer } from "./effects.js";
 import { drawOscilloscope } from "./oscilloscope.js";
 //localhost: npm run dev, build: npm run build
 
@@ -36,7 +35,6 @@ const keyboardtwoeng: Record<string, string> = {
 
 let keyboard:Record<string, string | undefined> = keyboardtwohun;
 
-const pressed: Set<string> = new Set<string>();
 
 document.getElementById("start")?.addEventListener("click", async (e) => {
     if (started) return;
@@ -91,25 +89,48 @@ window.onblur = function(){synth.releaseAll(0);
 document.addEventListener("keydown", (e) => {
     if (e.repeat || !started) return;
     let note = keyboard[e.key];
-    if (note != undefined){
-        if (!Effect.unison.on) synth.triggerAttack(note);
-        else synths.forEach((synth) => synth.triggerAttack(note));
-        pressed.add(note);
-        if (Effect.sequencer.recording){
-            const t = (Transport.seconds - sequencer.recStart) % sequencer.length;
-            seq.add(t, note);
-            console.log("Recorded: ", note, t);
-        }
-    }
+    if (note === undefined) return;
+    if (!Effect.unison.on) synth.triggerAttack(note);
+    else synths.forEach((synth) => synth.triggerAttack(note));
+    if (Effect.sequencer.recording) seq.add((Transport.seconds - Effect.sequencer.recStart) % Effect.sequencer.length, note);
 });
 
 document.addEventListener("keyup", (e) => {
-    let note = keyboard[e.key]
-    if (note != undefined && !Effect.sustain){
-        if (!Effect.unison.on) synth.triggerRelease(note);
-        else synths.forEach((synth) => synth.triggerRelease());
-        pressed.delete(note);
+    if (e.key === 'Enter'){
+       if (Effect.sequencer.on){
+            seq.loop = false;
+            seq.stop();
+            Effect.sequencer.on = false;
+            Effect.sequencer.recording = false;
+            console.info("sequencer paused");
+        }else{
+            seq.start();
+            seq.loop = true;
+            Effect.sequencer.recording = true;
+            Effect.sequencer.recStart = Transport.seconds;
+            Effect.sequencer.on = true;
+            console.info("sequencer started");
+        }
+        return;
     }
+    if (e.key === ' '){
+        Effect.sequencer.recording = !Effect.sequencer.recording;
+        return;
+    }
+    if (e.key === 'Backspace'){
+        seq.loop = false;
+        seq.stop();
+        Effect.sequencer.on = false;
+        Effect.sequencer.recording = false;
+        seq.clear();
+        console.info("sequencer stopped");
+    }
+
+    let note = keyboard[e.key]
+    if (note === undefined || Effect.sustain) return;
+
+    if (!Effect.unison.on) synth.triggerRelease(note);
+    else synths.forEach((synth) => synth.triggerRelease());
 });
 
 console.debug("script.js loaded!");

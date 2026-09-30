@@ -15,6 +15,10 @@ Knobs: <br>
     - Decay: 0-2.54s
     - Sustain: 0-1
     - Release: 0-2.54s
+- A sequencer whith UI buttons, or on your keyboard:
+    - Space: start/pause recording your input
+    - Enter: start/pause the recording itself
+    - Backspace: stop, and clears the recording
 ---
 
 If you want to use your MIDI controller with this synth, you must enable our webpage to access your MIDI inputs (you have to do this only once):

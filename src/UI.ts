@@ -128,8 +128,7 @@ document.getElementById("play")?.addEventListener("click", () => {
   seq.loop = true;
   sequencer.recording = true;
   sequencer.recStart = Transport.seconds;
-  console.log(sequencer);
-  console.log(seq);
+  console.info("sequencer started");
 });
 
 document.getElementById("pause")?.addEventListener("click", () => {
@@ -137,17 +136,14 @@ document.getElementById("pause")?.addEventListener("click", () => {
   sequencer.recording = false;
   seq.loop = false;
   seq.stop();
-  sequencer.sequence.length = 0;
   sequencer.on = false;
-  console.log(sequencer);
-  console.log(seq);
+  console.info("sequencer stoped");
 });
 
 document.getElementById("record")?.addEventListener("click", () => {
   if (!sequencer.on) return
   sequencer.recording = !sequencer.recording;
-  console.log(sequencer);
-  console.log(seq);
+  console.info("sequencer recording: ", sequencer.recording);
 });
 
 

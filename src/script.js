@@ -30,7 +30,6 @@ const keyboardtwoeng = {
     z: "C4",
 };
 let keyboard = keyboardtwohun;
-const pressed = new Set();
 document.getElementById("start")?.addEventListener("click", async (e) => {
     if (started)
         return;
@@ -82,23 +81,50 @@ document.addEventListener("keydown", (e) => {
             synth.triggerAttack(note);
         else
             synths.forEach((synth) => synth.triggerAttack(note));
-        pressed.add(note);
         if (Effect.sequencer.recording) {
             const t = (Transport.seconds - sequencer.recStart) % sequencer.length;
             seq.add(t, note);
-            console.log("Recorded: ", note, t);
         }
     }
 });
 document.addEventListener("keyup", (e) => {
-    let note = keyboard[e.key];
-    if (note != undefined && !Effect.sustain) {
-        if (!Effect.unison.on)
-            synth.triggerRelease(note);
-        else
-            synths.forEach((synth) => synth.triggerRelease());
-        pressed.delete(note);
+    if (e.key === 'Enter') {
+        if (sequencer.on) {
+            seq.loop = false;
+            seq.stop();
+            sequencer.on = false;
+            sequencer.recording = false;
+            console.info("sequencer paused");
+        }
+        else {
+            seq.start();
+            seq.loop = true;
+            sequencer.recording = true;
+            sequencer.recStart = Transport.seconds;
+            sequencer.on = true;
+            console.info("sequencer started");
+        }
+        return;
     }
+    if (e.key === ' ') {
+        sequencer.recording = !sequencer.recording;
+        return;
+    }
+    if (e.key === 'Backspace') {
+        seq.loop = false;
+        seq.stop();
+        sequencer.on = false;
+        sequencer.recording = false;
+        seq.clear();
+        console.info("sequencer stopped");
+    }
+    let note = keyboard[e.key];
+    if (note === undefined || Effect.sustain)
+        return;
+    if (!Effect.unison.on)
+        synth.triggerRelease(note);
+    else
+        synths.forEach((synth) => synth.triggerRelease());
 });
 console.debug("script.js loaded!");
 // (x,e *3, g, 6 *3, m, i * 3, b,z *3 )

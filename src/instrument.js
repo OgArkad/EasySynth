@@ -2,27 +2,13 @@ import { PolySynth, Sequence, Gain, Filter, LFO, Panner, Synth, Waveform, Part }
 import { loadPreset, presets, currentPreset } from "./presets.js";
 import { sequencer, unison } from "./effects.js";
 const waveform = new Waveform(1024);
-/*export const seq: Sequence<string> = new Sequence((time, note) => {//https://medium.com/geekculture/creating-a-step-sequencer-with-tone-js-32ea3002aaf5 nem segít, de érdekes
-    if (unison.on) synths.forEach((synth) => synth.triggerAttackRelease(note, "8n", time));
-    else synth.triggerAttackRelease(note, "8n", time);
-    console.log("sequencing it");
-}, sequencer.sequence, "8n");
-
-console.log(seq);
-*/
 export const seq = new Part((time, note) => {
-    console.log("PLAY:", note);
-    if (!unison.on) {
+    if (!unison.on)
         synth.triggerAttackRelease(note, "8n", time);
-    }
-    else {
-        synths.forEach((synth) => {
-            synth.triggerAttackRelease(note, "8n", time);
-        });
-    }
+    else
+        synths.forEach((synth) => synth.triggerAttackRelease(note, "8n", time));
 }, []);
-seq.loopEnd = "1m";
-//seq.start();
+seq.loopEnd = sequencer.length;
 const synth = new PolySynth();
 let volume = new Gain(1);
 const filter = new Filter({
@@ -98,11 +84,9 @@ function manageKnobs(knob, degree) {
             sequencer.on = degree > 0;
             if (sequencer.on) {
                 seq.start();
-                console.log("seq should start");
             }
             else {
                 seq.stop();
-                sequencer.sequence.length = 0;
             }
             break;
         case "gain":

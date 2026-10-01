@@ -1,6 +1,9 @@
 import * as Tone from "tone";
-export { sequencer, sustain, switchSustain, unison, reverb, chorus, chorusSend, reverbSend, effects };
+export { sequencer, sustain, switchSustain, unison, reverb, chorus, chorusSend, reverbSend, effects, currentEffect, SwitchCurrentEffect };
 let sustain = false;
+function SwitchCurrentEffect(effectIndex) {
+    currentEffect = effectIndex;
+}
 function switchSustain(value = !sustain) {
     sustain = value;
 }
@@ -46,16 +49,45 @@ const bitcrusher = new Tone.BitCrusher(4);
 const tremolo = new Tone.Tremolo(9, 0.75);
 const vibrato = new Tone.Vibrato(4, 0.5);
 const autoFilter = new Tone.AutoFilter("4n");
-const autoPanner = new Tone.AutoPanner("4n");
-const cheby = new Tone.Chebyshev(50);
+const autoPanner = new Tone.AutoPanner("4n").toDestination();
+const cheby = new Tone.Chebyshev(50).toDestination();
 const pingPong = new Tone.PingPongDelay("4n", 0.2);
-const pitchShift = new Tone.PitchShift(5);
+const pitchShift = new Tone.PitchShift(5).toDestination();
 const autoWah = new Tone.AutoWah({
     baseFrequency: 50,
     octaves: 6,
     sensitivity: -30,
     Q: 6
 });
-const effects = [phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, pingPong, autoWah];
+const effects = [
+    { node: phaser },
+    { node: stereowidener },
+    { node: distortion },
+    { node: bitcrusher },
+    {
+        node: autoFilter,
+        start: () => autoFilter.start(),
+        stop: () => autoFilter.stop()
+    },
+    {
+        node: autoPanner,
+        start: () => autoPanner.start(),
+        stop: () => autoPanner.stop()
+    },
+    {
+        node: tremolo,
+        start: () => tremolo.start(),
+        stop: () => tremolo.stop()
+    },
+    { node: vibrato },
+    { node: pingPong },
+    { node: autoWah },
+    { node: reverbSend },
+    { node: delay },
+    { node: chorusSend },
+    { node: cheby },
+    { node: pitchShift }
+];
+let currentEffect = null;
 /**/ 
 //# sourceMappingURL=effects.js.map

@@ -1,6 +1,6 @@
-import { PolySynth, Sequence, Gain, Filter, LFO, Panner, Synth, Waveform, Part, type SynthOptions } from "tone";
+import { PolySynth, Gain, Filter, LFO, Panner, Synth, Waveform, Part, type SynthOptions } from "tone";
 import { loadPreset, presets, currentPreset, type PresetOscillatorType } from "./presets.js";
-import { sequencer, unison } from "./effects.js";
+import { sequencer, unison, effects, currentEffect, SwitchCurrentEffect} from "./effects.js";
 
 const waveform: Waveform = new Waveform(1024);
 
@@ -92,19 +92,35 @@ function manageKnobs (knob: string, degree: number){ // degree: -127 - 127
             if (x === undefined) throw new Error("This shouldn't have happened, knob went throu limits");
             preset.oscillator.type = x;
             break;
-        case "sequencer":
-            sequencer.on = degree > 0;
-            if (sequencer.on){
-                seq.start();
+        case "effect":
+            let effectIndex = Math.floor((degree + 127) / 254 * effects.length);//0-effects.length
+
+            if (currentEffect === effectIndex) return;
+            console.log("Effect index: " + effectIndex);
+
+            if (currentEffect !== null){
+                const effectOld = effects[currentEffect];
+                if (effectOld === undefined) throw new Error("Unexpected indexing error in effects (stoping).");
+                synth.disconnect(effectOld.node);
+                effectOld.start?.();
+                SwitchCurrentEffect(null);
+                console.log("Effect disconnected: " + effectOld.node.constructor.name);
             }
-            else {
-                seq.stop();
-            }
+            if (effectIndex === 0) return;
+
+            effectIndex -= 1;
+            const effect = effects[effectIndex];
+            if (effect === undefined) throw new Error("Unexpected indexing error in effects (starting).");
+
+            synth.connect(effect.node);
+            effect.start?.();
+            SwitchCurrentEffect(effectIndex);
+
+            console.log("Effect connected: " + effect.node.constructor.name);
             break;
         case "gain":
             expression.gain.rampTo((degree + 127) / 254, 0.2);
             break;
-
 
         default:
             console.error("Unexpected knob: " + knob + ": " + degree);

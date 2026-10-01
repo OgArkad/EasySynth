@@ -83,21 +83,22 @@ function setKnobs(){
   const pres: SynthPreset | undefined = presets[currentPreset];
   if (pres === undefined) throw new Error("This shouldn't have happened, you selected a non-existing preset! (Trying to rotate knobs in position)");
 
+  set_Knob("filter", ["lowpass", "highpass", "lowshelf", "highshelf", "notch", "allpass", "peaking"].indexOf(filter.type)/6 * 254 - 127);
+  set_Knob("waveform", ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"].indexOf(pres.oscillator.type) * 32 - 127); //254/8 = 31,75
+  
+  set_Knob("gain", expression.gain.value * 254 - 127);
+
   set_Knob("cutoff",  Math.log( parseInt(filter.frequency.value.toString()) / 20) / Math.log(20000 / 20) * 254 - 127 );
+
+  set_Knob("octave",  pres.oscillator.octave  / 4 * 127);
+  set_Knob("semitone", pres.oscillator.detune / 1000 / 12 * 127);
+  set_Knob("fine-tuning", pres.oscillator.detune * 10);
 
   set_Knob("attack",  pres.envelope.attack  * 200 - 127);
   set_Knob("decay",   pres.envelope.decay   * 100 - 127);
   set_Knob("sustain", pres.envelope.sustain * 254 - 127);
   set_Knob("release", pres.envelope.release * 100 - 127);
 
-  set_Knob("filter", ["lowpass", "highpass", "lowshelf", "highshelf", "notch", "allpass", "peaking"].indexOf(filter.type)/6 * 254 - 127);
-  set_Knob("waveform", ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"].indexOf(pres.oscillator.type) * 32 - 127); //254/8 = 31,75
-  set_Knob("octave",  pres.oscillator.octave  / 4 * 127);
-  set_Knob("semitone", pres.oscillator.detune / 1000 / 12 * 127);
-  set_Knob("fine-tuning", pres.oscillator.detune * 10);
-  //set_Knob("unison", unison.on ? 127 : -127); // no need, because it's an outer variable
-
-  set_Knob("gain", expression.gain.value * 254 - 127);
   console.info("Knobs set!");
 }
 

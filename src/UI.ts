@@ -94,7 +94,7 @@ function setKnobs() {
 
   set_Knob("filter", ["lowpass", "highpass", "lowshelf", "highshelf", "notch", "allpass", "peaking"].indexOf(filter.type)/6 * 254 - 127);
   set_Knob("waveform", ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"].indexOf(pres.oscillator.type) * 32 - 127); //254/8 = 31,75
-  
+
   set_Knob("gain", expression.gain.value * 254 - 127);
 
   set_Knob("cutoff",  Math.log( parseInt(filter.frequency.value.toString()) / 20) / Math.log(20000 / 20) * 254 - 127 );
@@ -163,6 +163,7 @@ document.getElementById("record")?.addEventListener("click", () => {
 
 document.addEventListener('DOMContentLoaded', () => {
   const switches = document.querySelectorAll<HTMLImageElement>('.switch');
+
   switches.forEach((switchOne) => {
     switchOne.style.left = "-30px";
 
@@ -229,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.addEventListener('pointermove', onPointerMove);
       window.addEventListener('pointerup', onPointerUp);
     });
+    console.log(cap.id);
   });
 });
 

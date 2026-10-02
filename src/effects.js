@@ -49,10 +49,10 @@ const bitcrusher = new Tone.BitCrusher(4);
 const tremolo = new Tone.Tremolo(9, 0.75);
 const vibrato = new Tone.Vibrato(4, 0.5);
 const autoFilter = new Tone.AutoFilter("4n");
-const autoPanner = new Tone.AutoPanner("4n").toDestination();
-const cheby = new Tone.Chebyshev(50).toDestination();
+const autoPanner = new Tone.AutoPanner("4n");
+const cheby = new Tone.Chebyshev(50);
 const pingPong = new Tone.PingPongDelay("4n", 0.2);
-const pitchShift = new Tone.PitchShift(5).toDestination();
+const pitchShift = new Tone.PitchShift(5);
 const autoWah = new Tone.AutoWah({
     baseFrequency: 50,
     octaves: 6,

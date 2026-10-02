@@ -182,6 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.addEventListener('pointermove', onPointerMove);
             window.addEventListener('pointerup', onPointerUp);
         });
+        console.log(cap.id);
     });
 });
 const startBtn = document.getElementById("start");

@@ -23,7 +23,7 @@ const lfo = new LFO({
 });
 const panner = new Panner(0);
 const expression = new Gain(1);
-const synths = Array.from({ length: unison.voices }, (_, i) => {
+let synths = Array.from({ length: unison.voices }, (_, i) => {
     const singleSynth = new Synth();
     loadPreset(presets[currentPreset], singleSynth, filter, lfo, false);
     const panner = new Panner((i - (i / 2)) * 0.32);
@@ -32,7 +32,22 @@ const synths = Array.from({ length: unison.voices }, (_, i) => {
     singleSynth.detune.value = (i - 2) * unison.detune;
     return singleSynth;
 });
-export { waveform, synth, filter, lfo, panner, expression, synths, manageKnobs, volume };
+function regenerateSynths() {
+    synths = Array.from({ length: unison.voices }, (_, i) => {
+        const singleSynth = new Synth();
+        loadPreset(presets[currentPreset], singleSynth, filter, lfo, false);
+        if (i > 100)
+            throw new Error("Unexpected error: unison.voices > 100, this shouldn't have happened.");
+        const x = (((i - (i / 2)) * 0.02) - 0.5) * 2;
+        const panner = new Panner(x);
+        singleSynth.connect(panner);
+        panner.toDestination();
+        panner.connect(waveform);
+        singleSynth.detune.value = (i - 2) * unison.detune;
+        return singleSynth;
+    });
+}
+export { waveform, synth, filter, lfo, panner, expression, synths, manageKnobs, volume, manageCaps, manageSwitches };
 function manageKnobs(knob, degree) {
     const preset = presets[currentPreset];
     if (!preset)
@@ -116,5 +131,39 @@ function manageKnobs(knob, degree) {
         loadPreset(preset, synth, undefined, undefined, false);
     else
         synths.forEach((synth) => loadPreset(preset, synth, undefined, undefined, false));
+}
+function manageCaps(cap, state) {
+    switch (cap) {
+        case "detune":
+            unison.detune = state; //0 - 100
+            synths.forEach((synth, i) => { synth.detune.value = (i - 2) * unison.detune; });
+            break;
+        case "voices":
+            if (state <= 2)
+                state = 3;
+            unison.voices = Math.floor(state * 0.4); //2-40
+            regenerateSynths();
+            break;
+        default:
+            console.error("Unexpected cap: " + cap + ": " + state);
+            return;
+    }
+}
+function manageSwitches(switchName, state) {
+    switch (switchName) {
+        case "unison":
+            unison.on = state;
+            break;
+        case "effect":
+            break;
+        case "lfo":
+            lfo.start();
+            if (!state)
+                lfo.stop();
+            break;
+        default:
+            console.error("Unexpected switch: " + switchName + ": " + state);
+            return;
+    }
 }
 //# sourceMappingURL=instrument.js.map

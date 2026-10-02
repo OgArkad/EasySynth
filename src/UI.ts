@@ -1,7 +1,7 @@
-import {expression, manageKnobs, filter, seq} from "./instrument.js";
+import {expression, manageKnobs, filter, seq, manageCaps, manageSwitches} from "./instrument.js";
 import { presets, currentPreset, type PresetOscillatorType, type SynthPreset } from "./presets.js";
 import { sequencer } from "./effects.js";
-import { Recorder, Transport } from "tone";
+import { Transport } from "tone";
 export {setKnobs};
 
 interface KnobConfig {
@@ -85,7 +85,7 @@ function setKnobs(){
 
   set_Knob("filter", ["lowpass", "highpass", "lowshelf", "highshelf", "notch", "allpass", "peaking"].indexOf(filter.type)/6 * 254 - 127);
   set_Knob("waveform", ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"].indexOf(pres.oscillator.type) * 32 - 127); //254/8 = 31,75
-  
+
   set_Knob("gain", expression.gain.value * 254 - 127);
 
   set_Knob("cutoff",  Math.log( parseInt(filter.frequency.value.toString()) / 20) / Math.log(20000 / 20) * 254 - 127 );
@@ -122,6 +122,7 @@ if (up && down && value) {
     Transport.bpm.value = tempoValue;
   });
 }
+/*                             -                           Set sequencer UI                                          -                                                */
 
 document.getElementById("play")?.addEventListener("click", () => {
   sequencer.on = true;
@@ -146,11 +147,11 @@ document.getElementById("record")?.addEventListener("click", () => {
   sequencer.recording = !sequencer.recording;
   console.info("sequencer recording: ", sequencer.recording);
 });
-
+/*                             -                           Set switches UI                                          -                                                */
 
 document.addEventListener('DOMContentLoaded', () => {
   const switches = document.querySelectorAll<HTMLImageElement>('.switch');
-
+  console.log("Switches found: ", switches.length, switches);
   switches.forEach((switchOne) => {
     switchOne.style.position = "absolute";
     switchOne.style.top = "50%";
@@ -165,18 +166,21 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         switchOne.src = "./media/switchLeft.png";
         switchOne.dataset.works = "off";
-        switchOne.style.top = "50%";  
+        switchOne.style.top = "50%";
         switchOne.style.right = "33%";
       }
+      manageSwitches(switchOne.id.replace("-switch", ""), switchOne.dataset.works === "on");
+      console.log(`Switch [${switchOne.id}]: ${switchOne.dataset.works}`);
     });
   });
 });
 
+/*                             -                           Set caps UI                                          -                                                */
 document.addEventListener('DOMContentLoaded', () => {
   const caps = document.querySelectorAll<HTMLImageElement>('.cap');
 
   caps.forEach((cap) => {
-    let currentY = 60; 
+    let currentY = 60;
 
     cap.addEventListener('mousedown', (e: MouseEvent) => {
       e.preventDefault();
@@ -186,8 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!track) return;
 
       const totalTravel = track.offsetHeight - cap.offsetHeight;
-      const minY = -totalTravel; 
-      const maxY = 0;           
+      const minY = -totalTravel;
+      const maxY = 0;
 
       let startY = e.clientY;
 
@@ -195,21 +199,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const deltaY = moveEvent.clientY - startY;
         startY = moveEvent.clientY;
 
-        let targetY = currentY + deltaY;
+        currentY = Math.min(maxY, Math.max(minY, currentY + deltaY));
 
-        currentY = Math.min(maxY, Math.max(minY, targetY));
+        cap.style.transform = `translateY(${currentY}px)`;;
 
-        cap.style.transform = `translateY(${currentY}px)`;
-
-        const value = Math.round(((maxY - currentY) / totalTravel) * 100);
-
-        const paramId = cap.id.replace(/-(cap|knob)$/, '');
-
-        if (typeof (window as any).manageKnobs === 'function') {
-          (window as any).manageKnobs(paramId, value);
-        } else {
-          console.log(`Slider [${paramId}]: ${value}%`);
-        }
+        manageCaps(cap.id.replace("-cap", ""), Math.round(((maxY - currentY) / totalTravel) * 100));
       };
 
       const onMouseUp = () => {
@@ -220,8 +214,10 @@ document.addEventListener('DOMContentLoaded', () => {
       window.addEventListener('mousemove', onMouseMove);
       window.addEventListener('mouseup', onMouseUp);
     });
+    console.log(cap.id);
   });
 });
+
 
 /*
   position: absolute;

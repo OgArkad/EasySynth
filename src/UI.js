@@ -1,7 +1,7 @@
-import { expression, manageKnobs, filter, seq } from "./instrument.js";
+import { expression, manageKnobs, filter, seq, manageCaps, manageSwitches } from "./instrument.js";
 import { presets, currentPreset } from "./presets.js";
 import { sequencer } from "./effects.js";
-import { Recorder, Transport } from "tone";
+import { Transport } from "tone";
 export { setKnobs };
 const KNOB_CONFIGS = {
     'filter-knob': { minAngle: -127, maxAngle: 127, steps: 7 },
@@ -95,6 +95,7 @@ if (up && down && value) {
         Transport.bpm.value = tempoValue;
     });
 }
+/*                             -                           Set sequencer UI                                          -                                                */
 document.getElementById("play")?.addEventListener("click", () => {
     sequencer.on = true;
     seq.start();
@@ -118,8 +119,10 @@ document.getElementById("record")?.addEventListener("click", () => {
     sequencer.recording = !sequencer.recording;
     console.info("sequencer recording: ", sequencer.recording);
 });
+/*                             -                           Set switches UI                                          -                                                */
 document.addEventListener('DOMContentLoaded', () => {
     const switches = document.querySelectorAll('.switch');
+    console.log("Switches found: ", switches.length, switches);
     switches.forEach((switchOne) => {
         switchOne.style.position = "absolute";
         switchOne.style.top = "50%";
@@ -137,9 +140,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 switchOne.style.top = "50%";
                 switchOne.style.right = "33%";
             }
+            manageSwitches(switchOne.id.replace("-switch", ""), switchOne.dataset.works === "on");
+            console.log(`Switch [${switchOne.id}]: ${switchOne.dataset.works}`);
         });
     });
 });
+/*                             -                           Set caps UI                                          -                                                */
 document.addEventListener('DOMContentLoaded', () => {
     const caps = document.querySelectorAll('.cap');
     caps.forEach((cap) => {
@@ -157,17 +163,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const onMouseMove = (moveEvent) => {
                 const deltaY = moveEvent.clientY - startY;
                 startY = moveEvent.clientY;
-                let targetY = currentY + deltaY;
-                currentY = Math.min(maxY, Math.max(minY, targetY));
+                currentY = Math.min(maxY, Math.max(minY, currentY + deltaY));
                 cap.style.transform = `translateY(${currentY}px)`;
-                const value = Math.round(((maxY - currentY) / totalTravel) * 100);
-                const paramId = cap.id.replace(/-(cap|knob)$/, '');
-                if (typeof window.manageKnobs === 'function') {
-                    window.manageKnobs(paramId, value);
-                }
-                else {
-                    console.log(`Slider [${paramId}]: ${value}%`);
-                }
+                ;
+                manageCaps(cap.id.replace("-cap", ""), Math.round(((maxY - currentY) / totalTravel) * 100));
             };
             const onMouseUp = () => {
                 window.removeEventListener('mousemove', onMouseMove);
@@ -176,6 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.addEventListener('mousemove', onMouseMove);
             window.addEventListener('mouseup', onMouseUp);
         });
+        console.log(cap.id);
     });
 });
 /*

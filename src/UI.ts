@@ -76,8 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
         knob.removeEventListener('pointerup', onPointerUp);
       };
 
-      window.addEventListener('pointermove', onPointerMove);
-      window.addEventListener('pointerup', onPointerUp);
+      knob.addEventListener('pointermove', onPointerMove);
+      knob.addEventListener('pointerup', onPointerUp);
     });
   });
 });
@@ -279,7 +279,9 @@ if (startBtn) {
   const handleStart = async (e: Event) => {
     e.preventDefault();
 
-    await start();
+    if (typeof (Tone as any).start === "function") {
+      await (Tone as any).start();
+    }
 
     if (screen.orientation && typeof screen.orientation.lock === "function") {
       try {

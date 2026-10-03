@@ -55,8 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 knob.removeEventListener('pointermove', onPointerMove);
                 knob.removeEventListener('pointerup', onPointerUp);
             };
-            window.addEventListener('pointermove', onPointerMove);
-            window.addEventListener('pointerup', onPointerUp);
+            knob.addEventListener('pointermove', onPointerMove);
+            knob.addEventListener('pointerup', onPointerUp);
         });
     });
 });
@@ -222,7 +222,9 @@ const startBtn = document.getElementById("start");
 if (startBtn) {
     const handleStart = async (e) => {
         e.preventDefault();
-        await start();
+        if (typeof Tone.start === "function") {
+            await Tone.start();
+        }
         if (screen.orientation && typeof screen.orientation.lock === "function") {
             try {
                 await screen.orientation.lock("landscape");

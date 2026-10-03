@@ -46,6 +46,8 @@ async function autoStartAudio() {
     Effect.chorus.connect(waveform);
     Effect.chorus.toDestination();
 
+    lfo.connect(filter.frequency);
+
     synth.releaseAll(0);
     synths.forEach((s: any) => s.triggerRelease());
 

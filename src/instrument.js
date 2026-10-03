@@ -38,8 +38,7 @@ function regenerateSynths() {
         loadPreset(presets[currentPreset], singleSynth, filter, lfo, false);
         if (i > 100)
             throw new Error("Unexpected error: unison.voices > 100, this shouldn't have happened.");
-        const x = (((i - (i / 2)) * 0.02) - 0.5) * 2;
-        const panner = new Panner(x);
+        const panner = new Panner(unison.voices === 1 ? 0 : (i / (unison.voices - 1)) * 2 - 1);
         singleSynth.connect(panner);
         panner.toDestination();
         panner.connect(waveform);
@@ -141,7 +140,8 @@ function manageCaps(cap, state) {
             unison.detune = state; //0 - 100
             synths.forEach((synth, i) => { synth.detune.value = (i - 2) * unison.detune; });
             break;
-        case "voices": //bragadnak néha a hangok
+        case "voices":
+            synths.forEach((synth) => synth.triggerRelease("+1"));
             if (state <= 2)
                 state = 3;
             unison.voices = Math.floor(state * 0.4); //2-40
@@ -155,13 +155,18 @@ function manageCaps(cap, state) {
 function manageSwitches(switchName, state) {
     switch (switchName) {
         case "unison":
+            if (!state)
+                synths.forEach((synth) => synth.triggerRelease("+1"));
+            else
+                synth.releaseAll("+1");
             unison.on = state;
             break;
         case "effect":
             break;
         case "lfo":
-            lfo.start();
-            if (!state)
+            if (state)
+                lfo.start();
+            else
                 lfo.stop();
             break;
         default:

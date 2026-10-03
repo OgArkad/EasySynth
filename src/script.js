@@ -38,6 +38,7 @@ async function autoStartAudio() {
         Effect.reverb.connect(Effect.chorus);
         Effect.chorus.connect(waveform);
         Effect.chorus.toDestination();
+        lfo.connect(filter.frequency);
         synth.releaseAll(0);
         synths.forEach((s) => s.triggerRelease());
         Preset.loadPreset(Preset.presets[Preset.currentPreset], synth);

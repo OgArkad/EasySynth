@@ -1,7 +1,7 @@
 import { PolySynth, Gain, Filter, LFO, Panner, Synth, Waveform, Part } from "tone";
 import { loadPreset, presets, currentPreset } from "./presets.js";
 import { sequencer, unison, effects, currentEffect, SwitchCurrentEffect } from "./effects.js";
-const waveform = new Waveform(1024);
+const waveform = new Waveform(512); //1024 before, but for performance 512 is still enough
 export const seq = new Part((time, note) => {
     if (!unison.on)
         synth.triggerAttackRelease(note, "8n", time);
@@ -33,15 +33,19 @@ let synths = Array.from({ length: unison.voices }, (_, i) => {
     return singleSynth;
 });
 function regenerateSynths() {
+    for (const synth of synths) {
+        synth.dispose();
+    }
     synths = Array.from({ length: unison.voices }, (_, i) => {
         const singleSynth = new Synth();
         loadPreset(presets[currentPreset], singleSynth, filter, lfo, false);
         if (i > 100)
             throw new Error("Unexpected error: unison.voices > 100, this shouldn't have happened.");
+        if (i < 5)
+            synth.connect(waveform);
         const panner = new Panner(unison.voices === 1 ? 0 : (i / (unison.voices - 1)) * 2 - 1);
         singleSynth.connect(panner);
         panner.toDestination();
-        panner.connect(waveform);
         singleSynth.detune.value = (i - 2) * unison.detune;
         return singleSynth;
     });
@@ -98,7 +102,6 @@ function manageKnobs(knob, degree) {
             let effectIndex = Math.floor((degree + 127) / 254 * effects.length); //0-effects.length
             if (currentEffect === effectIndex)
                 return;
-            console.log("Effect index: " + effectIndex);
             if (currentEffect !== null) {
                 const effectOld = effects[currentEffect];
                 if (effectOld === undefined)
@@ -106,7 +109,6 @@ function manageKnobs(knob, degree) {
                 synth.disconnect(effectOld.node);
                 effectOld.stop?.();
                 SwitchCurrentEffect(null);
-                console.log("Effect disconnected: " + effectOld.node.constructor.name);
             }
             if (effectIndex === 0)
                 return;
@@ -123,8 +125,7 @@ function manageKnobs(knob, degree) {
             expression.gain.rampTo((degree + 127) / 254, 0.2);
             break;
         default:
-            console.error("Unexpected knob: " + knob + ": " + degree);
-            return;
+            throw new Error("Unexpected knob: " + knob + ": " + degree);
     }
     if (!unison.on)
         loadPreset(preset, synth, undefined, undefined, false);
@@ -148,8 +149,7 @@ function manageCaps(cap, state) {
             regenerateSynths();
             break;
         default:
-            console.error("Unexpected cap: " + cap + ": " + state);
-            return;
+            throw new Error("Unexpected cap: " + cap + ": " + state);
     }
 }
 function manageSwitches(switchName, state) {
@@ -170,8 +170,7 @@ function manageSwitches(switchName, state) {
                 lfo.stop();
             break;
         default:
-            console.error("Unexpected switch: " + switchName + ": " + state);
-            return;
+            throw new Error("Unexpected switch: " + switchName + ": " + state);
     }
 }
 /*

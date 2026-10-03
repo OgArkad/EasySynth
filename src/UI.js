@@ -76,7 +76,6 @@ function setKnobs() {
     set_Knob("decay", pres.envelope.decay * 100 - 127);
     set_Knob("sustain", pres.envelope.sustain * 254 - 127);
     set_Knob("release", pres.envelope.release * 100 - 127);
-    console.info("Knobs set!");
 }
 /*                             -                           Set tempo UI                                          -                                                */
 let up = document.getElementById("tempoUp");
@@ -142,23 +141,19 @@ const keyboardtwoeng = {
 };
 let keyboard = keyboardtwohun;
 document.getElementById("keyboardOptions")?.addEventListener("change", (e) => {
-    console.log("Keyboard option selected: ", e.target.value);
+    console.info("Keyboard option selected: ", e.target.value);
     switch (e.target.value) {
         case "2hun":
             keyboard = keyboardtwohun;
-            console.log("Keyboard set to 2 row hun");
             break;
         case "2eng":
             keyboard = keyboardtwoeng;
-            console.log("Keyboard set to 2 row eng");
             break;
         case "1hun":
             keyboard = keyboardonehun;
-            console.log("Keyboard set to 1 row hun");
             break;
         case "1eng":
             keyboard = keyboardoneeng;
-            console.log("Keyboard set to 1 row eng");
             break;
         default:
             throw new Error("Invalid keyboard option selected.");
@@ -185,7 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 switchC.style.right = "33%";
             }
             manageSwitches(switchC.id.replace("-switch", ""), switchC.dataset.works === "on");
-            console.log(`Switch [${switchC.id}]: ${switchC.dataset.works}`);
         });
     });
 });

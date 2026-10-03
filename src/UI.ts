@@ -98,8 +98,6 @@ function setKnobs(){
   set_Knob("decay",   pres.envelope.decay   * 100 - 127);
   set_Knob("sustain", pres.envelope.sustain * 254 - 127);
   set_Knob("release", pres.envelope.release * 100 - 127);
-
-  console.info("Knobs set!");
 }
 
 /*                             -                           Set tempo UI                                          -                                                */
@@ -175,23 +173,19 @@ const keyboardtwoeng: Record<string, string> = {
 let keyboard: Record<string, string | undefined> = keyboardtwohun;
 
 document.getElementById("keyboardOptions")?.addEventListener("change", (e) => {
-  console.log("Keyboard option selected: ", (e.target as HTMLSelectElement).value);
+  console.info("Keyboard option selected: ", (e.target as HTMLSelectElement).value);
   switch((e.target as HTMLSelectElement).value) {
     case "2hun":
       keyboard = keyboardtwohun;
-      console.log("Keyboard set to 2 row hun");
       break;
     case "2eng":
       keyboard = keyboardtwoeng;
-      console.log("Keyboard set to 2 row eng");
       break;
     case "1hun":
       keyboard = keyboardonehun;
-      console.log("Keyboard set to 1 row hun");
       break;
     case "1eng":
       keyboard = keyboardoneeng;
-      console.log("Keyboard set to 1 row eng");
       break;
 
     default:
@@ -220,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
         switchC.style.right = "33%";
       }
       manageSwitches(switchC.id.replace("-switch", ""), switchC.dataset.works === "on");
-      console.log(`Switch [${switchC.id}]: ${switchC.dataset.works}`);
     });
   });
 });

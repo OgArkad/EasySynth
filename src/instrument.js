@@ -1,5 +1,5 @@
 import { PolySynth, Gain, Filter, LFO, Panner, Synth, Waveform, Part } from "tone";
-import { loadPreset, presets, currentPreset, presetdefs } from "./presets.js";
+import { loadPreset, presets, currentPreset } from "./presets.js";
 import { sequencer, unison, effects, currentEffect, SwitchCurrentEffect } from "./effects.js";
 const waveform = new Waveform(1024);
 export const seq = new Part((time, note) => {
@@ -104,7 +104,7 @@ function manageKnobs(knob, degree) {
                 if (effectOld === undefined)
                     throw new Error("Unexpected indexing error in effects (stoping).");
                 synth.disconnect(effectOld.node);
-                effectOld.start?.();
+                effectOld.stop?.();
                 SwitchCurrentEffect(null);
                 console.log("Effect disconnected: " + effectOld.node.constructor.name);
             }
@@ -174,4 +174,6 @@ function manageSwitches(switchName, state) {
             return;
     }
 }
+/*
+effect*/ 
 //# sourceMappingURL=instrument.js.map

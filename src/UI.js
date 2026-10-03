@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+//set caps, switches...
 function setKnobs() {
     function set_Knob(knob, deg) {
         const x = document.getElementById(knob + "-knob");

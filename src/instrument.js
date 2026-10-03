@@ -1,5 +1,5 @@
 import { PolySynth, Gain, Filter, LFO, Panner, Synth, Waveform, Part } from "tone";
-import { loadPreset, presets, currentPreset } from "./presets.js";
+import { loadPreset, presets, currentPreset, presetdefs } from "./presets.js";
 import { sequencer, unison, effects, currentEffect, SwitchCurrentEffect } from "./effects.js";
 const waveform = new Waveform(1024);
 export const seq = new Part((time, note) => {
@@ -131,6 +131,9 @@ function manageKnobs(knob, degree) {
         loadPreset(preset, synth, undefined, undefined, false);
     else
         synths.forEach((synth) => loadPreset(preset, synth, undefined, undefined, false));
+    const x = presets[currentPreset];
+    if (x != undefined && x.itemId)
+        localStorage.setItem(x.itemId, JSON.stringify(preset));
 }
 function manageCaps(cap, state) {
     switch (cap) {
@@ -138,7 +141,7 @@ function manageCaps(cap, state) {
             unison.detune = state; //0 - 100
             synths.forEach((synth, i) => { synth.detune.value = (i - 2) * unison.detune; });
             break;
-        case "voices":
+        case "voices": //bragadnak néha a hangok
             if (state <= 2)
                 state = 3;
             unison.voices = Math.floor(state * 0.4); //2-40

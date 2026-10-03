@@ -81,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+//set caps, switches...
 
 function setKnobs() {
   function set_Knob(knob: string, deg: number) {

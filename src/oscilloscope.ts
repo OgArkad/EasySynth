@@ -3,7 +3,7 @@ import { waveform } from "./instrument.js";
 const canvas = document.getElementById("oscilloscope-canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d")!;
 
-export function drawOscilloscope() {
+function drawOscilloscope() {
   requestAnimationFrame(drawOscilloscope);
 
   const values = waveform.getValue();
@@ -33,3 +33,5 @@ export function drawOscilloscope() {
 
   ctx.stroke();
 }
+
+drawOscilloscope();

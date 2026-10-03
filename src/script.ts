@@ -3,7 +3,6 @@ import MIDI from "./MIDI.js";
 import * as Effect from "./effects.js";
 import { synth, filter, lfo, panner, expression, synths, volume, waveform, seq } from "./instrument.js";
 import * as Preset from "./presets.js";
-import { drawOscilloscope } from "./oscilloscope.js";
 import * as Tone from "tone";
 
 const midi: MIDI = new MIDI();
@@ -50,10 +49,7 @@ async function autoStartAudio() {
     synth.releaseAll(0);
     synths.forEach((s: any) => s.triggerRelease());
 
-    Preset.loadLocalPresets();
     Preset.loadPreset(Preset.presets[Preset.currentPreset], synth);
-
-    drawOscilloscope();
 
     midi.init().catch((err: unknown) => {
       console.warn("MIDI init warning:", err);
@@ -193,8 +189,6 @@ async function unlockAudio() {
 
     Preset.loadLocalPresets();
     Preset.loadPreset(Preset.presets[Preset.currentPreset], synth);
-
-    drawOscilloscope();
 
     midi.init().catch((err: unknown) => {
       console.warn("MIDI init warning:", err);

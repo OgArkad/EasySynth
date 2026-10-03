@@ -85,33 +85,36 @@ document.addEventListener("keydown", (e: KeyboardEvent) => {
   if (Effect.sequencer.recording) seq.add((Transport.seconds - Effect.sequencer.recStart) % Effect.sequencer.length, note);
 });
 
-document.addEventListener("keyup", (e: KeyboardEvent) => {
-  if (e.key === 'Enter') {
-    if (Effect.sequencer.on) {
-      seq.loop = false;
-      seq.stop();
-      Effect.sequencer.on = false;
-      Effect.sequencer.recording = false;
-    } else {
-      seq.start();
-      seq.loop = true;
-      Effect.sequencer.recording = true;
-      Effect.sequencer.recStart = Transport.seconds;
-      Effect.sequencer.on = true;
+document.addEventListener("keyup", (e) => {
+    if (e.key === 'Enter'){
+       if (Effect.sequencer.on){
+            seq.loop = false;
+            seq.stop();
+            Effect.sequencer.on = false;
+            Effect.sequencer.recording = false;
+            console.info("sequencer paused");
+        }else{
+            seq.start();
+            seq.loop = true;
+            Effect.sequencer.recording = true;
+            Effect.sequencer.recStart = Transport.seconds;
+            Effect.sequencer.on = true;
+            console.info("sequencer started");
+        }
+        return;
     }
-    return;
-  }
-  if (e.key === ' ') {
-    Effect.sequencer.recording = !Effect.sequencer.recording;
-    return;
-  }
-  if (e.key === 'Backspace') {
-    seq.loop = false;
-    seq.stop();
-    Effect.sequencer.on = false;
-    Effect.sequencer.recording = false;
-    seq.clear();
-  }
+    if (e.key === ' '){
+        Effect.sequencer.recording = !Effect.sequencer.recording;
+        return;
+    }
+    if (e.key === 'Backspace'){
+        seq.loop = false;
+        seq.stop();
+        Effect.sequencer.on = false;
+        Effect.sequencer.recording = false;
+        seq.clear();
+        console.info("sequencer stopped");
+    }
 
   let note = keyboard[e.key];
   if (note === undefined || Effect.sustain) return;

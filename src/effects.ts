@@ -8,10 +8,16 @@ export {
   chorus,
   chorusSend,
   reverbSend,
-  effects
+  effects,
+  currentEffect,
+  SwitchCurrentEffect
 };
 
 let sustain: boolean = false;
+
+function SwitchCurrentEffect(effectIndex: number | null){
+    currentEffect = effectIndex;
+}
 
 function switchSustain(value: boolean = !sustain){
     sustain = value;
@@ -67,10 +73,10 @@ const tremolo: Tone.Tremolo = new Tone.Tremolo(9, 0.75);
 const vibrato: Tone.Vibrato = new Tone.Vibrato(4, 0.5);
 
 const autoFilter: Tone.AutoFilter = new Tone.AutoFilter("4n");
-const autoPanner: Tone.AutoPanner = new Tone.AutoPanner("4n");
-const cheby: Tone.Chebyshev = new Tone.Chebyshev(50);
+const autoPanner: Tone.AutoPanner = new Tone.AutoPanner("4n").toDestination();
+const cheby: Tone.Chebyshev = new Tone.Chebyshev(50).toDestination();
 const pingPong: Tone.PingPongDelay = new Tone.PingPongDelay("4n", 0.2);
-const pitchShift: Tone.PitchShift = new Tone.PitchShift(5);
+const pitchShift: Tone.PitchShift = new Tone.PitchShift(5).toDestination();
 const autoWah: Tone.AutoWah = new Tone.AutoWah({
   baseFrequency: 50,
   octaves: 6,
@@ -78,9 +84,41 @@ const autoWah: Tone.AutoWah = new Tone.AutoWah({
   Q: 6
 });
 
-type effectType = (Tone.Phaser | Tone.StereoWidener | Tone.Distortion | Tone.BitCrusher | Tone.Tremolo | Tone.Vibrato | Tone.PingPongDelay | Tone.AutoWah | Tone.Reverb | Tone.Gain
-    | Tone.FeedbackDelay | Tone.Chorus | Tone.Phaser | Tone.StereoWidener | Tone.Distortion | Tone.BitCrusher | Tone.Tremolo | Tone.Vibrato | Tone.AutoFilter | Tone.AutoPanner
-    | Tone.Chebyshev | Tone.PingPongDelay | Tone.PitchShift | Tone.AutoWah);
+type EffectM = {
+  node: Tone.InputNode,
+  start?: () => void,
+  stop?: () => void
+};
 
-const effects: effectType[] = [phaser, stereowidener, distortion, bitcrusher, tremolo, vibrato, pingPong, autoWah];
+const effects: EffectM[] = [
+  { node: phaser },
+  { node: stereowidener },
+  { node: distortion },
+  { node: bitcrusher },
+  {
+    node: autoFilter,
+    start: () => autoFilter.start(),
+    stop: () => autoFilter.stop()
+  },
+  {
+    node: autoPanner,
+    start: () => autoPanner.start(),
+    stop: () => autoPanner.stop()
+  },
+  {
+    node: tremolo,
+    start: () => tremolo.start(),
+    stop: () => tremolo.stop()
+  },
+  { node: vibrato },
+  { node: pingPong },
+  { node: autoWah },
+  { node: reverbSend },
+  { node: delay },
+  { node: chorusSend },
+  { node: cheby },
+  { node: pitchShift }
+];
+
+let currentEffect: number | null = null;
 /**/

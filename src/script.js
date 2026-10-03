@@ -93,6 +93,14 @@ document.addEventListener("keyup", (e) => {
         return;
     }
     if (e.key === ' ') {
+        if (!Effect.sequencer.on) {
+            seq.start();
+            seq.loop = true;
+            Effect.sequencer.recording = true;
+            Effect.sequencer.recStart = Transport.seconds;
+            Effect.sequencer.on = true;
+            console.info("sequencer started");
+        }
         Effect.sequencer.recording = !Effect.sequencer.recording;
         return;
     }

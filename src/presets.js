@@ -189,7 +189,6 @@ function loadLocalPresets() {
      {
         const parsed = JSON.parse(x);
         presets.push(parsed);
-        console.log("Loaded preset from local machine: ", parsed);
         i++;
         x = localStorage.getItem("preset" + i);
     }

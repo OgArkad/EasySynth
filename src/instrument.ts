@@ -42,19 +42,20 @@ let synths: Synth<SynthOptions>[] = Array.from({ length: unison.voices }, (_, i)
 
 function regenerateSynths() {
     synths = Array.from({ length: unison.voices }, (_, i) => {
-    const singleSynth = new Synth();
-    loadPreset(presets[currentPreset], singleSynth, filter, lfo, false);
+        const singleSynth = new Synth();
+        loadPreset(presets[currentPreset], singleSynth, filter, lfo, false);
 
-    if (i > 100) throw new Error("Unexpected error: unison.voices > 100, this shouldn't have happened.");
-    const x = (((i - (i / 2)) * 0.02)-0.5)*2;
-    const panner = new Panner(x);
-    singleSynth.connect(panner);
-    panner.toDestination();
-    panner.connect(waveform);
-    singleSynth.detune.value = (i - 2) * unison.detune;
+        if (i > 100) throw new Error("Unexpected error: unison.voices > 100, this shouldn't have happened.");
 
-    return singleSynth;
-});
+        const panner = new Panner(unison.voices === 1 ? 0 : (i / (unison.voices - 1)) * 2 - 1);
+
+        singleSynth.connect(panner);
+        panner.toDestination();
+        panner.connect(waveform);
+        singleSynth.detune.value = (i - 2) * unison.detune;
+
+        return singleSynth;
+    });
 }
 
 
@@ -155,7 +156,8 @@ function manageCaps (cap: string, state: number){//0-100
             unison.detune = state; //0 - 100
             synths.forEach((synth, i) => {synth.detune.value = (i - 2) * unison.detune;});
             break;
-        case "voices"://bragadnak néha a hangok
+        case "voices":
+            synths.forEach((synth) => synth.triggerRelease("+1"));
             if (state <= 2) state = 3;
             unison.voices = Math.floor(state * 0.4); //2-40
             regenerateSynths();
@@ -170,13 +172,15 @@ function manageCaps (cap: string, state: number){//0-100
 function manageSwitches (switchName: string, state: boolean){
     switch (switchName){
         case "unison":
+            if (!state) synths.forEach((synth) => synth.triggerRelease("+1"));
+            else synth.releaseAll("+1");
             unison.on = state;
             break;
         case "effect":
             break;
         case "lfo":
-            lfo.start();
-            if (!state) lfo.stop();
+            if (state) lfo.start();
+            else lfo.stop();
             break;
 
         default:

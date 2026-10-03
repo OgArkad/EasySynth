@@ -54,7 +54,7 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     Effect.reverb.connect(Effect.chorus);
     Effect.chorus.connect(waveform);
     Effect.chorus.toDestination();
-    //lfo.connect(filter.frequency);
+    lfo.connect(filter.frequency);
     synth.releaseAll(0);
     synths.forEach((s) => s.triggerRelease());
     Preset.loadPreset(Preset.presets[Preset.currentPreset], synth);

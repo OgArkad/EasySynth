@@ -6,7 +6,7 @@ export { setKnobs };
 const KNOB_CONFIGS = {
     'filter-knob': { minAngle: -127, maxAngle: 127, steps: 7 },
     'waveform-knob': { minAngle: -100, maxAngle: 100, steps: 8 },
-    'sequencer-knob': { minAngle: -127, maxAngle: 127, steps: 8 },
+    'effect-knob': { minAngle: -127, maxAngle: 127, steps: 15 },
     'gain-knob': { minAngle: -127, maxAngle: 127, sensitivity: 2.0 },
     'cutoff-knob': { minAngle: -127, maxAngle: 127 },
     'unison-knob': { minAngle: -127, maxAngle: 127, steps: 4 },
@@ -123,26 +123,25 @@ document.getElementById("record")?.addEventListener("click", () => {
 /*                             -                           Set switches UI                                          -                                                */
 document.addEventListener('DOMContentLoaded', () => {
     const switches = document.querySelectorAll('.switch');
-    console.log("Switches found: ", switches.length, switches);
-    switches.forEach((switchOne) => {
-        switchOne.style.position = "absolute";
-        switchOne.style.top = "50%";
-        switchOne.style.right = "33%";
-        switchOne.addEventListener('click', (e) => {
-            if (switchOne.dataset.works === "off") {
-                switchOne.src = "./media/switchRight.png";
-                switchOne.dataset.works = "on";
-                switchOne.style.top = "50%";
-                switchOne.style.left = "66%";
+    switches.forEach((switchC) => {
+        switchC.style.position = "absolute";
+        switchC.style.top = "50%";
+        switchC.style.right = "33%";
+        switchC.addEventListener('click', (e) => {
+            if (switchC.dataset.works === "off") {
+                switchC.src = "./media/switchRight.png";
+                switchC.dataset.works = "on";
+                switchC.style.top = "50%";
+                switchC.style.left = "66%";
             }
             else {
-                switchOne.src = "./media/switchLeft.png";
-                switchOne.dataset.works = "off";
-                switchOne.style.top = "50%";
-                switchOne.style.right = "33%";
+                switchC.src = "./media/switchLeft.png";
+                switchC.dataset.works = "off";
+                switchC.style.top = "50%";
+                switchC.style.right = "33%";
             }
-            manageSwitches(switchOne.id.replace("-switch", ""), switchOne.dataset.works === "on");
-            console.log(`Switch [${switchOne.id}]: ${switchOne.dataset.works}`);
+            manageSwitches(switchC.id.replace("-switch", ""), switchC.dataset.works === "on");
+            console.log(`Switch [${switchC.id}]: ${switchC.dataset.works}`);
         });
     });
 });
@@ -176,7 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
             window.addEventListener('mousemove', onMouseMove);
             window.addEventListener('mouseup', onMouseUp);
         });
-        console.log(cap.id);
     });
 });
 /*

@@ -1,8 +1,9 @@
-import {expression, manageKnobs, filter, seq, manageCaps, manageSwitches} from "./instrument.js";
+import { expression, manageKnobs, filter, seq , manageCaps, manageSwitches} from "./instrument.js";
 import { presets, currentPreset, type SynthPreset } from "./presets.js";
 import { sequencer } from "./effects.js";
 import { Transport } from "tone";
-export {setKnobs, keyboard};
+export { setKnobs , keyboard};
+import * as Tone from "tone";
 
 interface KnobConfig {
   minAngle: number;
@@ -37,11 +38,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentAngle = minAngle;
     knob.style.transform = `rotate(${currentAngle}deg)`;
 
-    knob.addEventListener('mousedown', (e: MouseEvent) => {
+    knob.addEventListener('pointerdown', (e: PointerEvent) => {
       e.preventDefault();
       let startY = e.clientY;
 
-      const onMouseMove = (moveEvent: MouseEvent) => {
+      const onPointerMove = (moveEvent: PointerEvent) => {
         const deltaY = startY - moveEvent.clientY;
         startY = moveEvent.clientY;
 
@@ -62,22 +63,22 @@ document.addEventListener('DOMContentLoaded', () => {
         manageKnobs(knob.id.replace("-knob", ""), currentAngle);
       };
 
-      const onMouseUp = () => {
-        window.removeEventListener('mousemove', onMouseMove);
-        window.removeEventListener('mouseup', onMouseUp);
+      const onPointerUp = () => {
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', onPointerUp);
       };
 
-      window.addEventListener('mousemove', onMouseMove);
-      window.addEventListener('mouseup', onMouseUp);
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', onPointerUp);
     });
   });
 });
 
-function setKnobs(){
-  function set_Knob(knob: string, deg: number){
+function setKnobs() {
+  function set_Knob(knob: string, deg: number) {
     const x: HTMLElement | null = document.getElementById(knob + "-knob");
     if (x == null) return;
-    x.style.transform =  `rotate(${deg}deg)`;
+    x.style.transform = `rotate(${deg}deg)`;
   }
 
   const pres: SynthPreset | undefined = presets[currentPreset];
@@ -100,7 +101,6 @@ function setKnobs(){
   set_Knob("release", pres.envelope.release * 100 - 127);
 }
 
-/*                             -                           Set tempo UI                                          -                                                */
 let up = document.getElementById("tempoUp");
 let down = document.getElementById("tempDown");
 let value = document.getElementById("tempoValue");
@@ -108,13 +108,13 @@ let value = document.getElementById("tempoValue");
 let tempoValue: number = 120;
 
 if (up && down && value) {
-  up.addEventListener("click", function (e) {
+  up.addEventListener("click", function () {
     tempoValue++;
     value.textContent = tempoValue.toString();
     Transport.bpm.value = tempoValue;
   });
 
-  down.addEventListener("click", function (e) {
+  down.addEventListener("click", function () {
     tempoValue--;
     value.textContent = tempoValue.toString();
     Transport.bpm.value = tempoValue;
@@ -132,16 +132,16 @@ document.getElementById("play")?.addEventListener("click", () => {
 });
 
 document.getElementById("pause")?.addEventListener("click", () => {
-  if (!sequencer.on) return
+  if (!sequencer.on) return;
   sequencer.recording = false;
   seq.loop = false;
   seq.stop();
   sequencer.on = false;
-  console.info("sequencer stoped");
+  console.info("sequencer stopped");
 });
 
 document.getElementById("record")?.addEventListener("click", () => {
-  if (!sequencer.on) return
+  if (!sequencer.on) return;
   sequencer.recording = !sequencer.recording;
   console.info("sequencer recording: ", sequencer.recording);
 });
@@ -196,24 +196,23 @@ document.getElementById("keyboardOptions")?.addEventListener("change", (e) => {
 
 document.addEventListener('DOMContentLoaded', () => {
   const switches = document.querySelectorAll<HTMLImageElement>('.switch');
-  switches.forEach((switchC) => {
-    switchC.style.position = "absolute";
-    switchC.style.top = "50%";
-    switchC.style.right = "33%";
 
-    switchC.addEventListener('click', (e: MouseEvent) => {
-      if (switchC.dataset.works === "off") {
-        switchC.src = "./media/switchRight.png";
-        switchC.dataset.works = "on";
-        switchC.style.top = "50%";
-        switchC.style.left = "66%";
+  switches.forEach((switchOne) => {
+    switchOne.style.left = "-30px";
+
+    switchOne.addEventListener('click', () => {
+      const isOff = switchOne.dataset.works === "off";
+
+      if (isOff) {
+        switchOne.src = "./media/switchRight.png";
+        switchOne.dataset.works = "on";
+        switchOne.style.left = "30px";
       } else {
-        switchC.src = "./media/switchLeft.png";
-        switchC.dataset.works = "off";
-        switchC.style.top = "50%";
-        switchC.style.right = "33%";
+        switchOne.src = "./media/switchLeft.png";
+        switchOne.dataset.works = "off";
+        switchOne.style.left = "-30px";
       }
-      manageSwitches(switchC.id.replace("-switch", ""), switchC.dataset.works === "on");
+      manageSwitches(switchOne.id.replace("-switch", ""), switchOne.dataset.works === "on");
     });
   });
 });
@@ -223,13 +222,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const caps = document.querySelectorAll<HTMLImageElement>('.cap');
 
   caps.forEach((cap) => {
-    let currentY = 60;
+    const container = cap.parentElement;
+    const track = container?.querySelector<HTMLImageElement>('.slider');
 
-    cap.addEventListener('mousedown', (e: MouseEvent) => {
+    let currentY = 0; 
+    if (track) {
+      const totalTravel = track.offsetHeight - cap.offsetHeight;
+      
+      currentY = -(totalTravel / 2); 
+      cap.style.transform = `translateX(-50%) translateY(${currentY}px)`;
+    }
+
+    cap.addEventListener('pointerdown', (e: PointerEvent) => {
       e.preventDefault();
 
-      const container = cap.parentElement;
-      const track = container?.querySelector<HTMLImageElement>('.slider');
       if (!track) return;
 
       const totalTravel = track.offsetHeight - cap.offsetHeight;
@@ -238,31 +244,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let startY = e.clientY;
 
-      const onMouseMove = (moveEvent: MouseEvent) => {
+      const onPointerMove = (moveEvent: PointerEvent) => {
         const deltaY = moveEvent.clientY - startY;
         startY = moveEvent.clientY;
 
         currentY = Math.min(maxY, Math.max(minY, currentY + deltaY));
 
-        cap.style.transform = `translateY(${currentY}px)`;;
+        cap.style.transform = `translateX(-50%) translateY(${currentY}px)`;
 
         manageCaps(cap.id.replace("-cap", ""), Math.round(((maxY - currentY) / totalTravel) * 100));
       };
 
-      const onMouseUp = () => {
-        window.removeEventListener('mousemove', onMouseMove);
-        window.removeEventListener('mouseup', onMouseUp);
+      const onPointerUp = () => {
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', onPointerUp);
       };
 
-      window.addEventListener('mousemove', onMouseMove);
-      window.addEventListener('mouseup', onMouseUp);
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', onPointerUp);
     });
   });
 });
 
 
-/*
-  position: absolute;
-  top: 50%;
-  right: 48%;
-*/
+const startBtn = document.getElementById("start");
+
+if (startBtn) {
+  startBtn.addEventListener("click", async () => {
+    if (typeof (Tone as any).start === "function") {
+      await (Tone as any).start();
+    }
+
+    if (screen.orientation && typeof screen.orientation.lock === "function") {
+      try {
+        await screen.orientation.lock("landscape");
+      } catch (err) {
+        console.warn("Screen orientation lock not supported or allowed:", err);
+      }
+    }
+
+    startBtn.style.display = "none";
+  });
+}

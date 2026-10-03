@@ -8,7 +8,7 @@
   "homepage": "https://github.com/OgArkad/easySinth#readme",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "tsc && vite build"
   },
   "repository": {
@@ -20,9 +20,5 @@
   },
   "dependencies": {
     "tone": "^15.1.22"
-  },
-  "devDependencies": {
-    "typescript": "^7.0.2",
-    "vite": "^8.3.0"
   }
 }

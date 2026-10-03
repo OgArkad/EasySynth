@@ -1,21 +1,25 @@
-import { start, Transport } from "tone"; //npm install tone
+import { start, Transport } from "tone";
 import MIDI from "./MIDI.js";
 import * as Effect from "./effects.js";
 import { synth, filter, lfo, panner, expression, synths, volume, waveform, seq } from "./instrument.js";
 import * as Preset from "./presets.js";
 import { keyboard } from "./UI.js";
-//localhost: npm run dev, build: npm run build
-const midi = new MIDI;
+import * as Tone from "tone";
+const midi = new MIDI();
 let started = false;
-document.getElementById("start")?.addEventListener("click", async (e) => {
+async function autoStartAudio() {
     if (started)
         return;
-    await start(); //aka Tone.start
-    Transport.start();
-    const startElem = document.getElementById("start");
-    if (startElem)
-        startElem.style.display = "none";
-    synths.forEach((synth) => {
+    try {
+        await start();
+        if (Tone.getContext().state !== "running") {
+            await Tone.getContext().resume();
+        }
+        Transport.start();
+        if (screen.orientation && typeof screen.orientation.lock === "function") {
+            screen.orientation.lock("landscape").catch(() => { });
+        }
+        synths.forEach((s) => s.connect(volume));
         synth.connect(volume);
         volume.connect(filter);
         filter.connect(panner);
@@ -24,28 +28,27 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
         Effect.reverb.connect(Effect.chorus);
         Effect.chorus.connect(waveform);
         Effect.chorus.toDestination();
-    });
-    synth.connect(volume);
-    volume.connect(filter);
-    filter.connect(panner);
-    panner.connect(expression);
-    expression.connect(Effect.reverb);
-    Effect.reverb.connect(Effect.chorus);
-    Effect.chorus.connect(waveform);
-    Effect.chorus.toDestination();
-    lfo.connect(filter.frequency);
-    synth.releaseAll(0);
-    synths.forEach((s) => s.triggerRelease());
-    Preset.loadPreset(Preset.presets[Preset.currentPreset], synth);
-    midi.init().catch((err) => {
-        console.warn("MIDI initialization warning/error:", err);
-    });
-    started = true;
-    console.log("Synth started/reset!");
-});
+        lfo.connect(filter.frequency);
+        synth.releaseAll(0);
+        synths.forEach((s) => s.triggerRelease());
+        Preset.loadPreset(Preset.presets[Preset.currentPreset], synth);
+        midi.init().catch((err) => {
+            console.warn("MIDI init warning:", err);
+        });
+        started = true;
+        const startElem = document.getElementById("start");
+        if (startElem)
+            startElem.style.display = "none";
+    }
+    catch (err) {
+        console.error("Audio activation failed:", err);
+    }
+}
+window.addEventListener("pointerdown", autoStartAudio, { once: true });
+window.addEventListener("touchstart", autoStartAudio, { once: true });
 window.onblur = function () {
     synth.releaseAll(0);
-    synths.forEach((synth) => synth.triggerRelease());
+    synths.forEach((s) => s.triggerRelease());
 };
 document.addEventListener("keydown", (e) => {
     if (e.repeat || !started)
@@ -56,7 +59,7 @@ document.addEventListener("keydown", (e) => {
     if (!Effect.unison.on)
         synth.triggerAttack(note);
     else
-        synths.forEach((synth) => synth.triggerAttack(note));
+        synths.forEach((s) => s.triggerAttack(note));
     if (Effect.sequencer.recording)
         seq.add((Transport.seconds - Effect.sequencer.recStart) % Effect.sequencer.length, note);
 });
@@ -67,7 +70,6 @@ document.addEventListener("keyup", (e) => {
             seq.stop();
             Effect.sequencer.on = false;
             Effect.sequencer.recording = false;
-            console.info("sequencer paused");
         }
         else {
             seq.start();
@@ -75,19 +77,10 @@ document.addEventListener("keyup", (e) => {
             Effect.sequencer.recording = true;
             Effect.sequencer.recStart = Transport.seconds;
             Effect.sequencer.on = true;
-            console.info("sequencer started");
         }
         return;
     }
     if (e.key === ' ') {
-        if (!Effect.sequencer.on) {
-            seq.start();
-            seq.loop = true;
-            Effect.sequencer.recording = true;
-            Effect.sequencer.recStart = Transport.seconds;
-            Effect.sequencer.on = true;
-            console.info("sequencer started");
-        }
         Effect.sequencer.recording = !Effect.sequencer.recording;
         return;
     }
@@ -97,7 +90,6 @@ document.addEventListener("keyup", (e) => {
         Effect.sequencer.on = false;
         Effect.sequencer.recording = false;
         seq.clear();
-        console.info("sequencer stopped");
     }
     let note = keyboard[e.key];
     if (note === undefined || Effect.sustain)
@@ -105,8 +97,85 @@ document.addEventListener("keyup", (e) => {
     if (!Effect.unison.on)
         synth.triggerRelease(note);
     else
-        synths.forEach((synth) => synth.triggerRelease());
+        synths.forEach((s) => s.triggerRelease());
 });
-console.debug("script.js loaded!");
-// (x,e *3, g, 6 *3, m, i * 3, b,z *3 )
+function handleKeyPlay(target) {
+    if (!target)
+        return;
+    const keyElem = target.closest("[data-note]");
+    if (!keyElem)
+        return;
+    const note = keyElem.getAttribute("data-note");
+    if (note) {
+        if (!Effect.unison.on)
+            synth.triggerAttack(note);
+        else
+            synths.forEach((s) => s.triggerAttack(note));
+    }
+}
+function handleKeyRelease(target) {
+    if (!target)
+        return;
+    const keyElem = target.closest("[data-note]");
+    if (!keyElem)
+        return;
+    const note = keyElem.getAttribute("data-note");
+    if (note && !Effect.sustain) {
+        if (!Effect.unison.on)
+            synth.triggerRelease(note);
+        else
+            synths.forEach((s) => s.triggerRelease());
+    }
+}
+document.addEventListener("pointerdown", (e) => {
+    if (!started)
+        autoStartAudio();
+    handleKeyPlay(e.target);
+});
+document.addEventListener("pointerup", (e) => {
+    handleKeyRelease(e.target);
+});
+document.addEventListener("pointercancel", (e) => {
+    handleKeyRelease(e.target);
+});
+async function unlockAudio() {
+    if (started)
+        return;
+    try {
+        await start();
+        if (Tone.getContext().state !== "running") {
+            await Tone.getContext().resume();
+        }
+        const ctx = Tone.getContext().rawContext;
+        const buffer = ctx.createBuffer(1, 1, 22050);
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+        source.start(0);
+        Transport.start();
+        synths.forEach((s) => s.connect(volume));
+        synth.connect(volume);
+        volume.connect(filter);
+        filter.connect(panner);
+        panner.connect(expression);
+        expression.connect(Effect.reverb);
+        Effect.reverb.connect(Effect.chorus);
+        Effect.chorus.connect(waveform);
+        Effect.chorus.toDestination();
+        synth.releaseAll(0);
+        synths.forEach((s) => s.triggerRelease());
+        Preset.loadLocalPresets();
+        Preset.loadPreset(Preset.presets[Preset.currentPreset], synth);
+        midi.init().catch((err) => {
+            console.warn("MIDI init warning:", err);
+        });
+        started = true;
+        const startElem = document.getElementById("start");
+        if (startElem)
+            startElem.style.display = "none";
+    }
+    catch (err) {
+        console.error("Audio activation failed:", err);
+    }
+}
 //# sourceMappingURL=script.js.map

@@ -41,8 +41,8 @@ function regenerateSynths() {
         loadPreset(presets[currentPreset], singleSynth, filter, lfo, false);
         if (i > 100)
             throw new Error("Unexpected error: unison.voices > 100, this shouldn't have happened.");
-        if (i < 5)
-            synth.connect(waveform);
+        if (i <= 5)
+            singleSynth.connect(waveform);
         const panner = new Panner(unison.voices === 1 ? 0 : (i / (unison.voices - 1)) * 2 - 1);
         singleSynth.connect(panner);
         panner.toDestination();

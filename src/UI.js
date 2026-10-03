@@ -3,6 +3,7 @@ import { presets, currentPreset } from "./presets.js";
 import { sequencer } from "./effects.js";
 import { Transport, start } from "tone";
 export { setKnobs, keyboard };
+import * as Tone from "tone";
 const KNOB_CONFIGS = {
     'filter-knob': { minAngle: -127, maxAngle: 127, steps: 7 },
     'waveform-knob': { minAngle: -100, maxAngle: 100, steps: 8 },
@@ -54,8 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 knob.removeEventListener('pointermove', onPointerMove);
                 knob.removeEventListener('pointerup', onPointerUp);
             };
-            knob.addEventListener('pointermove', onPointerMove);
-            knob.addEventListener('pointerup', onPointerUp);
+            window.addEventListener('pointermove', onPointerMove);
+            window.addEventListener('pointerup', onPointerUp);
         });
     });
 });

@@ -48,6 +48,8 @@ body {
 .switch-control {
   position: absolute;
   width: 3vw;
+  height: auto;
+  z-index: 10;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
   font-size: 0.8vw;
@@ -231,6 +233,10 @@ body {
   height: 4vh;
   width: 6vw;
 }
+#keyboardOptions{
+  left: 80%;
+  top: 5%;
+}
 
 #tempo {
   background-color: #000000;
@@ -305,6 +311,65 @@ body {
   left: 44%;
 }
 
+@media screen and (max-width: 1000px) {
+  #start {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 1000px) and (orientation: portrait) {
+  html, body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    background-color: #1a1a1a;
+  }
+
+  .synth-stage {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 100vh !important;
+    height: 100vw !important;
+    transform: translate(-50%, -50%) rotate(90deg) !important;
+    transform-origin: center center !important;
+  }
+
+  .synth-chassis {
+    width: 100% !important;
+    height: 100% !important;
+    transform: none !important;
+  }
+
+  .synth-chassis > *:not(img[src*="white"]):not(img[src*="black"]) {
+    display: none !important;
+  }
+
+  .white-key-mobile {
+    object-fit: fill;
+  }
+
+  .black-key-mobile {
+    object-fit: fill;
+  }
+}
+
+[data-note],
+.knob-image,
+.knob-control,
+.slider-control,
+.cap,
+.switch,
+#start {
+  touch-action: none !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 @media screen and (max-width: 768px) {
   .knob-control,
   .switch-control,
@@ -316,29 +381,5 @@ body {
   #sampleAddOptions,
   .media {
     display: none !important;
-  }
-
-  html, body {
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    overflow: hidden !important;
-    touch-action: none;
-  }
-
-  .synth-chassis {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .white-key-mobile {
-    object-fit: fill;
-  }
-
-  .black-key-mobile {
-    object-fit: fill;
   }
 }

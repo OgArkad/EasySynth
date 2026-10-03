@@ -2,7 +2,8 @@ import { expression, manageKnobs, filter, seq, manageCaps, manageSwitches } from
 import { presets, currentPreset, type PresetOscillatorType, type SynthPreset } from "./presets.js";
 import { sequencer } from "./effects.js";
 import { Transport, start } from "tone";
-export {setKnobs, keyboard};
+export { setKnobs , keyboard};
+import * as Tone from "tone";
 
 interface KnobConfig {
   minAngle: number;
@@ -75,8 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
         knob.removeEventListener('pointerup', onPointerUp);
       };
 
-      knob.addEventListener('pointermove', onPointerMove);
-      knob.addEventListener('pointerup', onPointerUp);
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', onPointerUp);
     });
   });
 });

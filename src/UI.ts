@@ -33,43 +33,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
   knobs.forEach((knob) => {
     const config = KNOB_CONFIGS[knob.id] || { minAngle: -127, maxAngle: 127 };
-    const { minAngle, maxAngle, steps, sensitivity = 1.5 } = config;
+    const { minAngle, maxAngle, steps, sensitivity = 1.2 } = config;
 
-    let currentAngle = minAngle;
-    knob.style.transform = `rotate(${currentAngle}deg)`;
-
+    const getRotationFromElement = (el: HTMLElement): number => {
+      const transform = el.style.transform;
+      const match = transform.match(/rotate\(([-?\d.]+)deg\)/);
+      const val = match?.[1];
+      return val !== undefined ? parseFloat(val) : minAngle;
+    };
+    
     knob.addEventListener('pointerdown', (e: PointerEvent) => {
       e.preventDefault();
+      
+      knob.setPointerCapture(e.pointerId);
+
       let startY = e.clientY;
+      let continuousAngle = getRotationFromElement(knob);
 
       const onPointerMove = (moveEvent: PointerEvent) => {
         const deltaY = startY - moveEvent.clientY;
         startY = moveEvent.clientY;
 
-        let targetAngle = currentAngle + deltaY * sensitivity;
-        targetAngle = Math.min(maxAngle, Math.max(minAngle, targetAngle));
+        continuousAngle += deltaY * sensitivity;
+        continuousAngle = Math.min(maxAngle, Math.max(minAngle, continuousAngle));
+
+        let displayAngle = continuousAngle;
 
         if (steps && steps > 1) {
           const range = maxAngle - minAngle;
           const stepSize = range / (steps - 1);
-          const currentStep = Math.round((targetAngle - minAngle) / stepSize);
-
-          currentAngle = minAngle + currentStep * stepSize;
-          knob.style.transform = `rotate(${currentAngle}deg)`;
-        } else {
-          currentAngle = targetAngle;
-          knob.style.transform = `rotate(${currentAngle}deg)`;
+          const currentStep = Math.round((continuousAngle - minAngle) / stepSize);
+          displayAngle = minAngle + currentStep * stepSize;
         }
-        manageKnobs(knob.id.replace("-knob", ""), currentAngle);
+
+        knob.style.transform = `rotate(${displayAngle}deg)`;
+        manageKnobs(knob.id.replace("-knob", ""), displayAngle);
       };
 
-      const onPointerUp = () => {
-        window.removeEventListener('pointermove', onPointerMove);
-        window.removeEventListener('pointerup', onPointerUp);
+      const onPointerUp = (upEvent: PointerEvent) => {
+        knob.releasePointerCapture(upEvent.pointerId);
+        knob.removeEventListener('pointermove', onPointerMove);
+        knob.removeEventListener('pointerup', onPointerUp);
       };
 
-      window.addEventListener('pointermove', onPointerMove);
-      window.addEventListener('pointerup', onPointerUp);
+      knob.addEventListener('pointermove', onPointerMove);
+      knob.addEventListener('pointerup', onPointerUp);
     });
   });
 });
@@ -270,7 +278,9 @@ document.addEventListener('DOMContentLoaded', () => {
 const startBtn = document.getElementById("start");
 
 if (startBtn) {
-  startBtn.addEventListener("click", async () => {
+  const handleStart = async (e: Event) => {
+    e.preventDefault();
+
     if (typeof (Tone as any).start === "function") {
       await (Tone as any).start();
     }
@@ -284,5 +294,8 @@ if (startBtn) {
     }
 
     startBtn.style.display = "none";
-  });
+  };
+
+  startBtn.addEventListener("click", handleStart);
+  startBtn.addEventListener("pointerdown", handleStart);
 }

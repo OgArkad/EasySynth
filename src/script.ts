@@ -3,7 +3,6 @@ import MIDI from "./MIDI.js";
 import * as Effect from "./effects.js";
 import {synth, filter, lfo, panner, expression, synths, volume, waveform, seq} from "./instrument.js";
 import * as Preset from "./presets.js";
-import { drawOscilloscope } from "./oscilloscope.js";
 //localhost: npm run dev, build: npm run build
 
 const midi: MIDI = new MIDI;
@@ -69,10 +68,7 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     synth.releaseAll(0);
     synths.forEach((s) => s.triggerRelease());
 
-    Preset.loadLocalPresets();
     Preset.loadPreset(Preset.presets[Preset.currentPreset], synth);
-
-    drawOscilloscope();
 
     midi.init().catch((err) => {
         console.warn("MIDI initialization warning/error:", err);

@@ -1,13 +1,14 @@
-import { presets, loadPreset, currentPreset, switchPreset, type SynthPreset } from "./presets.js";
+import { presets, loadPreset, currentPreset, switchPreset, type SynthPreset, loadLocalPresets } from "./presets.js";
 import { synth, filter, lfo } from "./instrument.js";
 
 const options = document.getElementById("sampleOptions") as HTMLSelectElement | null;
 const add = document.getElementById("sampleAddOptions") as HTMLElement | null;
-let i: number = 0;
+let presIndex: number = 0;
 
 function renderPresetOptions() {
   if (!options) return;
   options.innerHTML = "";
+  loadLocalPresets();
 
   presets.forEach((preset, index) => {
     const opt = document.createElement("option");
@@ -32,8 +33,14 @@ options?.addEventListener("change", (e) => {
 add?.addEventListener("click", () => {
   const title = prompt("Sample name:") || "Untitled";
 
+  if (presets.some((preset) => preset.name === title)) {
+    alert(`Preset with the name "${title}" already exists!\nPlease choose a different name.`);
+    return;
+  }
+
   const newPreset: SynthPreset = {
     name: title,
+    itemId: "preset" + presIndex,
     oscillator: {
       type: "sawtooth",
       octave: 0,
@@ -49,8 +56,8 @@ add?.addEventListener("click", () => {
   };
 
   presets.push(newPreset);//wil not update
-  localStorage.setItem("preset" + i, newPreset.toString());
-  i++;
+  localStorage.setItem("preset" + presIndex, JSON.stringify(newPreset));
+  presIndex++;
 
   renderPresetOptions();
   if (options) {

@@ -1,7 +1,7 @@
 import { waveform } from "./instrument.js";
 const canvas = document.getElementById("oscilloscope-canvas");
 const ctx = canvas.getContext("2d");
-export function drawOscilloscope() {
+function drawOscilloscope() {
     requestAnimationFrame(drawOscilloscope);
     const values = waveform.getValue();
     ctx.fillStyle = "#121212";
@@ -24,4 +24,5 @@ export function drawOscilloscope() {
     }
     ctx.stroke();
 }
+drawOscilloscope();
 //# sourceMappingURL=oscilloscope.js.map

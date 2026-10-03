@@ -3,6 +3,8 @@ This is an **online** ([`tone.js`](https://tonejs.github.io/)) based synthesizer
 <br>
 ---
 ###Knobs: <br>
+- Detune: if unison is enabled: how much detune do you want on your oscillators
+- Voices: if unison is enabled: 1-40, voices cout above 20 are recomanded only on high-end PCs
 - Sequencer: play, pause, switch recording
 - Filter: the type of the filter:  lowpass, highpass, lowshelf, highshelf, notch, allpass, peaking
 - Waveform: the form of the wave: sine, square, triangle, sawtooth, fatsine, fatsquare, fattriangle, fatsawtooth

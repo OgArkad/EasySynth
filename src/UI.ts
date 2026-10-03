@@ -1,5 +1,5 @@
 import {expression, manageKnobs, filter, seq, manageCaps, manageSwitches} from "./instrument.js";
-import { presets, currentPreset, type PresetOscillatorType, type SynthPreset } from "./presets.js";
+import { presets, currentPreset, type SynthPreset } from "./presets.js";
 import { sequencer } from "./effects.js";
 import { Transport } from "tone";
 export {setKnobs};
@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+//set caps, switches...
 
 function setKnobs(){
   function set_Knob(knob: string, deg: number){

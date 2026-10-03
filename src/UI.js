@@ -3,6 +3,7 @@ import { presets, currentPreset } from "./presets.js";
 import { sequencer } from "./effects.js";
 import { Recorder, Transport } from "tone";
 export { setKnobs };
+import * as Tone from "tone";
 const KNOB_CONFIGS = {
     'filter-knob': { minAngle: -127, maxAngle: 127, steps: 7 },
     'waveform-knob': { minAngle: -100, maxAngle: 100, steps: 8 },
@@ -25,10 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const { minAngle, maxAngle, steps, sensitivity = 1.5 } = config;
         let currentAngle = minAngle;
         knob.style.transform = `rotate(${currentAngle}deg)`;
-        knob.addEventListener('mousedown', (e) => {
+        knob.addEventListener('pointerdown', (e) => {
             e.preventDefault();
             let startY = e.clientY;
-            const onMouseMove = (moveEvent) => {
+            const onPointerMove = (moveEvent) => {
                 const deltaY = startY - moveEvent.clientY;
                 startY = moveEvent.clientY;
                 let targetAngle = currentAngle + deltaY * sensitivity;
@@ -46,12 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 manageKnobs(knob.id.replace("-knob", ""), currentAngle);
             };
-            const onMouseUp = () => {
-                window.removeEventListener('mousemove', onMouseMove);
-                window.removeEventListener('mouseup', onMouseUp);
+            const onPointerUp = () => {
+                window.removeEventListener('pointermove', onPointerMove);
+                window.removeEventListener('pointerup', onPointerUp);
             };
-            window.addEventListener('mousemove', onMouseMove);
-            window.addEventListener('mouseup', onMouseUp);
+            window.addEventListener('pointermove', onPointerMove);
+            window.addEventListener('pointerup', onPointerUp);
         });
     });
 });
@@ -64,33 +65,31 @@ function setKnobs() {
     }
     const pres = presets[currentPreset];
     if (pres === undefined)
-        throw new Error("This shouldn't have happened, you selected a non-existing preset! (Trying to rotate knobs in position)");
+        throw new Error("This shouldn't have happened, you selected a non-existing preset!");
     set_Knob("cutoff", Math.log(parseInt(filter.frequency.value.toString()) / 20) / Math.log(20000 / 20) * 254 - 127);
     set_Knob("attack", pres.envelope.attack * 200 - 127);
     set_Knob("decay", pres.envelope.decay * 100 - 127);
     set_Knob("sustain", pres.envelope.sustain * 254 - 127);
     set_Knob("release", pres.envelope.release * 100 - 127);
     set_Knob("filter", ["lowpass", "highpass", "lowshelf", "highshelf", "notch", "allpass", "peaking"].indexOf(filter.type) / 6 * 254 - 127);
-    set_Knob("waveform", ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"].indexOf(pres.oscillator.type) * 32 - 127); //254/8 = 31,75
+    set_Knob("waveform", ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"].indexOf(pres.oscillator.type) * 32 - 127);
     set_Knob("octave", pres.oscillator.octave / 4 * 127);
     set_Knob("semitone", pres.oscillator.detune / 1000 / 12 * 127);
     set_Knob("fine-tuning", pres.oscillator.detune * 10);
-    //set_Knob("unison", unison.on ? 127 : -127); // no need, because it's an outer variable
     set_Knob("gain", expression.gain.value * 254 - 127);
     console.info("Knobs set!");
 }
-/*                             -                           Set tempo UI                                          -                                                */
 let up = document.getElementById("tempoUp");
 let down = document.getElementById("tempDown");
 let value = document.getElementById("tempoValue");
 let tempoValue = 120;
 if (up && down && value) {
-    up.addEventListener("click", function (e) {
+    up.addEventListener("click", function () {
         tempoValue++;
         value.textContent = tempoValue.toString();
         Transport.bpm.value = tempoValue;
     });
-    down.addEventListener("click", function (e) {
+    down.addEventListener("click", function () {
         tempoValue--;
         value.textContent = tempoValue.toString();
         Transport.bpm.value = tempoValue;
@@ -111,7 +110,7 @@ document.getElementById("pause")?.addEventListener("click", () => {
     seq.loop = false;
     seq.stop();
     sequencer.on = false;
-    console.info("sequencer stoped");
+    console.info("sequencer stopped");
 });
 document.getElementById("record")?.addEventListener("click", () => {
     if (!sequencer.on)
@@ -122,21 +121,18 @@ document.getElementById("record")?.addEventListener("click", () => {
 document.addEventListener('DOMContentLoaded', () => {
     const switches = document.querySelectorAll('.switch');
     switches.forEach((switchOne) => {
-        switchOne.style.position = "absolute";
-        switchOne.style.top = "50%";
-        switchOne.style.right = "33%";
-        switchOne.addEventListener('click', (e) => {
-            if (switchOne.dataset.works === "off") {
+        switchOne.style.left = "-30px";
+        switchOne.addEventListener('click', () => {
+            const isOff = switchOne.dataset.works === "off";
+            if (isOff) {
                 switchOne.src = "./media/switchRight.png";
                 switchOne.dataset.works = "on";
-                switchOne.style.top = "50%";
-                switchOne.style.left = "66%";
+                switchOne.style.left = "30px";
             }
             else {
                 switchOne.src = "./media/switchLeft.png";
                 switchOne.dataset.works = "off";
-                switchOne.style.top = "50%";
-                switchOne.style.right = "33%";
+                switchOne.style.left = "-30px";
             }
         });
     });
@@ -144,8 +140,8 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     const caps = document.querySelectorAll('.cap');
     caps.forEach((cap) => {
-        let currentY = 60;
-        cap.addEventListener('mousedown', (e) => {
+        let currentY = 0;
+        cap.addEventListener('pointerdown', (e) => {
             e.preventDefault();
             const container = cap.parentElement;
             const track = container?.querySelector('.slider');
@@ -155,12 +151,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const minY = -totalTravel;
             const maxY = 0;
             let startY = e.clientY;
-            const onMouseMove = (moveEvent) => {
+            const onPointerMove = (moveEvent) => {
                 const deltaY = moveEvent.clientY - startY;
                 startY = moveEvent.clientY;
                 let targetY = currentY + deltaY;
                 currentY = Math.min(maxY, Math.max(minY, targetY));
-                cap.style.transform = `translateY(${currentY}px)`;
+                cap.style.transform = `translateX(-50%) translateY(${currentY}px)`;
                 const value = Math.round(((maxY - currentY) / totalTravel) * 100);
                 const paramId = cap.id.replace(/-(cap|knob)$/, '');
                 if (typeof window.manageKnobs === 'function') {
@@ -170,18 +166,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log(`Slider [${paramId}]: ${value}%`);
                 }
             };
-            const onMouseUp = () => {
-                window.removeEventListener('mousemove', onMouseMove);
-                window.removeEventListener('mouseup', onMouseUp);
+            const onPointerUp = () => {
+                window.removeEventListener('pointermove', onPointerMove);
+                window.removeEventListener('pointerup', onPointerUp);
             };
-            window.addEventListener('mousemove', onMouseMove);
-            window.addEventListener('mouseup', onMouseUp);
+            window.addEventListener('pointermove', onPointerMove);
+            window.addEventListener('pointerup', onPointerUp);
         });
     });
 });
-/*
-  position: absolute;
-  top: 50%;
-  right: 48%;
-*/ 
+const startBtn = document.getElementById("start");
+if (startBtn) {
+    startBtn.addEventListener("click", async () => {
+        if (typeof Tone.start === "function") {
+            await Tone.start();
+        }
+        if (screen.orientation && typeof screen.orientation.lock === "function") {
+            try {
+                await screen.orientation.lock("landscape");
+            }
+            catch (err) {
+                console.warn("Screen orientation lock not supported or allowed:", err);
+            }
+        }
+        startBtn.style.display = "none";
+    });
+}
 //# sourceMappingURL=UI.js.map

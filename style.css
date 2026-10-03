@@ -14,9 +14,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
   color: #333333;
-
   white-space: nowrap;
-
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -36,31 +34,34 @@ body {
 }
 
 .switch-control {
-  position: absolute; 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  position: absolute;
+  width: 3vw;
+  height: auto;
   z-index: 10;
-
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
   color: #333333;
   white-space: nowrap;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   text-align: center;
 }
 
-.switch-nut{
-  width: 3vw;
-}
-.switch{
-  width: 3vw;
+.switch-nut {
+  width: 100%;
+  height: auto;
+  display: block;
+  position: relative;
+  z-index: 1;
 }
 
-
+.switch {
+  position: absolute;
+  top: 70px;
+  z-index: 2;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  transition: left 0.1s ease;
+}
 
 .slider-control {
   position: absolute; 
@@ -68,7 +69,6 @@ body {
   flex-direction: column;
   align-items: center;
   z-index: 10;
-  
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
   color: #333333;
@@ -85,31 +85,29 @@ body {
 
 .cap {
   position: absolute;
-  bottom: 0; 
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%); 
   cursor: grab;
   user-select: none;
   -webkit-user-drag: none;
   touch-action: none;
   will-change: transform;
-  left: 0%;
 }
 
 .cap:active {
   cursor: grabbing;
 }
 
-
 #start {
   display: flex;
   justify-content: center;
   align-items: center;
-
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-
   background-color: black;
   color: whitesmoke;
   font-size: 20vw;
@@ -117,10 +115,10 @@ body {
   text-decoration: underline;
   border: none;
   cursor: pointer;
-
   z-index: 9999;
 }
-#oscilloscope-canvas{
+
+#oscilloscope-canvas {
   position: absolute;
   width: 35vw;
   top: 5%;
@@ -147,17 +145,14 @@ body {
   bottom: -0.7em;
   left: 50%;
   transform: translateX(-50%);
-
   background-color: #2b2b2b;
   padding: 0 10px;
-
   color: #929aa5;
   font-family: sans-serif;
   font-size: 0.9vw;
   font-weight: bold;
   letter-spacing: 2px;
   text-transform: uppercase;
-
   pointer-events: none;
 }
 
@@ -165,7 +160,7 @@ body {
   opacity: 0.2;
 }
 
-#sampleAddOptions{
+#sampleAddOptions {
   position: absolute;
   left: 46%;
   top: 33%;
@@ -173,14 +168,13 @@ body {
   width: 2vw;
 }
 
-#sampleOptions{
+#sampleOptions {
   background-color: #000000;
   color: green;
   font-family: Arial, Helvetica, sans-serif;
   text-align: center;
   font-size: 1vw;
   border-radius: 8px;
-
   position: absolute;
   left: 39%;
   top: 33%;
@@ -188,13 +182,6 @@ body {
   width: 6vw;
 }
 
-/*
-  <div id="tempo">
-      <p id="tempoValue">100</p>
-      <button class="tempoButton" id="tempoUp"></button>
-      <button class="tempoButton" id="tempDown"></button>
-  </div>
-*/
 #tempo {
   background-color: #000000;
   width: 8vw;          
@@ -216,7 +203,6 @@ body {
   text-shadow: 
   0 0 3px #ff0000,
   0 0 9px #ff0000;
-
   position: absolute;
   left: 6%;
 }
@@ -239,30 +225,82 @@ body {
   bottom: 0%;
 }
 
-#tempoAside{
+#tempoAside {
   position: absolute;
   right: 0%;
-
   width: 2vw;
 }
 
-.media{
+.media {
   width: 2vw;
   height: 2vw;
 }
 
-#play{
+#play {
   position: absolute;
   top: 15%;
   left: 40%;
 }
-#pause{
+
+#pause {
   position: absolute;
   top: 15%;
   left: 42%;
 }
-#record{
+
+#record {
   position: absolute;
   top: 15%;
   left: 44%;
+}
+
+@media screen and (max-width: 1000px) {
+  #start {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 1000px) and (orientation: portrait) {
+  html, body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    background-color: #1a1a1a;
+  }
+
+  .synth-stage {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 100vh !important;
+    height: 100vw !important;
+    transform: translate(-50%, -50%) rotate(90deg) !important;
+    transform-origin: center center !important;
+  }
+
+  .synth-chassis {
+    width: 100% !important;
+    height: 100% !important;
+    transform: none !important;
+  }
+
+  .synth-chassis > *:not(img[src*="white"]):not(img[src*="black"]) {
+    display: none !important;
+  }
+}
+
+[data-note],
+.knob-image,
+.knob-control,
+.slider-control,
+.cap,
+.switch,
+#start {
+  touch-action: none !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }

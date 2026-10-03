@@ -1,60 +1,43 @@
-import {start, Transport} from "tone"; //npm install tone
+import { start, Transport } from "tone";
 import MIDI from "./MIDI.js";
 import * as Effect from "./effects.js";
-import {synth, filter, lfo, panner, expression, synths, volume, waveform, seq} from "./instrument.js";
+import { synth, filter, lfo, panner, expression, synths, volume, waveform, seq } from "./instrument.js";
 import * as Preset from "./presets.js";
 import { drawOscilloscope } from "./oscilloscope.js";
-//localhost: npm run dev, build: npm run build
+import * as Tone from "tone";
 
-const midi: MIDI = new MIDI;
+const midi: MIDI = new MIDI();
 let started: boolean = false;
 
-const keyboardonehun: Record<string, string> = {//higher notes, because usually you hear them cleaner (due to technologycal issues)
-        w: "C#5", e: "D#5",        t: "F#5", z: "G#5", u: "A#5",
-    a: "C5", s: "D5", d: "E5", f: "F5", g: "G5", h: "A5", j: "B5", k: "C6"
+const keyboardonehun: Record<string, string> = {
+  w: "C#5", e: "D#5", t: "F#5", z: "G#5", u: "A#5",
+  a: "C5", s: "D5", d: "E5", f: "F5", g: "G5", h: "A5", j: "B5", k: "C6"
 };
 
 const keyboardtwohun: Record<string, string> = {
-        3: "C#5", 4: "D#5",        6: "F#5", 7: "G#5", 8: "A#5",
-    w: "C5", e: "D5", r: "E5", t: "F5", z: "G5", u: "A5", i: "B5", o: "C6",
-        s: "C#4", d: "D#4",        g: "F#4", h: "G#4", j: "A#4",
-    y: "C4", x: "D4", c: "E4", v: "F4", b: "G4", n: "A4", m: "B4", ',': "C5",
+  3: "C#5", 4: "D#5", 6: "F#5", 7: "G#5", 8: "A#5",
+  w: "C5", e: "D5", r: "E5", t: "F5", z: "G5", u: "A5", i: "B5", o: "C6",
+  s: "C#4", d: "D#4", g: "F#4", h: "G#4", j: "A#4",
+  y: "C4", x: "D4", c: "E4", v: "F4", b: "G4", n: "A4", m: "B4", ',': "C5"
 };
 
-const keyboardoneeng: Record<string, string | undefined> = {
-    ...keyboardonehun,
-    y: "G#5",
-    z: undefined,
-};;
+let keyboard: Record<string, string | undefined> = keyboardtwohun;
 
-const keyboardtwoeng: Record<string, string> = {
-    ...keyboardtwohun,
-    y: "G5",
-    z: "C4",
-};
+async function autoStartAudio() {
+  if (started) return;
 
-let keyboard:Record<string, string | undefined> = keyboardtwohun;
-
-
-document.getElementById("start")?.addEventListener("click", async (e) => {
-    if (started) return;
-
-    await start(); //aka Tone.start
+  try {
+    await start();
+    if (Tone.getContext().state !== "running") {
+      await Tone.getContext().resume();
+    }
     Transport.start();
 
-    const startElem = document.getElementById("start");
-    if (startElem) startElem.style.display = "none";
+    if (screen.orientation && typeof screen.orientation.lock === "function") {
+      screen.orientation.lock("landscape").catch(() => {});
+    }
 
-    synths.forEach((synth) => {
-        synth.connect(volume);
-        volume.connect(filter);
-        filter.connect(panner);
-        panner.connect(expression);
-        expression.connect(Effect.reverb);
-        Effect.reverb.connect(Effect.chorus);
-        Effect.chorus.connect(waveform);
-        Effect.chorus.toDestination();
-    });
+    synths.forEach((s: any) => s.connect(volume));
     synth.connect(volume);
     volume.connect(filter);
     filter.connect(panner);
@@ -64,75 +47,161 @@ document.getElementById("start")?.addEventListener("click", async (e) => {
     Effect.chorus.connect(waveform);
     Effect.chorus.toDestination();
 
-    //lfo.connect(filter.frequency);
-
     synth.releaseAll(0);
-    synths.forEach((s) => s.triggerRelease());
+    synths.forEach((s: any) => s.triggerRelease());
 
     Preset.loadLocalPresets();
     Preset.loadPreset(Preset.presets[Preset.currentPreset], synth);
 
     drawOscilloscope();
 
-    midi.init().catch((err) => {
-        console.warn("MIDI initialization warning/error:", err);
+    midi.init().catch((err: unknown) => {
+      console.warn("MIDI init warning:", err);
     });
 
     started = true;
-    console.log("Synth started/reset!");
-});
 
-window.onblur = function(){synth.releaseAll(0);
-    synths.forEach((synth) => synth.triggerRelease());
+    const startElem = document.getElementById("start");
+    if (startElem) startElem.style.display = "none";
+  } catch (err: unknown) {
+    console.error("Audio activation failed:", err);
+  }
+}
+
+window.addEventListener("pointerdown", autoStartAudio, { once: true });
+window.addEventListener("touchstart", autoStartAudio, { once: true });
+
+window.onblur = function () {
+  synth.releaseAll(0);
+  synths.forEach((s: any) => s.triggerRelease());
 };
 
-document.addEventListener("keydown", (e) => {
-    if (e.repeat || !started) return;
-    let note = keyboard[e.key];
-    if (note === undefined) return;
+document.addEventListener("keydown", (e: KeyboardEvent) => {
+  if (e.repeat || !started) return;
+  let note = keyboard[e.key];
+  if (note === undefined) return;
+  if (!Effect.unison.on) synth.triggerAttack(note);
+  else synths.forEach((s: any) => s.triggerAttack(note));
+  if (Effect.sequencer.recording) seq.add((Transport.seconds - Effect.sequencer.recStart) % Effect.sequencer.length, note);
+});
+
+document.addEventListener("keyup", (e: KeyboardEvent) => {
+  if (e.key === 'Enter') {
+    if (Effect.sequencer.on) {
+      seq.loop = false;
+      seq.stop();
+      Effect.sequencer.on = false;
+      Effect.sequencer.recording = false;
+    } else {
+      seq.start();
+      seq.loop = true;
+      Effect.sequencer.recording = true;
+      Effect.sequencer.recStart = Transport.seconds;
+      Effect.sequencer.on = true;
+    }
+    return;
+  }
+  if (e.key === ' ') {
+    Effect.sequencer.recording = !Effect.sequencer.recording;
+    return;
+  }
+  if (e.key === 'Backspace') {
+    seq.loop = false;
+    seq.stop();
+    Effect.sequencer.on = false;
+    Effect.sequencer.recording = false;
+    seq.clear();
+  }
+
+  let note = keyboard[e.key];
+  if (note === undefined || Effect.sustain) return;
+
+  if (!Effect.unison.on) synth.triggerRelease(note);
+  else synths.forEach((s: any) => s.triggerRelease());
+});
+
+function handleKeyPlay(target: HTMLElement | null) {
+  if (!target) return;
+  const keyElem = target.closest<HTMLElement>("[data-note]");
+  if (!keyElem) return;
+
+  const note = keyElem.getAttribute("data-note");
+  if (note) {
     if (!Effect.unison.on) synth.triggerAttack(note);
-    else synths.forEach((synth) => synth.triggerAttack(note));
-    if (Effect.sequencer.recording) seq.add((Transport.seconds - Effect.sequencer.recStart) % Effect.sequencer.length, note);
-});
+    else synths.forEach((s: any) => s.triggerAttack(note));
+  }
+}
 
-document.addEventListener("keyup", (e) => {
-    if (e.key === 'Enter'){
-       if (Effect.sequencer.on){
-            seq.loop = false;
-            seq.stop();
-            Effect.sequencer.on = false;
-            Effect.sequencer.recording = false;
-            console.info("sequencer paused");
-        }else{
-            seq.start();
-            seq.loop = true;
-            Effect.sequencer.recording = true;
-            Effect.sequencer.recStart = Transport.seconds;
-            Effect.sequencer.on = true;
-            console.info("sequencer started");
-        }
-        return;
-    }
-    if (e.key === ' '){
-        Effect.sequencer.recording = !Effect.sequencer.recording;
-        return;
-    }
-    if (e.key === 'Backspace'){
-        seq.loop = false;
-        seq.stop();
-        Effect.sequencer.on = false;
-        Effect.sequencer.recording = false;
-        seq.clear();
-        console.info("sequencer stopped");
-    }
+function handleKeyRelease(target: HTMLElement | null) {
+  if (!target) return;
+  const keyElem = target.closest<HTMLElement>("[data-note]");
+  if (!keyElem) return;
 
-    let note = keyboard[e.key]
-    if (note === undefined || Effect.sustain) return;
-
+  const note = keyElem.getAttribute("data-note");
+  if (note && !Effect.sustain) {
     if (!Effect.unison.on) synth.triggerRelease(note);
-    else synths.forEach((synth) => synth.triggerRelease());
+    else synths.forEach((s: any) => s.triggerRelease());
+  }
+}
+
+document.addEventListener("pointerdown", (e: PointerEvent) => {
+  if (!started) autoStartAudio();
+  handleKeyPlay(e.target as HTMLElement);
 });
 
-console.debug("script.js loaded!");
+document.addEventListener("pointerup", (e: PointerEvent) => {
+  handleKeyRelease(e.target as HTMLElement);
+});
 
-// (x,e *3, g, 6 *3, m, i * 3, b,z *3 )
+document.addEventListener("pointercancel", (e: PointerEvent) => {
+  handleKeyRelease(e.target as HTMLElement);
+});
+
+async function unlockAudio() {
+  if (started) return;
+
+  try {
+    await start();
+    if (Tone.getContext().state !== "running") {
+      await Tone.getContext().resume();
+    }
+
+    const ctx = Tone.getContext().rawContext as AudioContext;
+    const buffer = ctx.createBuffer(1, 1, 22050);
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ctx.destination);
+    source.start(0);
+
+    Transport.start();
+
+    synths.forEach((s: any) => s.connect(volume));
+    synth.connect(volume);
+    volume.connect(filter);
+    filter.connect(panner);
+    panner.connect(expression);
+    expression.connect(Effect.reverb);
+    Effect.reverb.connect(Effect.chorus);
+    Effect.chorus.connect(waveform);
+    Effect.chorus.toDestination();
+
+    synth.releaseAll(0);
+    synths.forEach((s: any) => s.triggerRelease());
+
+    Preset.loadLocalPresets();
+    Preset.loadPreset(Preset.presets[Preset.currentPreset], synth);
+
+    drawOscilloscope();
+
+    midi.init().catch((err: unknown) => {
+      console.warn("MIDI init warning:", err);
+    });
+
+    started = true;
+
+    const startElem = document.getElementById("start");
+    if (startElem) startElem.style.display = "none";
+  } catch (err: unknown) {
+    console.error("Audio activation failed:", err);
+  }
+}

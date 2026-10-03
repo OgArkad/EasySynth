@@ -23,36 +23,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const knobs = document.querySelectorAll('.knob-image');
     knobs.forEach((knob) => {
         const config = KNOB_CONFIGS[knob.id] || { minAngle: -127, maxAngle: 127 };
-        const { minAngle, maxAngle, steps, sensitivity = 1.5 } = config;
-        let currentAngle = minAngle;
-        knob.style.transform = `rotate(${currentAngle}deg)`;
+        const { minAngle, maxAngle, steps, sensitivity = 1.2 } = config;
+        const getRotationFromElement = (el) => {
+            const transform = el.style.transform;
+            const match = transform.match(/rotate\(([-?\d.]+)deg\)/);
+            const val = match?.[1];
+            return val !== undefined ? parseFloat(val) : minAngle;
+        };
         knob.addEventListener('pointerdown', (e) => {
             e.preventDefault();
+            knob.setPointerCapture(e.pointerId);
             let startY = e.clientY;
+            let continuousAngle = getRotationFromElement(knob);
             const onPointerMove = (moveEvent) => {
                 const deltaY = startY - moveEvent.clientY;
                 startY = moveEvent.clientY;
-                let targetAngle = currentAngle + deltaY * sensitivity;
-                targetAngle = Math.min(maxAngle, Math.max(minAngle, targetAngle));
+                continuousAngle += deltaY * sensitivity;
+                continuousAngle = Math.min(maxAngle, Math.max(minAngle, continuousAngle));
+                let displayAngle = continuousAngle;
                 if (steps && steps > 1) {
                     const range = maxAngle - minAngle;
                     const stepSize = range / (steps - 1);
-                    const currentStep = Math.round((targetAngle - minAngle) / stepSize);
-                    currentAngle = minAngle + currentStep * stepSize;
-                    knob.style.transform = `rotate(${currentAngle}deg)`;
+                    const currentStep = Math.round((continuousAngle - minAngle) / stepSize);
+                    displayAngle = minAngle + currentStep * stepSize;
                 }
-                else {
-                    currentAngle = targetAngle;
-                    knob.style.transform = `rotate(${currentAngle}deg)`;
-                }
-                manageKnobs(knob.id.replace("-knob", ""), currentAngle);
+                knob.style.transform = `rotate(${displayAngle}deg)`;
+                manageKnobs(knob.id.replace("-knob", ""), displayAngle);
             };
-            const onPointerUp = () => {
-                window.removeEventListener('pointermove', onPointerMove);
-                window.removeEventListener('pointerup', onPointerUp);
+            const onPointerUp = (upEvent) => {
+                knob.releasePointerCapture(upEvent.pointerId);
+                knob.removeEventListener('pointermove', onPointerMove);
+                knob.removeEventListener('pointerup', onPointerUp);
             };
-            window.addEventListener('pointermove', onPointerMove);
-            window.addEventListener('pointerup', onPointerUp);
+            knob.addEventListener('pointermove', onPointerMove);
+            knob.addEventListener('pointerup', onPointerUp);
         });
     });
 });
@@ -67,9 +71,6 @@ function setKnobs() {
     if (pres === undefined)
         throw new Error("This shouldn't have happened, you selected a non-existing preset! (Trying to rotate knobs in position)");
     set_Knob("cutoff", Math.log(parseInt(filter.frequency.value.toString()) / 20) / Math.log(20000 / 20) * 254 - 127);
-    set_Knob("octave", pres.oscillator.octave / 4 * 127);
-    set_Knob("semitone", pres.oscillator.detune / 1000 / 12 * 127);
-    set_Knob("fine-tuning", pres.oscillator.detune * 10);
     set_Knob("attack", pres.envelope.attack * 200 - 127);
     set_Knob("decay", pres.envelope.decay * 100 - 127);
     set_Knob("sustain", pres.envelope.sustain * 254 - 127);
@@ -144,11 +145,16 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     const caps = document.querySelectorAll('.cap');
     caps.forEach((cap) => {
+        const container = cap.parentElement;
+        const track = container?.querySelector('.slider');
         let currentY = 0;
+        if (track) {
+            const totalTravel = track.offsetHeight - cap.offsetHeight;
+            currentY = -(totalTravel / 2);
+            cap.style.transform = `translateX(-50%) translateY(${currentY}px)`;
+        }
         cap.addEventListener('pointerdown', (e) => {
             e.preventDefault();
-            const container = cap.parentElement;
-            const track = container?.querySelector('.slider');
             if (!track)
                 return;
             const totalTravel = track.offsetHeight - cap.offsetHeight;
@@ -181,7 +187,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 const startBtn = document.getElementById("start");
 if (startBtn) {
-    startBtn.addEventListener("click", async () => {
+    const handleStart = async (e) => {
+        e.preventDefault();
         if (typeof Tone.start === "function") {
             await Tone.start();
         }
@@ -194,6 +201,8 @@ if (startBtn) {
             }
         }
         startBtn.style.display = "none";
-    });
+    };
+    startBtn.addEventListener("click", handleStart);
+    startBtn.addEventListener("pointerdown", handleStart);
 }
 //# sourceMappingURL=UI.js.map

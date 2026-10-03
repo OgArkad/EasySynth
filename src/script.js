@@ -82,6 +82,7 @@ document.addEventListener("keyup", (e) => {
             seq.stop();
             Effect.sequencer.on = false;
             Effect.sequencer.recording = false;
+            console.info("sequencer paused");
         }
         else {
             seq.start();
@@ -89,18 +90,11 @@ document.addEventListener("keyup", (e) => {
             Effect.sequencer.recording = true;
             Effect.sequencer.recStart = Transport.seconds;
             Effect.sequencer.on = true;
+            console.info("sequencer started");
         }
         return;
     }
     if (e.key === ' ') {
-        if (!Effect.sequencer.on) {
-            seq.start();
-            seq.loop = true;
-            Effect.sequencer.recording = true;
-            Effect.sequencer.recStart = Transport.seconds;
-            Effect.sequencer.on = true;
-            console.info("sequencer started");
-        }
         Effect.sequencer.recording = !Effect.sequencer.recording;
         return;
     }
@@ -110,6 +104,7 @@ document.addEventListener("keyup", (e) => {
         Effect.sequencer.on = false;
         Effect.sequencer.recording = false;
         seq.clear();
+        console.info("sequencer stopped");
     }
     let note = keyboard[e.key];
     if (note === undefined || Effect.sustain)

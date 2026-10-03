@@ -33,33 +33,42 @@
 
         <div class="switch-control" style="top: 20%; left: 40%;">
             <p>UNISON</p>
-            <img src="./media/NutOfTheSwitch.png" alt="switch" id="unison-switch" class="switch-nut">
-            <img src="./media/switchLeft.png" alt="left" class="switch" works="off">
-        </div>
-        <div class="switch-control" style="top: 20%; left: 45%;">
-            <p>EFFECT</p>
-            <img src="./media/NutOfTheSwitch.png" alt="switch" id="sequencer-switch" class="switch-nut">
-            <img src="./media/switchLeft.png" alt="left" class="switch" works="off">
-        </div>
-        <div class="switch-control" style="top: 36%; left: 40.5%;">
-            <p>LFO</p>
-            <img src="./media/NutOfTheSwitch.png" alt="switch" id="sequencer-switch" class="switch-nut">
-            <img src="./media/switchLeft.png" alt="left" class="switch" works="off">
+            <div class="switch-wrapper">
+                <img src="./media/NutOfTheSwitch.png" alt="switch" id="unison-switch" class="switch-nut">
+                <img src="./media/switchLeft.png" alt="left" class="switch" data-works="off">
+            </div>
         </div>
 
-        <div class="slider-control" style="top: 36%; left: 46%;">
+        <div class="switch-control" style="top: 20%; left: 45%;">
+            <p>EFFECT</p>
+            <div class="switch-wrapper">
+                <img src="./media/NutOfTheSwitch.png" alt="switch" id="effect-switch" class="switch-nut">
+                <img src="./media/switchLeft.png" alt="left" class="switch" data-works="off">
+            </div>
+        </div>
+
+        <div class="switch-control" style="top: 36%; left: 40.5%;">
+            <p>LFO</p>
+            <div class="switch-wrapper">
+                <img src="./media/NutOfTheSwitch.png" alt="switch" id="lfo-switch" class="switch-nut">
+                <img src="./media/switchLeft.png" alt="left" class="switch" data-works="off">
+            </div>
+        </div>
+
+        <div class="slider-control" style="top: 38%; left: 46%;">
             <p>DETUNE</p>
-        <div style="position: relative; display: inline-block;">
-            <img src="./media/slider.png" alt="slider" class="slider">
-            <img src="./media/cap.png" alt="cap" class="cap" id="detune-cap">
+            <div class="slider-wrapper">
+                <img src="./media/slider.png" alt="slider" class="slider">
+                <img src="./media/cap.png" alt="cap" class="cap" id="detune-cap">
+            </div>
         </div>
-        </div>
-        <div class="slider-control" style="top: 36%; left: 54%;">
+
+        <div class="slider-control" style="top: 38%; left: 52%;">
             <p>SPREAD</p>
-        <div style="position: relative; display: inline-block;">
-            <img src="./media/slider.png" alt="slider" class="slider">
-            <img src="./media/cap.png" alt="cap" class="cap" id="spread-cap">
-        </div>
+            <div class="slider-wrapper">
+                <img src="./media/slider.png" alt="slider" class="slider">
+                <img src="./media/cap.png" alt="cap" class="cap" id="spread-cap">
+            </div>
         </div>
 
         <select name="samples" id="sampleOptions">
@@ -88,10 +97,6 @@
             <p>CUTOFF</p>
             <img src="./knob.png" id="cutoff-knob" class="knob-image" alt="cutoff">
         </div>
-        <div class="knob-control" style="top: 40%; right: 25%;">
-            <p>UNISON</p>
-            <img src="./knob.png" id="unison-knob" class="knob-image" alt="unison">
-        </div>
 
         <div class="knob-control" style="top: 55%; right: 32%;">
             <p>OCTAVE</p>
@@ -109,19 +114,19 @@
         <div class="knobSegment" id="asdr">
             <span class="segment-label">ADSR</span>
         </div>
-        <div class="knob-control" style="position: absolute; top: 70%; right: 32%;">
+        <div class="knob-control" style="top: 70%; right: 32%;">
             <p>ATTACK</p>
             <img src="./knob.png" id="attack-knob" class="knob-image" alt="attack">
         </div>
-        <div class="knob-control" style="position: absolute; top: 70%; right: 25%;">
+        <div class="knob-control" style="top: 70%; right: 25%;">
             <p>DECAY</p>
             <img src="./knob.png" id="decay-knob" class="knob-image" alt="decay">
         </div>
-        <div class="knob-control" style="position: absolute; top: 70%; right: 18%;">
+        <div class="knob-control" style="top: 70%; right: 18%;">
             <p>SUSTAIN</p>
             <img src="./knob.png" id="sustain-knob" class="knob-image" alt="sustain">
         </div>
-        <div class="knob-control" style="position: absolute; top: 70%; right: 11%;">
+        <div class="knob-control" style="top: 70%; right: 11%;">
             <p>RELEASE</p>
             <img src="./knob.png" id="release-knob" class="knob-image" alt="release">
         </div>

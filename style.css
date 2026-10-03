@@ -5,14 +5,22 @@ body {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
+  overflow: hidden;
+}
+
+.synth-chassis {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
 }
 
 .knob-control {
   position: absolute;
   width: 4vw;
-  height: 4vw;
+  height: auto;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
+  font-size: 0.8vw;
   color: #333333;
   white-space: nowrap;
   display: flex;
@@ -21,28 +29,45 @@ body {
   text-align: center;
 }
 
+.knob-control p {
+  margin: 0 0 5px 0;
+}
+
 .knob-image {
   width: 4vw;
-  height: 4vw;
-  transform: rotate(-135deg);
+  height: 4vw; 
+  aspect-ratio: 1 / 1;
   cursor: ns-resize;
   user-select: none;
+  touch-action: none; 
   will-change: transform;
   filter: drop-shadow(-5px -5px 10px #000000);
-  object-fit: contain;
-  transform-origin: center center;
+  transform-origin: 50% 50%;
 }
 
 .switch-control {
   position: absolute;
   width: 3vw;
-  height: auto;
-  z-index: 10;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
+  font-size: 0.8vw;
   color: #333333;
   white-space: nowrap;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.switch-control p {
+  margin: 0 0 0.3vw 0;
+  line-height: 1;
+}
+
+.switch-wrapper {
+  position: relative;
+  width: 100%;
+  display: inline-block;
 }
 
 .switch-nut {
@@ -55,12 +80,22 @@ body {
 
 .switch {
   position: absolute;
-  top: 70px;
+  top: 50%;
+  width: 100%; 
+  height: auto;
   z-index: 2;
   cursor: pointer;
   touch-action: none;
   user-select: none;
-  transition: left 0.1s ease;
+  transition: transform 0.1s ease;
+}
+
+.switch[data-works="off"] {
+  transform: translate(0%, -50%);
+}
+
+.switch[data-works="on"] {
+  transform: translate(0%, -50%);
 }
 
 .slider-control {
@@ -71,9 +106,19 @@ body {
   z-index: 10;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
+  font-size: 0.8vw;
   color: #333333;
   white-space: nowrap;
   text-align: center;
+}
+
+.slider-control p {
+  margin: 0 0 5px 0;
+}
+
+.slider-wrapper {
+  position: relative;
+  display: inline-block;
 }
 
 .slider {
@@ -134,10 +179,10 @@ body {
 
 #asdr {
   position: absolute;
-  top: 70%;
-  left: 63%;
+  top: 66%;
+  right: 10%;
   width: 27vw;
-  height: 7vw;
+  height: 9vw;
 }
 
 .knobSegment .segment-label {
@@ -163,7 +208,7 @@ body {
 #sampleAddOptions {
   position: absolute;
   left: 46%;
-  top: 33%;
+  top: 31%;
   height: 2vw;
   width: 2vw;
 }
@@ -177,7 +222,7 @@ body {
   border-radius: 8px;
   position: absolute;
   left: 39%;
-  top: 33%;
+  top: 31%;
   height: 4vh;
   width: 6vw;
 }
@@ -234,6 +279,7 @@ body {
 .media {
   width: 2vw;
   height: 2vw;
+  cursor: pointer;
 }
 
 #play {
@@ -254,53 +300,40 @@ body {
   left: 44%;
 }
 
-@media screen and (max-width: 1000px) {
-  #start {
+@media screen and (max-width: 768px) {
+  .knob-control,
+  .switch-control,
+  .slider-control,
+  .knobSegment,
+  #oscilloscope,
+  #tempo,
+  #sampleOptions,
+  #sampleAddOptions,
+  .media {
     display: none !important;
   }
-}
 
-@media screen and (max-width: 1000px) and (orientation: portrait) {
   html, body {
     width: 100vw;
     height: 100vh;
     margin: 0;
     padding: 0;
-    overflow: hidden;
-    position: relative;
-    background-color: #1a1a1a;
-  }
-
-  .synth-stage {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    width: 100vh !important;
-    height: 100vw !important;
-    transform: translate(-50%, -50%) rotate(90deg) !important;
-    transform-origin: center center !important;
+    overflow: hidden !important;
+    touch-action: none;
   }
 
   .synth-chassis {
-    width: 100% !important;
-    height: 100% !important;
-    transform: none !important;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
   }
 
-  .synth-chassis > *:not(img[src*="white"]):not(img[src*="black"]) {
-    display: none !important;
+  .white-key-mobile {
+    object-fit: fill;
   }
-}
 
-[data-note],
-.knob-image,
-.knob-control,
-.slider-control,
-.cap,
-.switch,
-#start {
-  touch-action: none !important;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
+  .black-key-mobile {
+    object-fit: fill;
+  }
 }

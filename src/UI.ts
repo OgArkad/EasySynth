@@ -2,7 +2,7 @@ import {expression, manageKnobs, filter, seq, manageCaps, manageSwitches} from "
 import { presets, currentPreset, type SynthPreset } from "./presets.js";
 import { sequencer } from "./effects.js";
 import { Transport } from "tone";
-export {setKnobs};
+export {setKnobs, keyboard};
 
 interface KnobConfig {
   minAngle: number;
@@ -72,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
-//set caps, switches...
 
 function setKnobs(){
   function set_Knob(knob: string, deg: number){
@@ -147,6 +146,57 @@ document.getElementById("record")?.addEventListener("click", () => {
   if (!sequencer.on) return
   sequencer.recording = !sequencer.recording;
   console.info("sequencer recording: ", sequencer.recording);
+});
+
+const keyboardonehun: Record<string, string> = {//higher notes, because usually you hear them cleaner (due to technologycal issues)
+        w: "C#5", e: "D#5",        t: "F#5", z: "G#5", u: "A#5",
+    a: "C5", s: "D5", d: "E5", f: "F5", g: "G5", h: "A5", j: "B5", k: "C6"
+};
+
+const keyboardtwohun: Record<string, string> = {
+        3: "C#5", 4: "D#5",        6: "F#5", 7: "G#5", 8: "A#5",
+    w: "C5", e: "D5", r: "E5", t: "F5", z: "G5", u: "A5", i: "B5", o: "C6",
+        s: "C#4", d: "D#4",        g: "F#4", h: "G#4", j: "A#4",
+    y: "C4", x: "D4", c: "E4", v: "F4", b: "G4", n: "A4", m: "B4", ',': "C5",
+};
+
+const keyboardoneeng: Record<string, string | undefined> = {
+    ...keyboardonehun,
+    y: "G#5",
+    z: undefined,
+};;
+
+const keyboardtwoeng: Record<string, string> = {
+    ...keyboardtwohun,
+    y: "G5",
+    z: "C4",
+};
+
+let keyboard: Record<string, string | undefined> = keyboardtwohun;
+
+document.getElementById("keyboardOptions")?.addEventListener("change", (e) => {
+  console.log("Keyboard option selected: ", (e.target as HTMLSelectElement).value);
+  switch((e.target as HTMLSelectElement).value) {
+    case "2hun":
+      keyboard = keyboardtwohun;
+      console.log("Keyboard set to 2 row hun");
+      break;
+    case "2eng":
+      keyboard = keyboardtwoeng;
+      console.log("Keyboard set to 2 row eng");
+      break;
+    case "1hun":
+      keyboard = keyboardonehun;
+      console.log("Keyboard set to 1 row hun");
+      break;
+    case "1eng":
+      keyboard = keyboardoneeng;
+      console.log("Keyboard set to 1 row eng");
+      break;
+
+    default:
+      throw new Error("Invalid keyboard option selected.");
+  }
 });
 /*                             -                           Set switches UI                                          -                                                */
 

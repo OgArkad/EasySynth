@@ -36,7 +36,7 @@ body {
 }
 
 .switch-control {
-  position: absolute; 
+  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -63,12 +63,12 @@ body {
 
 
 .slider-control {
-  position: absolute; 
+  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
   z-index: 10;
-  
+
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
   color: #333333;
@@ -85,7 +85,7 @@ body {
 
 .cap {
   position: absolute;
-  bottom: 0; 
+  bottom: 0;
   cursor: grab;
   user-select: none;
   -webkit-user-drag: none;
@@ -173,19 +173,24 @@ body {
   width: 2vw;
 }
 
-#sampleOptions{
+.multiple-options{
   background-color: #000000;
   color: green;
   font-family: Arial, Helvetica, sans-serif;
   text-align: center;
   font-size: 1vw;
   border-radius: 8px;
-
   position: absolute;
+}
+#sampleOptions{
   left: 39%;
   top: 33%;
   height: 4vh;
   width: 6vw;
+}
+#keyboardOptions{
+  left: 80%;
+  top: 5%;
 }
 
 /*
@@ -197,23 +202,23 @@ body {
 */
 #tempo {
   background-color: #000000;
-  width: 8vw;          
+  width: 8vw;
   height: 5vw;
   position: absolute;
   left: 39%;
   top: 5%;
-  overflow: hidden;    
-  display: flex;       
+  overflow: hidden;
+  display: flex;
   align-items: center;
   justify-content: center;
 }
 
 #tempoValue {
   color: red;
-  font-size: 3vw;      
+  font-size: 3vw;
   font-family: Arial, Helvetica, sans-serif;
   line-height: 1;
-  text-shadow: 
+  text-shadow:
   0 0 3px #ff0000,
   0 0 9px #ff0000;
 

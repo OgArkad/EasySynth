@@ -77,13 +77,6 @@ function setKnobs() {
     set_Knob("decay", pres.envelope.decay * 100 - 127);
     set_Knob("sustain", pres.envelope.sustain * 254 - 127);
     set_Knob("release", pres.envelope.release * 100 - 127);
-    set_Knob("filter", ["lowpass", "highpass", "lowshelf", "highshelf", "notch", "allpass", "peaking"].indexOf(filter.type) / 6 * 254 - 127);
-    set_Knob("waveform", ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"].indexOf(pres.oscillator.type) * 32 - 127); //254/8 = 31,75
-    set_Knob("octave", pres.oscillator.octave / 4 * 127);
-    set_Knob("semitone", pres.oscillator.detune / 1000 / 12 * 127);
-    set_Knob("fine-tuning", pres.oscillator.detune * 10);
-    //set_Knob("unison", unison.on ? 127 : -127); // no need, because it's an outer variable
-    set_Knob("gain", expression.gain.value * 254 - 127);
     console.info("Knobs set!");
 }
 let up = document.getElementById("tempoUp");
@@ -149,23 +142,19 @@ const keyboardtwoeng = {
 };
 let keyboard = keyboardtwohun;
 document.getElementById("keyboardOptions")?.addEventListener("change", (e) => {
-    console.log("Keyboard option selected: ", e.target.value);
+    console.info("Keyboard option selected: ", e.target.value);
     switch (e.target.value) {
         case "2hun":
             keyboard = keyboardtwohun;
-            console.log("Keyboard set to 2 row hun");
             break;
         case "2eng":
             keyboard = keyboardtwoeng;
-            console.log("Keyboard set to 2 row eng");
             break;
         case "1hun":
             keyboard = keyboardonehun;
-            console.log("Keyboard set to 1 row hun");
             break;
         case "1eng":
             keyboard = keyboardoneeng;
-            console.log("Keyboard set to 1 row eng");
             break;
         default:
             throw new Error("Invalid keyboard option selected.");

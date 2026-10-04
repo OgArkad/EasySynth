@@ -342,38 +342,7 @@ body {
     object-fit: fill;
   }
 
-  .white-key-mobile {
-    object-fit: fill;
-  }
-
   .black-key-mobile {
     object-fit: fill;
-  }
-}
-
-[data-note],
-.knob-image,
-.knob-control,
-.slider-control,
-.cap,
-.switch,
-#start {
-  touch-action: none !important;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-@media screen and (max-width: 768px) {
-  .knob-control,
-  .switch-control,
-  .slider-control,
-  .knobSegment,
-  #oscilloscope,
-  #tempo,
-  #sampleOptions,
-  #sampleAddOptions,
-  .media {
-    display: none !important;
   }
 }

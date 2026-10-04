@@ -15,7 +15,7 @@ interface KnobConfig {
 const KNOB_CONFIGS: Record<string, KnobConfig> = {
   'filter-knob':      { minAngle: -127, maxAngle: 127, steps: 7 },
   'waveform-knob':    { minAngle: -100, maxAngle: 100, steps: 8 },
-  'sequencer-knob':   { minAngle: -127, maxAngle: 127, steps: 8 },
+  'effect-knob':      { minAngle: -127, maxAngle: 127, steps: 15 },
   'gain-knob':        { minAngle: -127, maxAngle: 127, sensitivity: 2.0 },
   'cutoff-knob':      { minAngle: -127, maxAngle: 127 },
   'unison-knob':      { minAngle: -127, maxAngle: 127, steps: 4 },
@@ -103,8 +103,6 @@ function setKnobs() {
   set_Knob("decay",   pres.envelope.decay   * 100 - 127);
   set_Knob("sustain", pres.envelope.sustain * 254 - 127);
   set_Knob("release", pres.envelope.release * 100 - 127);
-
-  console.info("Knobs set!");
 }
 
 let up = document.getElementById("tempoUp");
@@ -231,11 +229,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = cap.parentElement;
     const track = container?.querySelector<HTMLImageElement>('.slider');
 
-    let currentY = 0;
+    let currentY = 0; 
     if (track) {
       const totalTravel = track.offsetHeight - cap.offsetHeight;
-
-      currentY = -(totalTravel / 2);
+      
+      currentY = -(totalTravel / 2); 
       cap.style.transform = `translateX(-50%) translateY(${currentY}px)`;
     }
 

@@ -122,6 +122,18 @@ function handleKeyRelease(target: HTMLElement | null) {
   if (!keyElem) return;
 
   const note = keyElem.getAttribute("data-note");
+  if (note) {
+    if (!Effect.unison.on) synth.triggerAttack(note);
+    else synths.forEach((s: any) => s.triggerAttack(note));
+  }
+}
+
+function handleKeyRelease(target: HTMLElement | null) {
+  if (!target) return;
+  const keyElem = target.closest<HTMLElement>("[data-note]");
+  if (!keyElem) return;
+
+  const note = keyElem.getAttribute("data-note");
   if (note && !Effect.sustain) {
     if (!Effect.unison.on) synth.triggerRelease(note);
     else synths.forEach((s: any) => s.triggerRelease());

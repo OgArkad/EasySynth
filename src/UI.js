@@ -7,7 +7,7 @@ import * as Tone from "tone";
 const KNOB_CONFIGS = {
     'filter-knob': { minAngle: -127, maxAngle: 127, steps: 7 },
     'waveform-knob': { minAngle: -100, maxAngle: 100, steps: 8 },
-    'sequencer-knob': { minAngle: -127, maxAngle: 127, steps: 8 },
+    'effect-knob': { minAngle: -127, maxAngle: 127, steps: 15 },
     'gain-knob': { minAngle: -127, maxAngle: 127, sensitivity: 2.0 },
     'cutoff-knob': { minAngle: -127, maxAngle: 127 },
     'unison-knob': { minAngle: -127, maxAngle: 127, steps: 4 },
@@ -78,7 +78,6 @@ function setKnobs() {
     set_Knob("decay", pres.envelope.decay * 100 - 127);
     set_Knob("sustain", pres.envelope.sustain * 254 - 127);
     set_Knob("release", pres.envelope.release * 100 - 127);
-    console.info("Knobs set!");
 }
 let up = document.getElementById("tempoUp");
 let down = document.getElementById("tempDown");

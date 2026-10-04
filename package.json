@@ -11,6 +11,10 @@
     "dev": "vite --host",
     "build": "tsc && vite build"
   },
+  "devDependencies": {
+    "typescript": "^5.9.2",
+    "vite": "^7.3.6"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/OgArkad/easySinth.git"

@@ -1,7 +1,7 @@
 import { PolySynth, Gain, Filter, LFO, Panner, Synth, Waveform, Part } from "tone";
 import { loadPreset, presets, currentPreset } from "./presets.js";
 import { sequencer, unison, effects, currentEffect, SwitchCurrentEffect } from "./effects.js";
-const waveform = new Waveform(1024);
+const waveform = new Waveform(512); //1024 before, but for performance 512 is still enough
 export const seq = new Part((time, note) => {
     if (!unison.on)
         synth.triggerAttackRelease(note, "8n", time);
@@ -23,7 +23,7 @@ const lfo = new LFO({
 });
 const panner = new Panner(0);
 const expression = new Gain(1);
-const synths = Array.from({ length: unison.voices }, (_, i) => {
+let synths = Array.from({ length: unison.voices }, (_, i) => {
     const singleSynth = new Synth();
     loadPreset(presets[currentPreset], singleSynth, filter, lfo, false);
     const panner = new Panner((i - (i / 2)) * 0.32);
@@ -32,7 +32,25 @@ const synths = Array.from({ length: unison.voices }, (_, i) => {
     singleSynth.detune.value = (i - 2) * unison.detune;
     return singleSynth;
 });
-export { waveform, synth, filter, lfo, panner, expression, synths, manageKnobs, volume };
+function regenerateSynths() {
+    for (const synth of synths) {
+        synth.dispose();
+    }
+    synths = Array.from({ length: unison.voices }, (_, i) => {
+        const singleSynth = new Synth();
+        loadPreset(presets[currentPreset], singleSynth, filter, lfo, false);
+        if (i > 100)
+            throw new Error("Unexpected error: unison.voices > 100, this shouldn't have happened.");
+        if (i <= 5)
+            singleSynth.connect(waveform);
+        const panner = new Panner(unison.voices === 1 ? 0 : (i / (unison.voices - 1)) * 2 - 1);
+        singleSynth.connect(panner);
+        panner.toDestination();
+        singleSynth.detune.value = (i - 2) * unison.detune;
+        return singleSynth;
+    });
+}
+export { waveform, synth, filter, lfo, panner, expression, synths, manageKnobs, volume, manageCaps, manageSwitches };
 function manageKnobs(knob, degree) {
     const preset = presets[currentPreset];
     if (!preset)
@@ -84,15 +102,13 @@ function manageKnobs(knob, degree) {
             let effectIndex = Math.floor((degree + 127) / 254 * effects.length); //0-effects.length
             if (currentEffect === effectIndex)
                 return;
-            console.log("Effect index: " + effectIndex);
             if (currentEffect !== null) {
                 const effectOld = effects[currentEffect];
                 if (effectOld === undefined)
                     throw new Error("Unexpected indexing error in effects (stoping).");
                 synth.disconnect(effectOld.node);
-                effectOld.start?.();
+                effectOld.stop?.();
                 SwitchCurrentEffect(null);
-                console.log("Effect disconnected: " + effectOld.node.constructor.name);
             }
             if (effectIndex === 0)
                 return;
@@ -109,12 +125,54 @@ function manageKnobs(knob, degree) {
             expression.gain.rampTo((degree + 127) / 254, 0.2);
             break;
         default:
-            console.error("Unexpected knob: " + knob + ": " + degree);
-            return;
+            throw new Error("Unexpected knob: " + knob + ": " + degree);
     }
     if (!unison.on)
         loadPreset(preset, synth, undefined, undefined, false);
     else
         synths.forEach((synth) => loadPreset(preset, synth, undefined, undefined, false));
+    const x = presets[currentPreset];
+    if (x != undefined && x.itemId)
+        localStorage.setItem(x.itemId, JSON.stringify(preset));
 }
+function manageCaps(cap, state) {
+    switch (cap) {
+        case "detune":
+            unison.detune = state; //0 - 100
+            synths.forEach((synth, i) => { synth.detune.value = (i - 2) * unison.detune; });
+            break;
+        case "voices":
+            synths.forEach((synth) => synth.triggerRelease("+1"));
+            if (state <= 2)
+                state = 3;
+            unison.voices = Math.floor(state * 0.4); //2-40
+            regenerateSynths();
+            break;
+        default:
+            throw new Error("Unexpected cap: " + cap + ": " + state);
+    }
+}
+function manageSwitches(switchName, state) {
+    switch (switchName) {
+        case "unison":
+            if (!state)
+                synths.forEach((synth) => synth.triggerRelease("+1"));
+            else
+                synth.releaseAll("+1");
+            unison.on = state;
+            break;
+        case "effect":
+            break;
+        case "lfo":
+            if (state)
+                lfo.start();
+            else
+                lfo.stop();
+            break;
+        default:
+            throw new Error("Unexpected switch: " + switchName + ": " + state);
+    }
+}
+/*
+effect*/ 
 //# sourceMappingURL=instrument.js.map

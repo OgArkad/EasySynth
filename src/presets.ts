@@ -1,7 +1,7 @@
 import type {FilterOptions, LFOOptions, PolySynth, Synth, Filter, LFO} from "tone";//no need in js;
 import { filter } from "./instrument.js";
 import { setKnobs } from "./UI.js";
-export {loadPreset, loadLocalPresets, currentPreset, switchPreset, presets};
+export {loadPreset, loadLocalPresets, currentPreset, switchPreset, presets, presetdefs};
 export type {SynthPreset, PresetOscillatorType};
 
 type PresetOscillatorType =
@@ -16,6 +16,7 @@ type PresetOscillatorType =
 
 interface SynthPreset {
     name: string;
+    itemId?: string;
     oscillator: {
         type: PresetOscillatorType;
         octave: number;
@@ -231,28 +232,36 @@ const presets: SynthPreset[] = [
     laser
 ];
 
-function toSynthPreset(x: String): SynthPreset{
-    if (x === undefined) throw new Error("Undefined preset found!!!");
-    let name = x.replace("{name:", "").split(",").slice(0,5)[0];
-    if (name === undefined) name = "undef";
-    const pres: SynthPreset = {
-        name: name,
-        oscillator: { type: "square", octave: 1, detune: 0, volume: -7 },
-        filter: { type: "highpass", frequency: 1200, Q: 5 },
-        envelope: { attack: 0.001, decay: 0.5, sustain: 0, release: 0.15 },
-        lfo: { frequency: 8, min: 1000, max: 7000, phase: 0, type: "sawtooth" }
-    };
-
-    return pres;
-}
+const presetdefs: string[] = [
+    "Default",
+    "Clean Saw",
+    "Super Saw",
+    "Triangle",
+    "Bright Lead",
+    "Soft Lead",
+    "Deep Bass",
+    "Sub Bass",
+    "Pluck",
+    "Warm Pad",
+    "Dream Pad",
+    "Wobble",
+    "Acid",
+    "Retro Game",
+    "Cosmic",
+    "Organ",
+    "Dark Drone",
+    "Laser"
+];
 
 function loadLocalPresets(){
     let i: number = 0;
     let x: string | null = localStorage.getItem("preset" + i);
-    while ((x != null || x != undefined) && i < 150)//max 150 items
+    while (x != null && i < 150)//max 150 items
     {
-        presets.push(toSynthPreset(x));
+        const parsed = JSON.parse(x) as SynthPreset;
+        presets.push(parsed);
         i++;
+        x = localStorage.getItem("preset" + i);
     }
     console.log(i + " presets loaded from local machine");
 }

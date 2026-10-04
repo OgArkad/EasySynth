@@ -37,24 +37,24 @@
         <div class="switch-control" style="top: 20%; left: 40%;">
             <p>UNISON</p>
             <div class="switch-wrapper">
-                <img src="./media/NutOfTheSwitch.png" alt="switch" id="unison-switch" class="switch-nut">
-                <img src="./media/switchLeft.png" alt="left" class="switch" data-works="off">
+                <img src="./media/NutOfTheSwitch.png" alt="switch" class="switch-nut">
+                <img src="./media/switchLeft.png" alt="left" id="unison-switch" class="switch" data-works="off">
             </div>
         </div>
 
         <div class="switch-control" style="top: 20%; left: 45%;">
             <p>EFFECT</p>
             <div class="switch-wrapper">
-                <img src="./media/NutOfTheSwitch.png" alt="switch" id="effect-switch" class="switch-nut">
-                <img src="./media/switchLeft.png" alt="left" class="switch" data-works="off">
+                <img src="./media/NutOfTheSwitch.png" alt="switch" class="switch-nut">
+                <img src="./media/switchLeft.png" alt="left" id="effect-switch" class="switch" data-works="off">
             </div>
         </div>
 
         <div class="switch-control" style="top: 36%; left: 40.5%;">
             <p>LFO</p>
             <div class="switch-wrapper">
-                <img src="./media/NutOfTheSwitch.png" alt="switch" id="lfo-switch" class="switch-nut">
-                <img src="./media/switchLeft.png" alt="left" class="switch" data-works="off">
+                <img src="./media/NutOfTheSwitch.png" alt="switch" class="switch-nut">
+                <img src="./media/switchLeft.png" alt="left" id="lfo-switch" class="switch" data-works="off">
             </div>
         </div>
 
@@ -64,19 +64,26 @@
                 <img src="./media/slider.png" alt="slider" class="slider">
                 <img src="./media/cap.png" alt="cap" class="cap" id="detune-cap">
             </div>
-        </div>
-
+      </div>
         <div class="slider-control" style="top: 38%; left: 52%;">
-            <p>SPREAD</p>
+            <p>VOICES</p>
             <div class="slider-wrapper">
                 <img src="./media/slider.png" alt="slider" class="slider">
-                <img src="./media/cap.png" alt="cap" class="cap" id="spread-cap">
+                <img src="./media/cap.png" alt="cap" class="cap" id="voices-cap">
             </div>
         </div>
 
-        <select name="samples" id="sampleOptions">
+        <select name="samples" id="sampleOptions" class="multiple-options">
             <option value="default" selected>default</option>
         </select>
+
+        <select name="keyboard" id="keyboardOptions" class="multiple-options">
+            <option value="2hun" selected>2 rows (hun)</option>
+            <option value="2eng">2 rows (eng)</option>
+            <option value="1hun">1 rows (hun)</option>
+            <option value="1eng">1 rows (eng)</option>
+        </select>
+
         <img src="./add.png" alt="add" id="sampleAddOptions">
 
         <div class="knob-control" style="top: 25%; right: 46%;">

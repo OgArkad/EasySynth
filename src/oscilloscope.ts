@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", resizeCanvas);
 });
 
-export function drawOscilloscope() {
+function drawOscilloscope() {
   requestAnimationFrame(drawOscilloscope);
 
   if (!canvas || !ctx) return;
@@ -88,6 +88,7 @@ function drawWaveform(width: number, height: number) {
   ctx.stroke();
 }
 
+<<<<<<< HEAD
 function drawFFT(width: number, height: number) {
   const values = fftNode.getValue();
   const barWidth = (width / values.length) * 0.85;
@@ -145,3 +146,6 @@ function updateCanvasDimensions() {
 
 updateCanvasDimensions();
 window.addEventListener("resize", updateCanvasDimensions);
+=======
+drawOscilloscope();
+>>>>>>> c105f7b528348caa65e173c70ea4a63b3d85331b

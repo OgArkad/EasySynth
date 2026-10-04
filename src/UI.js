@@ -1,13 +1,13 @@
-import { expression, manageKnobs, filter, seq } from "./instrument.js";
+import { expression, manageKnobs, filter, seq, manageCaps, manageSwitches } from "./instrument.js";
 import { presets, currentPreset } from "./presets.js";
 import { sequencer } from "./effects.js";
-import { Recorder, Transport } from "tone";
-export { setKnobs };
+import { Transport, start } from "tone";
+export { setKnobs, keyboard };
 import * as Tone from "tone";
 const KNOB_CONFIGS = {
     'filter-knob': { minAngle: -127, maxAngle: 127, steps: 7 },
     'waveform-knob': { minAngle: -100, maxAngle: 100, steps: 8 },
-    'sequencer-knob': { minAngle: -127, maxAngle: 127, steps: 8 },
+    'effect-knob': { minAngle: -127, maxAngle: 127, steps: 15 },
     'gain-knob': { minAngle: -127, maxAngle: 127, sensitivity: 2.0 },
     'cutoff-knob': { minAngle: -127, maxAngle: 127 },
     'unison-knob': { minAngle: -127, maxAngle: 127, steps: 4 },
@@ -70,19 +70,14 @@ function setKnobs() {
     const pres = presets[currentPreset];
     if (pres === undefined)
         throw new Error("This shouldn't have happened, you selected a non-existing preset! (Trying to rotate knobs in position)");
+    set_Knob("filter", ["lowpass", "highpass", "lowshelf", "highshelf", "notch", "allpass", "peaking"].indexOf(filter.type) / 6 * 254 - 127);
+    set_Knob("waveform", ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"].indexOf(pres.oscillator.type) * 32 - 127); //254/8 = 31,75
+    set_Knob("gain", expression.gain.value * 254 - 127);
     set_Knob("cutoff", Math.log(parseInt(filter.frequency.value.toString()) / 20) / Math.log(20000 / 20) * 254 - 127);
     set_Knob("attack", pres.envelope.attack * 200 - 127);
     set_Knob("decay", pres.envelope.decay * 100 - 127);
     set_Knob("sustain", pres.envelope.sustain * 254 - 127);
     set_Knob("release", pres.envelope.release * 100 - 127);
-    set_Knob("filter", ["lowpass", "highpass", "lowshelf", "highshelf", "notch", "allpass", "peaking"].indexOf(filter.type) / 6 * 254 - 127);
-    set_Knob("waveform", ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"].indexOf(pres.oscillator.type) * 32 - 127); //254/8 = 31,75
-    set_Knob("octave", pres.oscillator.octave / 4 * 127);
-    set_Knob("semitone", pres.oscillator.detune / 1000 / 12 * 127);
-    set_Knob("fine-tuning", pres.oscillator.detune * 10);
-    //set_Knob("unison", unison.on ? 127 : -127); // no need, because it's an outer variable
-    set_Knob("gain", expression.gain.value * 254 - 127);
-    console.info("Knobs set!");
 }
 let up = document.getElementById("tempoUp");
 let down = document.getElementById("tempDown");
@@ -100,6 +95,7 @@ if (up && down && value) {
         Transport.bpm.value = tempoValue;
     });
 }
+/*                             -                           Set sequencer UI                                          -                                                */
 document.getElementById("play")?.addEventListener("click", () => {
     sequencer.on = true;
     seq.start();
@@ -123,6 +119,48 @@ document.getElementById("record")?.addEventListener("click", () => {
     sequencer.recording = !sequencer.recording;
     console.info("sequencer recording: ", sequencer.recording);
 });
+const keyboardonehun = {
+    w: "C#5", e: "D#5", t: "F#5", z: "G#5", u: "A#5",
+    a: "C5", s: "D5", d: "E5", f: "F5", g: "G5", h: "A5", j: "B5", k: "C6"
+};
+const keyboardtwohun = {
+    3: "C#5", 4: "D#5", 6: "F#5", 7: "G#5", 8: "A#5",
+    w: "C5", e: "D5", r: "E5", t: "F5", z: "G5", u: "A5", i: "B5", o: "C6",
+    s: "C#4", d: "D#4", g: "F#4", h: "G#4", j: "A#4",
+    y: "C4", x: "D4", c: "E4", v: "F4", b: "G4", n: "A4", m: "B4", ',': "C5",
+};
+const keyboardoneeng = {
+    ...keyboardonehun,
+    y: "G#5",
+    z: undefined,
+};
+;
+const keyboardtwoeng = {
+    ...keyboardtwohun,
+    y: "G5",
+    z: "C4",
+};
+let keyboard = keyboardtwohun;
+document.getElementById("keyboardOptions")?.addEventListener("change", (e) => {
+    console.info("Keyboard option selected: ", e.target.value);
+    switch (e.target.value) {
+        case "2hun":
+            keyboard = keyboardtwohun;
+            break;
+        case "2eng":
+            keyboard = keyboardtwoeng;
+            break;
+        case "1hun":
+            keyboard = keyboardonehun;
+            break;
+        case "1eng":
+            keyboard = keyboardoneeng;
+            break;
+        default:
+            throw new Error("Invalid keyboard option selected.");
+    }
+});
+/*                             -                           Set switches UI                                          -                                                */
 document.addEventListener('DOMContentLoaded', () => {
     const switches = document.querySelectorAll('.switch');
     switches.forEach((switchOne) => {
@@ -139,9 +177,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 switchOne.dataset.works = "off";
                 switchOne.style.left = "-30px";
             }
+            manageSwitches(switchOne.id.replace("-switch", ""), switchOne.dataset.works === "on");
         });
     });
 });
+/*                             -                           Set caps UI                                          -                                                */
 document.addEventListener('DOMContentLoaded', () => {
     const caps = document.querySelectorAll('.cap');
     caps.forEach((cap) => {
@@ -164,17 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const onPointerMove = (moveEvent) => {
                 const deltaY = moveEvent.clientY - startY;
                 startY = moveEvent.clientY;
-                let targetY = currentY + deltaY;
-                currentY = Math.min(maxY, Math.max(minY, targetY));
+                currentY = Math.min(maxY, Math.max(minY, currentY + deltaY));
                 cap.style.transform = `translateX(-50%) translateY(${currentY}px)`;
-                const value = Math.round(((maxY - currentY) / totalTravel) * 100);
-                const paramId = cap.id.replace(/-(cap|knob)$/, '');
-                if (typeof window.manageKnobs === 'function') {
-                    window.manageKnobs(paramId, value);
-                }
-                else {
-                    console.log(`Slider [${paramId}]: ${value}%`);
-                }
+                manageCaps(cap.id.replace("-cap", ""), Math.round(((maxY - currentY) / totalTravel) * 100));
             };
             const onPointerUp = () => {
                 window.removeEventListener('pointermove', onPointerMove);
@@ -192,9 +224,10 @@ if (startBtn) {
         if (typeof Tone.start === "function") {
             await Tone.start();
         }
-        if (screen.orientation && typeof screen.orientation.lock === "function") {
+        const orientation = screen.orientation;
+        if (typeof orientation.lock === "function") {
             try {
-                await screen.orientation.lock("landscape");
+                await orientation.lock("landscape");
             }
             catch (err) {
                 console.warn("Screen orientation lock not supported or allowed:", err);

@@ -10,7 +10,6 @@ Tone.getDestination().connect(splitNode);
 splitNode.connect(leftWaveform, 0);
 splitNode.connect(rightWaveform, 1);
 const canvas = document.getElementById("oscilloscope-canvas");
-<<<<<<< HEAD
 const ctx = canvas ? canvas.getContext("2d") : null;
 document.addEventListener("DOMContentLoaded", () => {
     const modeButtons = document.querySelectorAll(".viz-btn");
@@ -30,11 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 });
-export function drawOscilloscope() {
-=======
-const ctx = canvas.getContext("2d");
 function drawOscilloscope() {
->>>>>>> c105f7b528348caa65e173c70ea4a63b3d85331b
     requestAnimationFrame(drawOscilloscope);
     if (!canvas || !ctx)
         return;
@@ -74,7 +69,6 @@ function drawWaveform(width, height) {
     }
     ctx.stroke();
 }
-<<<<<<< HEAD
 function drawFFT(width, height) {
     const values = fftNode.getValue();
     const barWidth = (width / values.length) * 0.85;
@@ -122,7 +116,5 @@ function updateCanvasDimensions() {
 }
 updateCanvasDimensions();
 window.addEventListener("resize", updateCanvasDimensions);
-=======
 drawOscilloscope();
->>>>>>> c105f7b528348caa65e173c70ea4a63b3d85331b
 //# sourceMappingURL=oscilloscope.js.map

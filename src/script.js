@@ -1,10 +1,9 @@
-import { start, Transport } from "tone";
+import { start, Transport, getContext } from "tone";
 import MIDI from "./MIDI.js";
 import * as Effect from "./effects.js";
 import { synth, filter, lfo, panner, expression, synths, volume, waveform, seq } from "./instrument.js";
 import * as Preset from "./presets.js";
 import { keyboard } from "./UI.js";
-import * as Tone from "tone";
 const midi = new MIDI();
 let started = false;
 async function autoStartAudio() {
@@ -12,8 +11,8 @@ async function autoStartAudio() {
         return;
     try {
         await start();
-        if (Tone.getContext().state !== "running") {
-            await Tone.getContext().resume();
+        if (getContext().state !== "running") {
+            await getContext().resume();
         }
         Transport.start();
         if (screen.orientation && typeof screen.orientation.lock === "function") {
@@ -138,44 +137,4 @@ document.addEventListener("pointerup", (e) => {
 document.addEventListener("pointercancel", (e) => {
     handleKeyRelease(e.target);
 });
-async function unlockAudio() {
-    if (started)
-        return;
-    try {
-        await start();
-        if (Tone.getContext().state !== "running") {
-            await Tone.getContext().resume();
-        }
-        const ctx = Tone.getContext().rawContext;
-        const buffer = ctx.createBuffer(1, 1, 22050);
-        const source = ctx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(ctx.destination);
-        source.start(0);
-        Transport.start();
-        synths.forEach((s) => s.connect(volume));
-        synth.connect(volume);
-        volume.connect(filter);
-        filter.connect(panner);
-        panner.connect(expression);
-        expression.connect(Effect.reverb);
-        Effect.reverb.connect(Effect.chorus);
-        Effect.chorus.connect(waveform);
-        Effect.chorus.toDestination();
-        synth.releaseAll(0);
-        synths.forEach((s) => s.triggerRelease());
-        Preset.loadLocalPresets();
-        Preset.loadPreset(Preset.presets[Preset.currentPreset], synth);
-        midi.init().catch((err) => {
-            console.warn("MIDI init warning:", err);
-        });
-        started = true;
-        const startElem = document.getElementById("start");
-        if (startElem)
-            startElem.style.display = "none";
-    }
-    catch (err) {
-        console.error("Audio activation failed:", err);
-    }
-}
 //# sourceMappingURL=script.js.map

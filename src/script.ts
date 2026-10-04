@@ -1,21 +1,20 @@
-import { start, Transport } from "tone";
+import { start, Transport, getContext } from "tone";
 import MIDI from "./MIDI.js";
 import * as Effect from "./effects.js";
 import { synth, filter, lfo, panner, expression, synths, volume, waveform, seq } from "./instrument.js";
 import * as Preset from "./presets.js";
-import {keyboard} from "./UI.js";
-import * as Tone from "tone";
+import { keyboard } from "./UI.js";
 
 const midi: MIDI = new MIDI();
 let started: boolean = false;
 
-async function autoStartAudio() {
+async function autoStartAudio(){
     if (started) return;
 
   try {
     await start();
-    if (Tone.getContext().state !== "running") {
-      await Tone.getContext().resume();
+    if (getContext().state !== "running") {
+      await getContext().resume();
     }
     Transport.start();
 
@@ -123,6 +122,18 @@ function handleKeyRelease(target: HTMLElement | null) {
   if (!keyElem) return;
 
   const note = keyElem.getAttribute("data-note");
+  if (note) {
+    if (!Effect.unison.on) synth.triggerAttack(note);
+    else synths.forEach((s: any) => s.triggerAttack(note));
+  }
+}
+
+function handleKeyRelease(target: HTMLElement | null) {
+  if (!target) return;
+  const keyElem = target.closest<HTMLElement>("[data-note]");
+  if (!keyElem) return;
+
+  const note = keyElem.getAttribute("data-note");
   if (note && !Effect.sustain) {
     if (!Effect.unison.on) synth.triggerRelease(note);
     else synths.forEach((s: any) => s.triggerRelease());
@@ -141,50 +152,3 @@ document.addEventListener("pointerup", (e: PointerEvent) => {
 document.addEventListener("pointercancel", (e: PointerEvent) => {
   handleKeyRelease(e.target as HTMLElement);
 });
-
-async function unlockAudio() {
-  if (started) return;
-
-  try {
-    await start();
-    if (Tone.getContext().state !== "running") {
-      await Tone.getContext().resume();
-    }
-
-    const ctx = Tone.getContext().rawContext as AudioContext;
-    const buffer = ctx.createBuffer(1, 1, 22050);
-    const source = ctx.createBufferSource();
-    source.buffer = buffer;
-    source.connect(ctx.destination);
-    source.start(0);
-
-    Transport.start();
-
-    synths.forEach((s: any) => s.connect(volume));
-    synth.connect(volume);
-    volume.connect(filter);
-    filter.connect(panner);
-    panner.connect(expression);
-    expression.connect(Effect.reverb);
-    Effect.reverb.connect(Effect.chorus);
-    Effect.chorus.connect(waveform);
-    Effect.chorus.toDestination();
-
-    synth.releaseAll(0);
-    synths.forEach((s: any) => s.triggerRelease());
-
-    Preset.loadLocalPresets();
-    Preset.loadPreset(Preset.presets[Preset.currentPreset], synth);
-
-    midi.init().catch((err: unknown) => {
-      console.warn("MIDI init warning:", err);
-    });
-
-    started = true;
-
-    const startElem = document.getElementById("start");
-    if (startElem) startElem.style.display = "none";
-  } catch (err: unknown) {
-    console.error("Audio activation failed:", err);
-  }
-}

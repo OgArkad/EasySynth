@@ -1,7 +1,7 @@
 import { expression, manageKnobs, filter, seq, manageCaps, manageSwitches } from "./instrument.js";
 import { presets, currentPreset } from "./presets.js";
 import { sequencer } from "./effects.js";
-import { Transport } from "tone";
+import { Transport, start } from "tone";
 export { setKnobs, keyboard };
 import * as Tone from "tone";
 const KNOB_CONFIGS = {
@@ -74,9 +74,6 @@ function setKnobs() {
     set_Knob("waveform", ["sine", "square", "triangle", "sawtooth", "fatsine", "fatsquare", "fattriangle", "fatsawtooth"].indexOf(pres.oscillator.type) * 32 - 127); //254/8 = 31,75
     set_Knob("gain", expression.gain.value * 254 - 127);
     set_Knob("cutoff", Math.log(parseInt(filter.frequency.value.toString()) / 20) / Math.log(20000 / 20) * 254 - 127);
-    set_Knob("octave", pres.oscillator.octave / 4 * 127);
-    set_Knob("semitone", pres.oscillator.detune / 1000 / 12 * 127);
-    set_Knob("fine-tuning", pres.oscillator.detune * 10);
     set_Knob("attack", pres.envelope.attack * 200 - 127);
     set_Knob("decay", pres.envelope.decay * 100 - 127);
     set_Knob("sustain", pres.envelope.sustain * 254 - 127);

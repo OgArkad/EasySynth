@@ -224,9 +224,10 @@ if (startBtn) {
         if (typeof Tone.start === "function") {
             await Tone.start();
         }
-        if (screen.orientation && typeof screen.orientation.lock === "function") {
+        const orientation = screen.orientation;
+        if (typeof orientation.lock === "function") {
             try {
-                await screen.orientation.lock("landscape");
+                await orientation.lock("landscape");
             }
             catch (err) {
                 console.warn("Screen orientation lock not supported or allowed:", err);

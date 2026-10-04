@@ -18,8 +18,12 @@ async function autoStartAudio(){
     }
     Transport.start();
 
-    if (screen.orientation && typeof screen.orientation.lock === "function") {
-      screen.orientation.lock("landscape").catch(() => {});
+    const orientation = screen.orientation as ScreenOrientation & {
+      lock?: (orientation: string) => Promise<void>;
+    };
+
+    if (typeof orientation.lock === "function") {
+      orientation.lock("landscape").catch(() => {});
     }
 
     synths.forEach((s: any) => s.connect(volume));

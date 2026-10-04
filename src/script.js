@@ -15,8 +15,9 @@ async function autoStartAudio() {
             await getContext().resume();
         }
         Transport.start();
-        if (screen.orientation && typeof screen.orientation.lock === "function") {
-            screen.orientation.lock("landscape").catch(() => { });
+        const orientation = screen.orientation;
+        if (typeof orientation.lock === "function") {
+            orientation.lock("landscape").catch(() => { });
         }
         synths.forEach((s) => s.connect(volume));
         synth.connect(volume);
